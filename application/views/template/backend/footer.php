@@ -33,6 +33,12 @@
 <script src="<?= base_url();?>assets/vendor/fslightbox/index.js"></script>
 <script src="<?= base_url();?>assets/vendor/appear/dist/appear.min.js"></script>
 <script src="<?= base_url();?>assets/vendor/circles.js/circles.js"></script>
+<script src="<?= base_url();?>assets/vendor/hs-add-field/dist/hs-add-field.min.js"></script>
+<script src="<?= base_url();?>assets/vendor/hs-file-attach/dist/hs-file-attach.min.js"></script>
+<script src="<?= base_url();?>assets/vendor/imask/dist/imask.min.js"></script>
+<script src="<?= base_url();?>assets/vendor/quill/dist/quill.min.js"></script>
+<script src="<?= base_url();?>assets/vendor/tom-select/dist/js/tom-select.complete.min.js"></script>
+
 
 <!-- JS Front -->
 <script src="<?= base_url();?>assets/js/theme.min.js"></script>
@@ -57,6 +63,11 @@
 		// INITIALIZATION OF SHOW ANIMATIONS
 		// =======================================================
 		new HSShowAnimation('.js-animation-link')
+
+
+		// INITIALIZATION OF FILE ATTACH
+		// =======================================================
+		new HSFileAttach('.js-file-attach')
 
 
 		// INITIALIZATION OF BOOTSTRAP DROPDOWN

@@ -23,8 +23,19 @@
 	<div class="col-md-3 col-sm-12">
 		<div class="card" style="text-align: center;">
 			<div class="card-body">
+				<h1 class="h1"><?= number_format($countLeader['totalLeader'],0,",",".")?></h1>
+				<div class="h6">Total Leader</div>
+				<div style="position: absolute;right: 10px;bottom: 0px;">
+					<i class="bi bi-person-check text-success" style="font-size: 2.5em;"></i>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-3 col-sm-12">
+		<div class="card" style="text-align: center;">
+			<div class="card-body">
 				<h1 class="h1"><?= number_format(1,0,",",".")?></h1>
-				<div class="h6">Aktif staff</div>
+				<div class="h6">Total Staff</div>
 				<div style="position: absolute;right: 10px;bottom: 0px;">
 					<i class="bi bi-people text-secondary" style="font-size: 2.5em;"></i>
 				</div>
@@ -38,17 +49,6 @@
 				<div class="h6">Total Task</div>
 				<div style="position: absolute;right: 10px;bottom: 0px;">
 					<i class="bi bi-clipboard text-warning" style="font-size: 2.5em;"></i>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-md-3 col-sm-12">
-		<div class="card" style="text-align: center;">
-			<div class="card-body">
-				<h1 class="h1"><?= number_format(1,0,",",".")?> %</h1>
-				<div class="h6">Presentase penyelesaian</div>
-				<div style="position: absolute;right: 10px;bottom: 0px;">
-					<i class="bi bi-person-check text-success" style="font-size: 2.5em;"></i>
 				</div>
 			</div>
 		</div>

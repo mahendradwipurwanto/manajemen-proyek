@@ -134,6 +134,7 @@ class Auth extends CI_Controller
     public function register()
     {
         // menerimaemaildan password serta memparse karakter spesial
+        $undangan = htmlspecialchars($this->input->post('undangan'), true);
         $email = htmlspecialchars($this->input->post('email'), true);
         $password = htmlspecialchars($this->input->post('password'), true);
         $password_ver = htmlspecialchars($this->input->post('confirmPassword'), true);
@@ -165,15 +166,62 @@ class Auth extends CI_Controller
                         // menyimpan data session
                         $this->session->set_userdata($sessiondata);
 
-                        // mengirimkan email selamat bergabung
-                        $subject = "Selamat bergabung";
-                        $message = "Hi {$user->nama}, Selamat telah bergabung bersama kami. Harap verifikasi akunmu dengan kode verifikasi yang telah kami kirimkan ke emailmu";
+                        if($undangan == false){
+                            // mengirimkan email selamat bergabung
+                            $subject = "Selamat bergabung";
+                            $message = "Hi {$user->nama}, Selamat telah bergabung bersama kami. Harap verifikasi akunmu dengan kode verifikasi yang telah kami kirimkan ke emailmu";
+    
+                            sendMail($email, $subject, $message);
+                            redirect(site_url('verifikasi-email?act=send-email'));
+                        }else{
+                            $this->bypas_otp = $this->M_auth->getSetting('bypass_otp') == 'true' ? true : false;
 
-                        sendMail($email, $subject, $message);
+                            if($this->bypas_otp == true){
+                                $session_data = array(
+                                    'otp' => true,
+                                );
+
+                                $this->session->set_userdata($session_data);
+                            }
+
+                            // CEK HAK AKSES
+                            // ADMIN
+                            if ($user->role == 1) {
+                                if ($this->session->userdata('redirect')) {
+                                    $this->session->set_flashdata('notif_success', 'Hi, berhasil masuk, harap lanjutkan aktivitas anda !');
+                                    redirect($this->session->userdata('redirect'));
+                                } else {
+                                    $this->session->set_flashdata('notif_success', "Welcome super admin, {$user->nama}");
+                                    redirect(site_url('admin'));
+                                }
+
+                            // LEADER
+                            } elseif ($user->role == 2) {
+                                if ($this->session->userdata('redirect')) {
+                                    $this->session->set_flashdata('notif_success', 'Hi, berhasil masuk, harap lanjutkan aktivitas anda !');
+                                    redirect($this->session->userdata('redirect'));
+                                } else {
+                                    $this->session->set_flashdata('notif_success', "Welcome admin, {$user->nama}");
+                                    redirect(site_url('leader'));
+                                }
+                            
+                            // STAFF
+                            } elseif ($user->role == 3) {
+                                if ($this->session->userdata('redirect')) {
+                                    $this->session->set_flashdata('notif_success', 'Hi, berhasil masuk, harap lanjutkan aktivitas anda !');
+                                    redirect($this->session->userdata('redirect'));
+                                } else {
+                                    $this->session->set_flashdata('notif_success', "Selamat datang, {$user->nama}");
+                                    redirect(site_url('staff'));
+                                }
+                            } else {
+                                $this->session->set_flashdata('notif_success', "Welcome, {$user->nama}");
+                                redirect(base_url());
+                            }
+                        }
 
                         // $this->session->set_flashdata('error', 'Registration is successful, we have sent an activation code to your email. Please enter the code to activate your account!');
                         // mengirimkan user untuk verifikasi email
-                        redirect(site_url('verifikasi-email?act=send-email'));
                     } else {
                         $this->session->set_flashdata('error', 'Terjadi kesalahan saat mendaftarkan diri!');
                         redirect($this->agent->referrer());

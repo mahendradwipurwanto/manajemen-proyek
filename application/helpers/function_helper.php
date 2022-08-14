@@ -50,7 +50,6 @@ if (!function_exists('time_ago')) {
     }
 }
 
-
 if (!function_exists('sendMail')) {
     function sendMail($email, $subject, $message)
     {
@@ -71,3 +70,30 @@ if (!function_exists('sendMail')) {
     }
 }
     
+if (!function_exists('penalty_remaining')) {
+    function penalty_remaining($datetime, $full = false)
+    {
+        // $datetime = date(" Y - m - d H : i : s ", time()+120);
+        $now = new DateTime;
+        $ago = new DateTime($datetime);
+        $diff = $now->diff($ago);
+
+        $diff->w = floor($diff->d / 7);
+        $diff->d -= $diff->w * 7;
+
+        $string = [
+            'i' => 'Menit ',
+            's' => 'Detik ',
+        ];
+        $a = null;
+        foreach ($string as $k => &$v) {
+            if ($diff->$k) {
+                $v = $diff->$k . ' ' . $v;
+                $a .= $v;
+            } else {
+                unset($string[$k]);
+            }
+        }
+        return $a;
+    }
+}

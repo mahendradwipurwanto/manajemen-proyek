@@ -20,12 +20,20 @@
 
 		<div class="col-md-7 col-lg-6">
 			<!-- Form -->
-			<form action="<?= site_url('api/auth/register');?>" method="post" class="js-validate needs-validation" novalidate>
+			<form action="<?= site_url('api/auth/register');?>" method="post" class="js-validate needs-validation"
+				novalidate>
+				<input type="hidden" name="role" value="<?= $role;?>">
+				<input type="hidden" name="undangan" value="<?php if (isset($email)):?>true<?php else:?>false<?php endif;?>">
 				<!-- Card -->
 				<div class="card">
 					<div class="card-header bg-primary text-center py-4">
+						<?php if (isset($email)):?>
+						<h4 class="card-header-title text-white">Lengkapi data diri untuk menyelesaikan <span
+								class="badge bg-warning text-dark rounded-pill ms-1">undangan</span></h4>
+						<?php else:?>
 						<h4 class="card-header-title text-white">Daftarkan akun anda <span
 								class="badge bg-warning text-dark rounded-pill ms-1">sekarang</span></h4>
+						<?php endif;?>
 					</div>
 
 					<div class="card-body">
@@ -51,8 +59,9 @@
 						<div class="mb-4">
 							<label class="form-label" for="signupHeroFormWorkEmail">Email</label>
 							<input type="email" class="form-control form-control-lg" name="email"
-								id="signupHeroFormWorkEmail" placeholder="email@site.com" aria-label="email@site.com"
-								required>
+								id="signupHeroFormWorkEmail" <?php if(isset($email)):?>value="<?= $email;?>"
+								<?php else:?>placeholder="email@site.com" aria-label="email@site.com" <?php endif;?>
+								required <?php if(isset($email)):?>readonly<?php endif;?>>
 							<span class="invalid-feedback">Masukkan email valid dengan benar</span>
 						</div>
 						<!-- End Form -->
@@ -86,7 +95,8 @@
 							<!-- End Col -->
 
 							<div class="col-sm-5 text-sm-end">
-								<button type="submit" class="btn btn-primary btn-sm btn-lg">Daftar sekarang</button>
+								<button type="submit" class="btn btn-primary btn-sm btn-lg"><?php if(isset($email)):?>Bergabung Sekarang
+								<?php else:?>Daftar Sekarang<?php endif;?></button>
 							</div>
 							<!-- End Col -->
 						</div>

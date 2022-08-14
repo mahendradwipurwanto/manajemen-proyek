@@ -25,12 +25,12 @@ class Admin extends CI_Controller
             redirect('masuk');
         }
 
-        if ($this->session->userdata('role') == 2) {
+        if ($this->session->userdata('role') == 2 || $this->session->userdata('role') == 3) {
             $this->session->set_flashdata('warning', "You don`t have access to this page");
             redirect(base_url());
         }
 
-        $this->load->model(['M_admin']);
+        $this->load->model(['M_admin', 'api/M_leader', 'api/M_staff', 'api/M_master']);
     }
 
     public function index()
@@ -40,17 +40,29 @@ class Admin extends CI_Controller
 
     public function dashboard()
     {
-        $this->templateback->view('admin/dashboard');
+        $data['countLeader'] = $this->M_leader->countLeader();
+
+        $this->templateback->view('admin/dashboard', $data);
     }
 
     public function kelola_leader()
     {
-        $this->templateback->view('admin/leader');
+        $data['countLeader'] = $this->M_leader->countLeader();
+        $data['jabatan'] = $this->M_master->getJabatan();
+        $data['leader'] = $this->M_leader->getLeader();
+        $data['undanganLeader'] = $this->M_master->getUndangan(2);
+
+        $this->templateback->view('admin/leader', $data);
     }
 
     public function kelola_staff()
     {
-        $this->templateback->view('admin/staff');
+        $data['countStaff'] = $this->M_staff->countStaff();
+        $data['jabatan'] = $this->M_master->getJabatan();
+        $data['staff'] = $this->M_staff->getStaff();
+        $data['undanganStaff'] = $this->M_master->getUndangan(3);
+
+        $this->templateback->view('admin/staff', $data);
     }
 
     public function kelola_proyek()
@@ -85,6 +97,12 @@ class Admin extends CI_Controller
                 $data['mailer_password'] = $this->M_admin->get_settingsValue('mailer_password');
 
                 $this->templateback->view('admin/pengaturan/mailer', $data);
+                break;
+
+            case 'jabatan':
+                $data['jabatan'] = $this->M_master->getJabatan();
+
+                $this->templateback->view('admin/pengaturan/jabatan', $data);
                 break;
             
             default:

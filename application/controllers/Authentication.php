@@ -23,7 +23,13 @@ class Authentication extends CI_Controller
 
     public function register()
     {
-        $this->templateauth->view('authentication/register');
+        $data['role'] = 3;
+        if($this->input->get('act') == "undangan-leader"){
+            $data['email'] = $this->input->get('email');
+            $data['role'] = 2;
+        }
+
+        $this->templateauth->view('authentication/register', $data);
     }
 
     public function lupa_password()

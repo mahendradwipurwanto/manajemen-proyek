@@ -39,8 +39,7 @@
 		<!-- End Card -->
 	</div>
 	<!-- End Col -->
-	<div class="col mb-4">
-		<!-- Card -->
+	<!-- <div class="col mb-4">
 		<a class="card card-sm card-transition h-100" href="<?= site_url('admin/pengaturan?p=keamanan'); ?>"
 			data-aos="fade-up">
 			<img class="card-img p-2" src="<?= base_url(); ?>assets/svg/design-system/docs-duotone-icons.svg"
@@ -50,8 +49,7 @@
 				<p class="card-text small text-body">Atur hak akses</p>
 			</div>
 		</a>
-		<!-- End Card -->
-	</div>
+	</div> -->
 	<!-- End Col -->
 
 	<?php if($this->session->userdata('role') == -1):?>
@@ -83,5 +81,24 @@
 		<!-- End Card -->
 	</div>
 	<!-- End Col -->
+</div>
+<!-- End Row -->
+
+
+<span class="divider-center text-cap mb-8">Master data website</span>
+
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-5 mb-6">
+    <div class="col mb-4">
+        <!-- Card -->
+        <a class="card card-sm card-transition h-100" href="<?= site_url('admin/pengaturan?p=jabatan'); ?>" data-aos="fade-up">
+            <img class="card-img p-2" src="<?= base_url(); ?>assets/svg/design-system/docs-sticky-block.svg" alt="Image Description">
+            <div class="card-body">
+                <h4 class="card-title text-inherit">Jabatan</h4>
+                <p class="card-text small text-body">Kelola master jabatan anda</p>
+            </div>
+        </a>
+        <!-- End Card -->
+    </div>
+    <!-- End Col -->
 </div>
 <!-- End Row -->

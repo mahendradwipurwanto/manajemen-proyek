@@ -21,6 +21,13 @@ class TemplateFront
         $data['web_desc'] = $this->getSettingsValue('web_desc');
         $data['web_icon'] = $this->getSettingsValue('web_icon');
         $data['web_logo'] = $this->getSettingsValue('web_logo');
+        $data['web_alamat'] = $this->getSettingsValue('web_alamat');
+        $data['web_telepon'] = $this->getSettingsValue('web_telepon');
+
+        $data['sosmed_ig'] = $this->getSettingsValue('sosmed_ig');
+        $data['sosmed_twitter'] = $this->getSettingsValue('sosmed_twitter');
+        $data['sosmed_facebook'] = $this->getSettingsValue('sosmed_facebook');
+        $data['sosmed_yt'] = $this->getSettingsValue('sosmed_yt');
 
         $this->_ci->load->view('template/frontend/header', $data);
         $this->_ci->load->view('template/alert', $data);

@@ -42,8 +42,9 @@
 
   			<div class="docs-navbar-sidebar-aside-body navbar-sidebar-aside-body">
   				<ul id="navbarSettings" class="navbar-nav nav nav-vertical nav-tabs nav-tabs-borderless nav-sm">
+  					<?php if($this->session->userdata('role') == 1):?>
   					<li class="nav-item" id="tour-dashboard">
-  						<a class="nav-link <?= ($this->uri->segment(2) == "dashboard" || !$this->uri->segment(2) ? "active" : "") ?>"
+  						<a class="nav-link <?= ($this->uri->segment(2) == "dashboard" && !$this->uri->segment(2) ? "active" : "") ?>"
   							href="<?= site_url('admin/dashboard'); ?>">Dashboard</a>
   					</li>
 
@@ -72,10 +73,6 @@
   							<span class="ms-auto badge bg-primary"></span>
   						</a>
   					</li>
-  					<li class="nav-item" id="tour-menu-kpi">
-  						<a class="nav-link <?= ($this->uri->segment(2) == "kpi" ? "active" : "") ?>"
-  							href="<?= site_url('leader/kpi'); ?>">KPI</a>
-  					</li>
 
   					<li class="nav-item my-2 my-lg-5"></li>
 
@@ -83,13 +80,50 @@
   						<span class="nav-subtitle">Pengaturan</span>
   					</li>
   					<li class="nav-item" id="tour-menu-cms">
-  						<a class="nav-link <?= ($this->uri->segment(2) == "cms" ? "active" : "") ?>"
+  						<a class="nav-link <?= ($this->uri->segment(1) == "cms" ? "active" : "") ?>"
   							href="<?= site_url('cms/dashboard'); ?>">CMS Website</a>
   					</li>
   					<li class="nav-item" id="tour-menu-pengaturan">
   						<a class="nav-link <?= ($this->uri->segment(2) == "pengaturan" ? "active" : "") ?>"
   							href="<?= site_url('admin/pengaturan'); ?>">Pengaturan</a>
   					</li>
+  					<?php elseif($this->session->userdata('role') == 2):?>
+  					<li class="nav-item" id="tour-dashboard">
+  						<a class="nav-link <?= ($this->uri->segment(2) == "dashboard" || !$this->uri->segment(2) ? "active" : "") ?>"
+  							href="<?= site_url('leader/dashboard'); ?>">Dashboard</a>
+  					</li>
+  					<li class="nav-item" id="tour-menu-kpi">
+  						<a class="nav-link <?= ($this->uri->segment(2) == "kpi" ? "active" : "") ?>"
+  							href="<?= site_url('leader/kpi'); ?>">KPI / Laporan</a>
+  					</li>
+
+  					<li class="nav-item my-2 my-lg-5"></li>
+
+  					<li class="nav-item">
+  						<span class="nav-subtitle">Proyek</span>
+  					</li>
+  					<li class="nav-item" id="tour-menu-staff">
+  						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-staff" ? "active" : "") ?>"
+  							href="<?= site_url('leader/kelola-staff'); ?>">Staff</a>
+  					</li>
+  					<li class="nav-item" id="tour-menu-proyek">
+  						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-proyek" ? "active" : "") ?>"
+  							href="<?= site_url('leader/kelola-proyek'); ?>">Proyek
+  							<span class="ms-auto badge bg-primary"></span>
+  						</a>
+  					</li>
+
+  					<li class="nav-item my-2 my-lg-5"></li>
+
+  					<li class="nav-item">
+  						<span class="nav-subtitle">Pengaturan</span>
+  					</li>
+  					<li class="nav-item" id="tour-menu-pengaturan">
+  						<a class="nav-link <?= ($this->uri->segment(2) == "pengaturan" ? "active" : "") ?>"
+  							href="<?= site_url('leader/pengaturan'); ?>">Pengaturan</a>
+  					</li>
+  					<?php elseif($this->session->userdata('role') == 3):?>
+  					<?php endif;?>
   				</ul>
   			</div>
   		</div>

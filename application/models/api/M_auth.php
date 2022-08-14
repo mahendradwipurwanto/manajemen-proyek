@@ -70,17 +70,19 @@ class M_auth extends CI_Model
     {
 
         // TB AUTH
-
+        $undangan = htmlspecialchars($this->input->post('undangan'), true);
         $email = htmlspecialchars($this->input->post('email'), true);
         $password = htmlspecialchars($this->input->post('password'), true);
+        $role = htmlspecialchars($this->input->post('role'), true);
 
         // TB USER
-        $name = htmlspecialchars($this->input->post('name'), true);
+        $name = htmlspecialchars($this->input->post('nama'), true);
         $no_telp = htmlspecialchars($this->input->post('no_telp'), true);
 
         // TB AUTH
         $auth = [
             'email' => $email,
+            'role' => $role,
             'password' => password_hash($password, PASSWORD_DEFAULT),
             'created_at' => time()
         ];
@@ -97,25 +99,33 @@ class M_auth extends CI_Model
             ];
 
             $this->db->insert('tb_user', $user);
+            if($undangan == true){
+                $this->db->where('user_id', $user_id);
+                $this->db->update('tb_auth', ['status' => 1]);
 
-            if ($this->db->affected_rows() == true) {
-
-                $chiper = $this->create_verifikasi();
-
-                $verifikasi = [
-                    'user_id' => $user_id,
-                    'key' => $chiper,
-                    'type' => 1, #VERIFIKASI email / verifikasi AKUN 
-                    'status' => 0,
-                    'date_created' => time()
-                ];
-
-                $this->db->insert('tb_token', $verifikasi);
+                $this->db->where('email', $email);
+                $this->db->update('tb_undangan', ['status' => 2]);
                 return ($this->db->affected_rows() != 1) ? false : true;
-            } else {
-                $this->del_token($user_id, 1); #VERIFIKASI email / verifikasi AKUN 
-                $this->del_user($user_id);
-                return false;
+            }else{
+                if ($this->db->affected_rows() == true) {
+
+                    $chiper = $this->create_verifikasi();
+
+                    $verifikasi = [
+                        'user_id' => $user_id,
+                        'key' => $chiper,
+                        'type' => 1, #VERIFIKASI email / verifikasi AKUN 
+                        'status' => 0,
+                        'date_created' => time()
+                    ];
+
+                    $this->db->insert('tb_token', $verifikasi);
+                    return ($this->db->affected_rows() != 1) ? false : true;
+                } else {
+                    $this->del_token($user_id, 1); #VERIFIKASI email / verifikasi AKUN 
+                    $this->del_user($user_id);
+                    return false;
+                }
             }
         } else {
             $this->del_user($user_id);
