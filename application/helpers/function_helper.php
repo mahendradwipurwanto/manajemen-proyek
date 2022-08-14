@@ -49,3 +49,25 @@ if (!function_exists('time_ago')) {
         return $a;
     }
 }
+
+
+if (!function_exists('sendMail')) {
+    function sendMail($email, $subject, $message)
+    {
+        $_ci = &get_instance();
+        $_ci->load->library('mailer');
+
+        $mail = [
+            'to' => $email,
+            'subject' => $subject,
+            'message' => $message
+        ];
+
+        if ($_ci->mailer->send($mail) == true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+    
