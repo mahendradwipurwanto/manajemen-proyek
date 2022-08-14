@@ -11,4 +11,4 @@ $route['verifikasi-email'] = 'authentication/verifikasi_email';
 
 $route['default_controller'] = 'home';
 $route['404_override'] = 'utility/not_found';
-$route['translate_uri_dashes'] = false;
+$route['translate_uri_dashes'] = true;
