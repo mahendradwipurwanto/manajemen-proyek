@@ -32,4 +32,14 @@ class Master extends CI_Controller
             redirect($this->agent->referrer());
         }
     }
+
+    function testMailer(){
+        if (sendMail($this->input->post('email'), 'Test email mailer', 'This is a Test Email on '.date('d M Y - H:i:s')) == true) {
+            $this->session->set_flashdata('success', 'Succesfuly tested mailer for the current setting');
+            redirect($this->agent->referrer());
+        } else {
+            $this->session->set_flashdata('warning', 'There is a problem when trying to test mailer, try again later');
+            redirect($this->agent->referrer());
+        }
+    }
 }

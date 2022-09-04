@@ -1,17 +1,30 @@
 <!-- Page Header -->
-<div class="docs-page-header">
+<div class="docs-page-header <?php if ($this->agent->is_mobile()):?>mb-0<?php endif;?>">
 	<div class="row align-items-center">
 		<div class="col-sm">
-			<h1 class="docs-page-header-title">Leader
-				<button type="button" class="btn btn-sm btn-primary float-end" data-bs-toggle="modal"
+			<h1 class="docs-page-header-title">Leader<?php if (!$this->agent->is_mobile()):?>
+				<button type="button" class="btn btn-xs btn-soft-primary float-end" data-bs-toggle="modal"
 					data-bs-target="#tambah">Tambah leader</button>
-				<button type="button" class="btn btn-sm btn-outline-secondary float-end me-2" data-bs-toggle="modal"
-					data-bs-target="#undang"><i class="bi bi-link-45deg"></i> Undang leader</button>
+				<button type="button" class="btn btn-xs btn-outline-secondary float-end me-2" data-bs-toggle="modal"
+					data-bs-target="#undang"><i class="bi bi-link-45deg"></i> Undang leader</button><?php endif;?>
 			</h1>
 			<p class="docs-page-header-text">Kelola semua akun leader yang telah terdaftar pada website</p>
 		</div>
 	</div>
 </div>
+<?php if ($this->agent->is_mobile()):?>
+<div class="row mb-4">
+	<div class="col-6">
+		<button type="button" class="btn btn-xs btn-soft-outline-secondary w-100" data-bs-toggle="modal"
+			data-bs-target="#undang"><i class="bi bi-link-45deg"></i> Undang leader</button>
+	</div>
+	<div class="col-6">
+		<button type="button" class="btn btn-xs btn-soft-primary w-100" data-bs-toggle="modal"
+			data-bs-target="#tambah">Tambah
+			leader</button>
+	</div>
+</div>
+<?php endif;?>
 <!-- End Page Header -->
 <div class="row mb-4">
 	<div class="col-md-3 col-sm-12">
@@ -94,19 +107,124 @@
 						</div>
 					</td>
 					<td>
-						<span class="badge bg-warning">idle</span>
+						<span
+							class="badge bg-soft-<?= $val->status_proyek == 3 ? 'danger' : ($val->status_proyek == 2 ? 'primary' : 'warning');?>"><?= $val->status_proyek == 3 ? 'akun suspend' : ($val->status_proyek == 2 ? 'menangani proyek' : 'idle');?></span>
 					</td>
 					<td>
-						<b>12</b> Proyek
+						<span data-bs-toggle="modal" data-bs-target="#listAllProyek-<?= $val->user_id;?>"><span
+								data-bs-toggle="tooltip" data-bs-html="true"
+								title="Lihat daftar total proyek"><b><?= count($val->proyek_aktif)+count($val->proyek_arsip);?></b>
+								Proyek</span></span>
 					</td>
 					<td>
-						<b>4</b> Proyek
+						<span data-bs-toggle="modal" data-bs-target="#listAktifProyek-<?= $val->user_id;?>"><span
+								data-bs-toggle="tooltip" data-bs-html="true"
+								title="Lihat daftar proyek aktif"><b><?= count($val->proyek_aktif);?></b>
+								Proyek</span></span>
 					</td>
 					<td>
-						<button type="button" class="btn btn-xs btn-primary" data-bs-toggle="modal"
+						<button type="button" class="btn btn-xs btn-soft-primary" data-bs-toggle="modal"
 							data-bs-target="#detail-<?= $val->user_id;?>">detail</button>
 					</td>
 				</tr>
+
+				<!-- Modal -->
+				<div id="listAllProyek-<?= $val->user_id;?>" class="modal fade" tabindex="-1" role="dialog"
+					aria-labelledby="modalTambah" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="modalTambah">Daftar riwayat proyek</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<?php if(!empty($val->proyek_all)):?>
+								<!-- List Striped -->
+								<ul class="list-group list-group-lg w-100 mx-0"
+									style="max-height: 300px; overflow: auto;">
+									<?php foreach($val->proyek_all as $keys => $value):?>
+									<li class="list-group-item py-2">
+										<div class="row justify-content-between">
+											<div class="col-sm-6 mb-2 mb-sm-0">
+												<span class="h6"><?= $value->judul;?></span>
+											</div>
+											<!-- End Col -->
+
+											<!-- End Col -->
+											<div class="col-sm-4 mb-2 mb-sm-0">
+												<?php if($value->status == 1):?>
+												<span class="badge bg-soft-primary">proses pengerjaan</span>
+												<?php else:?>
+												<span class="badge bg-soft-secondary">arsip</span>
+												<?php endif;?>
+											</div>
+											<!-- End Col -->
+										</div>
+										<!-- End Row -->
+									</li>
+									<?php endforeach;?>
+								</ul>
+								<!-- End List Striped -->
+								<?php else:?>
+								<div class="alert alert-secondary mb-0">
+									Belum ada proyek
+								</div>
+								<?php endif;?>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- End Modal -->
+
+				<!-- Modal -->
+				<div id="listAktifProyek-<?= $val->user_id;?>" class="modal fade" tabindex="-1" role="dialog"
+					aria-labelledby="modalTambah" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="modalTambah">Daftar proyek aktif</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<?php if(!empty($val->proyek_aktif)):?>
+								<!-- List Striped -->
+								<ul class="list-group list-group-lg w-100 mx-0"
+									style="max-height: 300px; overflow: auto;">
+									<?php foreach($val->proyek_aktif as $keys => $value):?>
+									<li class="list-group-item py-2">
+										<div class="row justify-content-between">
+											<div class="col-sm-6 mb-2 mb-sm-0">
+												<span class="h6"><?= $value->judul;?></span>
+											</div>
+											<!-- End Col -->
+
+											<!-- End Col -->
+											<div class="col-sm-4 mb-2 mb-sm-0">
+												<?php if($value->status == 1):?>
+												<span class="badge bg-soft-primary">proses pengerjaan</span>
+												<?php else:?>
+												<span class="badge bg-soft-secondary">arsip</span>
+												<?php endif;?>
+											</div>
+											<!-- End Col -->
+										</div>
+										<!-- End Row -->
+									</li>
+									<?php endforeach;?>
+								</ul>
+								<!-- End List Striped -->
+								<?php else:?>
+								<div class="alert alert-secondary mb-0">
+									Belum ada proyek
+								</div>
+								<?php endif;?>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- End Modal -->
 
 				<!-- Modal -->
 				<div id="detail-<?= $val->user_id;?>" class="modal fade" tabindex="-1" role="dialog"
@@ -163,14 +281,14 @@
 											<li><i class="bi-briefcase dropdown-item-icon"></i>
 												<?= isset($val->jabatan) || $val->jabatan != null ? $val->jabatan : '-';?>
 											</li>
-											<li><i class="bi-star dropdown-item-icon"></i> 4.87 Rating project</li>
-											<li><i class="bi-play-circle dropdown-item-icon"></i> 29 project</li>
+											<li><i class="bi-box-seam dropdown-item-icon"></i>
+												<?= count($val->proyek_aktif)+count($val->proyek_arsip);?> Proyek</li>
 										</ul>
 									</div>
 									<div class="col-6">
 										<ul class="list-unstyled list-py-1">
 											<li><i class="bi-person dropdown-item-icon"></i> 23,912 staff</li>
-											<li><i class="bi-chat-left-dots dropdown-item-icon"></i> 1,533 task</li>
+											<li><i class="bi-archive dropdown-item-icon"></i> 1,533 task</li>
 										</ul>
 									</div>
 								</div>
@@ -202,8 +320,8 @@
 					<!-- Form -->
 					<div class="mb-3">
 						<label class="form-label" for="formNama">Nama</label>
-						<input type="text" name="nama" id="formNama" class="form-control" placeholder="Nama leader"
-							required>
+						<input type="text" name="nama" id="formNama" class="form-control form-control-sm"
+							placeholder="Nama leader" required>
 					</div>
 					<!-- End Form -->
 
@@ -214,8 +332,8 @@
 							<div class="col-md-10">
 								<!-- Select -->
 								<div class="tom-select-custom">
-									<select class="js-select form-select" autocomplete="off" name="jabatan"
-										data-hs-tom-select-options='{"placeholder": "Pilih jabatan..."}'
+									<select class="js-select form-select form-select-sm" autocomplete="off"
+										name="jabatan" data-hs-tom-select-options='{"placeholder": "Pilih jabatan..."}'
 										<?php if(empty($jabatan)):?>disabled<?php endif;?>>
 										<?php if(!empty($jabatan)):?>
 										<?php foreach($jabatan as $key => $val):?>
@@ -239,8 +357,8 @@
 					<!-- Form -->
 					<div class="mb-3">
 						<label class="form-label" for="formEmail">Email</label>
-						<input type="email" name="email" id="formEmail" class="form-control" placeholder="Email leader"
-							required>
+						<input type="email" name="email" id="formEmail" class="form-control form-control-sm"
+							placeholder="Email leader" required>
 						<small class="text-secondary">Pengguna akan mendapatkan email pemberitahuan telah ditambahkan
 							sebagai leader</small>
 					</div>
@@ -266,7 +384,7 @@
 						<span class="invalid-feedback">Password tidak sama</span>
 					</div>
 					<!-- End From -->
-					<div class="modal-footer p-0">
+					<div class="modal-footer p-0 pt-3">
 						<button type="button" class="btn btn-sm btn-white" data-bs-dismiss="modal">Batal</button>
 						<button type="submit" class="btn btn-sm btn-primary">Tambahkan</button>
 					</div>
@@ -289,7 +407,8 @@
 
 				<!-- Form -->
 				<div class="mb-3">
-					<form action="<?= site_url('api/leader/undang');?>" method="post" class="js-validate need-validate" novalidate>
+					<form action="<?= site_url('api/leader/undang');?>" method="post" class="js-validate need-validate"
+						novalidate>
 						<label class="form-label" for="formEmail">Email</label>
 						<div class="row">
 							<div class="col-8">
@@ -307,9 +426,9 @@
 				<?php if(!empty($undanganLeader)):?>
 				<hr>
 				<!-- End Form -->
-				<div class="modal-footer p-0">
+				<div class="modal-footer p-0 pt-3" style="border-top: none">
 					<!-- List Striped -->
-					<ul class="list-group list-group-lg w-100" style="max-height: 300px; overflow: auto;">
+					<ul class="list-group list-group-lg w-100 mx-0" style="max-height: 300px; overflow: auto;">
 						<?php foreach($undanganLeader as $key => $val):?>
 						<li class="list-group-item">
 							<div class="row justify-content-between">

@@ -55,7 +55,7 @@
 
   						<!-- Button -->
   						<li class="nav-item">
-  							<?php if($this->session->userdata('role') == 1):?>
+  							<?php if($this->session->userdata('role') == 1 || $this->session->userdata('role') == 0):?>
                                 <a class="btn btn-xs btn-primary btn-transition" href="<?= site_url('admin');?>">Dashboard</a>
   							<?php elseif($this->session->userdata('role') == 2):?>
                                 <a class="btn btn-xs btn-primary btn-transition" href="<?= site_url('leader');?>">Dashboard</a>

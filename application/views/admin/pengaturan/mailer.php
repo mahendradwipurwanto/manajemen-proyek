@@ -16,11 +16,21 @@
 				<form action="<?= site_url('api/website/ubahMailer');?>" method="post"
 					class="js-validate needs-validation" novalidate enctype="multipart/form-data">
 					<?php if($this->session->userdata('role') == 0):?>
-					<div class="mb-3">
-						<label for="inputMailerMode" class="form-label">Mailer Mode <small
-								class="text-danger">*</small></label>
-						<input type="number" id="inputMailerMode" class="form-control form-control-sm"
-							name="mailer_mode" value="<?= $mailer_mode;?>" required>
+					<div class="mb-3 justify-content-between align-items-center row">
+						<div class="col-8">
+							<div class="input-group input-group-sm mb-3">
+								<span class="input-group-text" id="inputMailerMode">Mailer Mode <small
+										class="text-danger">*</small></span>
+								<input type="number" id="inputMailerMode" class="form-control form-control-sm"
+									name="mailer_mode" value="<?= $mailer_mode;?>" required>
+							</div>
+						</div>
+						<div class="col-4">
+							<div class="form-check form-switch mb-4">
+								<input type="checkbox" class="form-check-input" id="formMailerSmtp" name="mailer_smtp" <?= $mailer_smtp == 1 ? 'checked' : '';?>>
+								<label class="form-check-label" for="formMailerSmtp">Mailer SMTP</label>
+							</div>
+						</div>
 					</div>
 					<div class="mb-3">
 						<label for="inputMailerHost" class="form-label">Mailer Host<small
@@ -51,7 +61,7 @@
 						<label for="inputMailerPassword" class="form-label">Mailer Password<small
 								class="text-danger">*</small></label>
 						<input type="password" id="inputMailerPassword" class="form-control form-control-sm"
-							name="mailer_password" value="<?= $mailer_password;?>" required>
+							name="mailer_password" placeholder="Password Mailer">
 					</div>
 					<div class="card-footer px-0">
 						<button type="submit" class="btn btn-primary btn-sm float-end">Simpan perubahan</button>
@@ -63,7 +73,7 @@
 	<div class="col-md-5">
 		<div class="card card-body">
 			<h4>Testing config mailer</h4>
-			<form action="<?= site_url('api/mailer/testMailer');?>" method="post" class="js-validate needs-validation"
+			<form action="<?= site_url('api/master/testMailer');?>" method="post" class="js-validate needs-validation"
 				novalidate>
 				<div class="mb-3">
 					<label for="inputEmailTestingMailer">Testing email <small class="text-danger">*</small></label>

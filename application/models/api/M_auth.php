@@ -99,7 +99,8 @@ class M_auth extends CI_Model
             ];
 
             $this->db->insert('tb_user', $user);
-            if($undangan == true){
+            $cek = $this->db->affected_rows();
+            if($undangan === true || $undangan === 'true'){
                 $this->db->where('user_id', $user_id);
                 $this->db->update('tb_auth', ['status' => 1]);
 
@@ -107,7 +108,7 @@ class M_auth extends CI_Model
                 $this->db->update('tb_undangan', ['status' => 2]);
                 return ($this->db->affected_rows() != 1) ? false : true;
             }else{
-                if ($this->db->affected_rows() == true) {
+                if ($cek == true) {
 
                     $chiper = $this->create_verifikasi();
 
@@ -118,7 +119,6 @@ class M_auth extends CI_Model
                         'status' => 0,
                         'date_created' => time()
                     ];
-
                     $this->db->insert('tb_token', $verifikasi);
                     return ($this->db->affected_rows() != 1) ? false : true;
                 } else {

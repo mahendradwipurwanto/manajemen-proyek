@@ -1,18 +1,18 @@
   <!-- ========== MAIN CONTENT ========== -->
-  <main id="content" role="main">
+  <main id="content" role="main" class="content-space-t-1">
   	<!-- Navbar -->
   	<nav class="js-nav-scroller navbar navbar-expand-lg navbar-sidebar navbar-vertical navbar-light bg-white border-end"
   		data-hs-nav-scroller-options='{
             "type": "vertical",
             "target": ".navbar-nav .active",
             "offset": 80
-           }'>
+           }' style="z-index: 90;">
   		<!-- Navbar Toggle -->
   		<button type="button" class="navbar-toggler btn btn-white d-grid w-100" data-bs-toggle="collapse"
   			data-bs-target="#navbarVerticalNavMenu" aria-label="Toggle navigation" aria-expanded="false"
   			aria-controls="navbarVerticalNavMenu">
   			<span class="d-flex justify-content-between align-items-center">
-  				<span class="h3 mb-0">Nav menu</span>
+  				<span class="h3 mb-0">Menu</span>
 
   				<span class="navbar-toggler-default">
   					<i class="bi-list"></i>
@@ -27,10 +27,10 @@
 
   		<!-- Navbar Collapse -->
   		<div id="navbarVerticalNavMenu" class="collapse navbar-collapse">
-  			<div class="navbar-brand-wrapper border-end" style="height: auto;">
+  			<div class="navbar-brand-wrapper border-end" style="height: 75px;">
   				<!-- Default Logo -->
   				<div class="d-flex align-items-center">
-  					<a class="navbar-brand" href="<?= site_url('dashboard'); ?>" aria-label="Space">
+  					<a class="navbar-brand" href="<?= base_url(); ?>" aria-label="Space">
   						<img class="navbar-brand-logo" src="<?= base_url(); ?>assets/images/logo.png" alt="Logo">
   					</a>
   					<a class="navbar-brand-badge">
@@ -42,9 +42,9 @@
 
   			<div class="docs-navbar-sidebar-aside-body navbar-sidebar-aside-body">
   				<ul id="navbarSettings" class="navbar-nav nav nav-vertical nav-tabs nav-tabs-borderless nav-sm">
-  					<?php if($this->session->userdata('role') == 1):?>
+  					<?php if($this->session->userdata('role') == 0 || $this->session->userdata('role') == 1):?>
   					<li class="nav-item" id="tour-dashboard">
-  						<a class="nav-link <?= ($this->uri->segment(2) == "dashboard" && !$this->uri->segment(2) ? "active" : "") ?>"
+  						<a class="nav-link <?= ($this->uri->segment(2) == "dashboard" || !$this->uri->segment(2) ? "active" : "") ?>"
   							href="<?= site_url('admin/dashboard'); ?>">Dashboard</a>
   					</li>
 
@@ -58,7 +58,7 @@
   							href="<?= site_url('admin/kelola-leader'); ?>">Leader</a>
   					</li>
   					<li class="nav-item" id="tour-menu-staff">
-  						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-staff" ? "active" : "") ?>"
+  						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-staff" && $this->uri->segment(1) != "proyek" ? "active" : "") ?>"
   							href="<?= site_url('admin/kelola-staff'); ?>">Staff</a>
   					</li>
 
@@ -68,7 +68,7 @@
   						<span class="nav-subtitle">Proyek</span>
   					</li>
   					<li class="nav-item" id="tour-menu-proyek">
-  						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-proyek" ? "active" : "") ?>"
+  						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-proyek" || $this->uri->segment(1) == "proyek" ? "active" : "") ?>"
   							href="<?= site_url('admin/kelola-proyek'); ?>">Proyek
   							<span class="ms-auto badge bg-primary"></span>
   						</a>
@@ -103,11 +103,11 @@
   						<span class="nav-subtitle">Proyek</span>
   					</li>
   					<li class="nav-item" id="tour-menu-staff">
-  						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-staff" ? "active" : "") ?>"
+  						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-staff" && $this->uri->segment(1) != "proyek" ? "active" : "") ?>"
   							href="<?= site_url('leader/kelola-staff'); ?>">Staff</a>
   					</li>
   					<li class="nav-item" id="tour-menu-proyek">
-  						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-proyek" ? "active" : "") ?>"
+  						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-proyek" || $this->uri->segment(1) == "proyek" ? "active" : "") ?>"
   							href="<?= site_url('leader/kelola-proyek'); ?>">Proyek
   							<span class="ms-auto badge bg-primary"></span>
   						</a>
@@ -123,6 +123,24 @@
   							href="<?= site_url('leader/pengaturan'); ?>">Pengaturan</a>
   					</li>
   					<?php elseif($this->session->userdata('role') == 3):?>
+  					<li class="nav-item" id="tour-dashboard">
+  						<a class="nav-link <?= ($this->uri->segment(2) == "dashboard" || !$this->uri->segment(2) ? "active" : "") ?>"
+  							href="<?= site_url('staff/dashboard'); ?>">Dashboard</a>
+  					</li>
+
+  					<li class="nav-item my-2 my-lg-3"></li>
+
+  					<li class="nav-item">
+  						<span class="nav-subtitle">Proyek</span>
+  					</li>
+  					<li class="nav-item" id="tour-dashboard">
+  						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-proyek" || $this->uri->segment(2) == "task" ? "active" : "") ?>"
+  							href="<?= site_url('staff/kelola-proyek'); ?>">Kelola Task</a>
+  					</li>
+  					<li class="nav-item" id="tour-dashboard">
+  						<a class="nav-link <?= ($this->uri->segment(2) == "pengaturan" ? "active" : "") ?>"
+  							href="<?= site_url('staff/pengaturan'); ?>">Pengaturan</a>
+  					</li>
   					<?php endif;?>
   				</ul>
   			</div>

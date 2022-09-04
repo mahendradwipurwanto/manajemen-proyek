@@ -37,7 +37,11 @@
 <script src="<?= base_url();?>assets/vendor/hs-file-attach/dist/hs-file-attach.min.js"></script>
 <script src="<?= base_url();?>assets/vendor/imask/dist/imask.min.js"></script>
 <script src="<?= base_url();?>assets/vendor/quill/dist/quill.min.js"></script>
+<script src="<?= base_url();?>assets/vendor/prism/prism.js"></script>
 <script src="<?= base_url();?>assets/vendor/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script src="<?= base_url();?>assets/vendor/nouislider/dist/nouislider.min.js"></script>
+<script src="<?= base_url();?>assets/vendor/hs-unfold/dist/hs-unfold.min.js"></script>
+<script src="<?= base_url();?>assets/js/proyek.js"></script>
 
 
 <!-- JS Front -->
@@ -74,19 +78,22 @@
 		// =======================================================
 		HSBsDropdown.init()
 
-        // INITIALIZATION OF BOOTSTRAP VALIDATION
+		// INITIALIZATION OF BOOTSTRAP VALIDATION
 		// =======================================================
 		HSBsValidation.init('.js-validate', {
 			onSubmit: data => {
 				$('button[type=submit]').prop("disabled", true);
 				// add spinner to button
 				$('button[type=submit]').html(
-					`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...`
+					`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`
 				);
 				return;
 			}
 		})
 
+		// INITIALIZATION OF SELECT
+		// =======================================================
+		HSCore.components.HSTomSelect.init('.js-select')
 
 		// INITIALIZATION OF GO TO
 		// =======================================================
@@ -100,6 +107,9 @@
 			once: true
 		});
 
+		// INITIALIZATION OF NOUISLIDER
+		// =======================================================
+		HSCore.components.HSNoUISlider.init('.js-nouislider')
 
 		// INITIALIZATION OF CIRCLES
 		// =======================================================
@@ -107,9 +117,23 @@
 			HSCore.components.HSCircles.init('.js-circle')
 		})
 
+		// INITIALIZATION OF UNFOLD
+		// =======================================================
+		var unfold = new HSUnfold('.js-hs-unfold-invoker').init();
+
 		$(document).ready(function () {
 			$('#table').DataTable({
+				scrollX: true,
 				responsive: true
+			});
+
+			$(".alphanum").keydown(function (event) {
+				var inputValue = event.which;
+				// allow letters and whitespaces only.
+				if (!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 0 &&
+						inputValue != 8 && inputValue != 37 && inputValue != 39)) {
+					event.preventDefault();
+				}
 			});
 		})
 	})()

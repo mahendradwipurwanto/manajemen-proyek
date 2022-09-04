@@ -1,6 +1,6 @@
 <!-- Page Header -->
 <div class="docs-page-header">
-	<div class="row align-items-center">
+	<div class="row align-items-center <?php if ($this->agent->is_mobile()):?>mb-0<?php endif;?>">
 		<div class="col-sm">
 			<h1 class="docs-page-header-title">Pengaturan</h1>
 			<p class="docs-page-header-text">Kelola semua pengaturan untuk akun anda disini</p>

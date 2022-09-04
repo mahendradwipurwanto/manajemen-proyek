@@ -34,6 +34,7 @@ class TemplateBack
         $this->_ci->load->view('template/alert', $data);
         $this->_ci->load->view('template/backend/navbar', $data);
         $this->_ci->load->view('template/backend/sidebar', $data);
+        $this->_ci->load->view('template/backend/sidebar_task', $data);
         $this->_ci->load->view($content, $data);
         $this->_ci->load->view('template/backend/footer', $data);
     }

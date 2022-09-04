@@ -3,9 +3,9 @@
 	<div class="row align-items-center">
 		<div class="col-sm">
 			<h1 class="docs-page-header-title">Staff
-				<button type="button" class="btn btn-sm btn-primary float-end" data-bs-toggle="modal"
+				<button type="button" class="btn btn-xs btn-soft-primary float-end" data-bs-toggle="modal"
 					data-bs-target="#tambah">Tambah staff</button>
-				<button type="button" class="btn btn-sm btn-outline-secondary float-end me-2" data-bs-toggle="modal"
+				<button type="button" class="btn btn-xs btn-outline-secondary float-end me-2" data-bs-toggle="modal"
 					data-bs-target="#undang"><i class="bi bi-link-45deg"></i> Undang staff</button>
 			</h1>
 			<p class="docs-page-header-text">Kelola semua akun staff yang telah terdaftar pada website</p>
@@ -95,29 +95,255 @@
 						</div>
 					</td>
 					<td>
-						<span class="badge bg-warning">idle</span>
+						<span
+							class="badge bg-soft-<?= $val->status_staff == 1 ? 'warning' : 'primary';?>"><?= $val->status_staff == 1 ? 'idle' : 'mengerjakan task';?></span>
 					</td>
 					<td>
-						<b>12</b> Proyek
+						<span data-bs-toggle="modal" data-bs-target="#listAllProyek-<?= $val->user_id;?>"><span
+								data-bs-toggle="tooltip" data-bs-html="true"
+								title="Lihat daftar total proyek"><b><?= count($val->proyek_all);?></b>
+								Proyek</span></span>
 					</td>
 					<td>
-						<b>4</b> Proyek
+						<span data-bs-toggle="modal" data-bs-target="#listAktifProyek-<?= $val->user_id;?>"><span
+								data-bs-toggle="tooltip" data-bs-html="true"
+								title="Lihat daftar proyek aktif"><b><?= count($val->proyek_aktif);?></b>
+								Proyek</span></span>
 					</td>
 					<td>
-						<b>54</b> Task
+						<span data-bs-toggle="modal" data-bs-target="#listTask-<?= $val->user_id;?>"><span
+								data-bs-toggle="tooltip" data-bs-html="true"
+								title="Lihat daftar proyek aktif"><b><?= $val->total_task;?></b> Task</span></span>
+
 					</td>
 					<td>
-						<button type="button" class="btn btn-xs btn-success mr-2" data-bs-toggle="modal"
+						<button type="button" class="btn btn-xs btn-soft-success mr-2" data-bs-toggle="modal"
 							data-bs-target="#assign-<?= $val->user_id;?>">assign / tugaskan</button>
-						<button type="button" class="btn btn-xs btn-primary" data-bs-toggle="modal"
+						<button type="button" class="btn btn-xs btn-soft-primary" data-bs-toggle="modal"
 							data-bs-target="#detail-<?= $val->user_id;?>">detail</button>
 					</td>
 				</tr>
 
 				<!-- Modal -->
+				<div id="listAllProyek-<?= $val->user_id;?>" class="modal fade" tabindex="-1" role="dialog"
+					aria-labelledby="modalTambah" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="modalTambah">Daftar riwayat proyek</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<?php if(!empty($val->proyek_all)):?>
+								<!-- List Striped -->
+								<ul class="list-group list-group-lg w-100 mx-0"
+									style="max-height: 300px; overflow: auto;">
+									<?php foreach($val->proyek_all as $keys => $value):?>
+									<li class="list-group-item py-2">
+										<div class="row justify-content-between">
+											<div class="col-sm-6 mb-2 mb-sm-0">
+												<span class="h6"><?= $value->judul;?></span>
+											</div>
+											<!-- End Col -->
+
+											<!-- End Col -->
+											<div class="col-sm-4 mb-2 mb-sm-0">
+												<?php if($value->status == 1):?>
+												<span class="badge bg-soft-primary">proses pengerjaan</span>
+												<?php else:?>
+												<span class="badge bg-soft-secondary">arsip</span>
+												<?php endif;?>
+											</div>
+											<!-- End Col -->
+										</div>
+										<!-- End Row -->
+									</li>
+									<?php endforeach;?>
+								</ul>
+								<!-- End List Striped -->
+								<?php else:?>
+								<div class="alert alert-secondary mb-0">
+									Belum ada proyek
+								</div>
+								<?php endif;?>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- End Modal -->
+
+				<!-- Modal -->
+				<div id="listAktifProyek-<?= $val->user_id;?>" class="modal fade" tabindex="-1" role="dialog"
+					aria-labelledby="modalTambah" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="modalTambah">Daftar proyek aktif</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<?php if(!empty($val->proyek_aktif)):?>
+								<!-- List Striped -->
+								<ul class="list-group list-group-lg w-100 mx-0"
+									style="max-height: 300px; overflow: auto;">
+									<?php foreach($val->proyek_aktif as $keys => $value):?>
+									<li class="list-group-item py-2">
+										<div class="row justify-content-between">
+											<div class="col-sm-6 mb-2 mb-sm-0">
+												<span class="h6"><?= $value->judul;?></span>
+											</div>
+											<!-- End Col -->
+
+											<!-- End Col -->
+											<div class="col-sm-4 mb-2 mb-sm-0">
+												<?php if($value->status == 1):?>
+												<span class="badge bg-soft-primary">proses pengerjaan</span>
+												<?php else:?>
+												<span class="badge bg-soft-secondary">arsip</span>
+												<?php endif;?>
+											</div>
+											<!-- End Col -->
+										</div>
+										<!-- End Row -->
+									</li>
+									<?php endforeach;?>
+								</ul>
+								<!-- End List Striped -->
+								<?php else:?>
+								<div class="alert alert-secondary mb-0">
+									Belum ada proyek
+								</div>
+								<?php endif;?>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- End Modal -->
+
+				<!-- Modal -->
+				<div id="assign-<?= $val->user_id;?>" class="modal fade" tabindex="-1" role="dialog"
+					aria-labelledby="modalTambah" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="modalTambah">Tugaskan staff ke proyek</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+
+								<!-- Form -->
+								<div class="mb-3">
+									<form action="<?= site_url('api/proyek/assignstaff');?>" method="post"
+										class="js-validate need-validate" novalidate>
+										<input type="hidden" name="staff_id" value="<?= $val->user_id;?>">
+										<label class="form-label" for="formEmail">Proyek</label>
+										<div class="row">
+											<div class="col-8">
+												<div class="tom-select-custom">
+													<select class="js-select form-select form-select-sm"
+														autocomplete="off" name="proyek_id" data-hs-tom-select-options='{
+															"placeholder": "Pilih proyek"
+														}' required>
+														<?php if(!empty($proyek)):?>
+														<?php foreach($proyek as $keys => $value):?>
+														<option value="<?= $value->id;?>"><?= $value->judul;?></option>
+														<?php endforeach;?>
+														<?php endif;?>
+													</select>
+												</div>
+											</div>
+											<div class="col-4">
+												<button type="submit"
+													class="btn btn-sm btn-primary w-100">Tugaskan</button>
+											</div>
+										</div>
+										<small class="text-secondary">Tugaskan staff ke proyek yang diinginkan</small>
+									</form>
+								</div>
+								<?php if(!empty($val->proyek_aktif)):?>
+								<hr>
+								<!-- End Form -->
+								<div class="modal-footer border-none p-0">
+									<!-- List Striped -->
+									<ul class="list-group list-group-lg w-100 mx-0"
+										style="max-height: 300px; overflow: auto;">
+										<?php foreach($val->proyek_aktif as $keys => $value):?>
+										<li class="list-group-item py-2">
+											<div class="row justify-content-between">
+												<div class="col-sm-6 mb-2 mb-sm-0">
+													<span class="h6"><?= $value->judul;?></span>
+												</div>
+												<!-- End Col -->
+
+												<!-- End Col -->
+												<div class="col-sm-4 mb-2 mb-sm-0">
+													<?php if($value->status == 1):?>
+													<span class="badge bg-soft-primary">proses pengerjaan</span>
+													<?php else:?>
+													<span class="badge bg-soft-secondary">arsip</span>
+													<?php endif;?>
+												</div>
+												<!-- End Col -->
+											</div>
+											<!-- End Row -->
+										</li>
+										<?php endforeach;?>
+									</ul>
+									<!-- End List Striped -->
+								</div>
+								<?php endif;?>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- End Modal -->
+
+				<!-- Modal -->
+				<div id="listTask-<?= $val->user_id;?>" class="modal fade" tabindex="-1" role="dialog"
+					aria-labelledby="modalTambah" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="modalTambah">Daftar task staff</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<?php if(!empty($val->tasks)):?>
+								<!-- List Striped -->
+								<ul class="list-group list-group-lg w-100 mx-0"
+									style="max-height: 300px; overflow: auto;">
+									<?php foreach($val->tasks as $keys => $value):?>
+									<li class="list-group-item py-2">
+										<div class="row justify-content-between">
+											<div class="col-sm-6 mb-2 mb-sm-0">
+												<span class="h6"><?= $value->task;?></span>
+											</div>
+											<!-- End Col -->
+										</div>
+										<!-- End Row -->
+									</li>
+									<?php endforeach;?>
+								</ul>
+								<!-- End List Striped -->
+								<?php else:?>
+								<div class="alert alert-secondary mb-0">
+									Belum ada proyek
+								</div>
+								<?php endif;?>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- End Modal -->
+
+				<!-- Modal -->
 				<div id="detail-<?= $val->user_id;?>" class="modal fade" tabindex="-1" role="dialog"
 					aria-labelledby="modalTambah" aria-hidden="true">
-					<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+					<div class="modal-dialog modal-dialog-centered" role="document">
 						<div class="modal-content">
 							<div class="modal-header">
 								<h5 class="modal-title" id="modalTambah">detail</h5>
@@ -169,95 +395,17 @@
 											<li><i class="bi-briefcase dropdown-item-icon"></i>
 												<?= isset($val->jabatan) || $val->jabatan != null ? $val->jabatan : '-';?>
 											</li>
-											<li><i class="bi-star dropdown-item-icon"></i> 4.87 Rating project</li>
-											<li><i class="bi-play-circle dropdown-item-icon"></i> 29 project</li>
+											<li><i class="bi-box-seam dropdown-item-icon"></i>
+												<?= count($val->proyek_aktif)+count($val->proyek_arsip);?> Proyek</li>
 										</ul>
 									</div>
 									<div class="col-6">
 										<ul class="list-unstyled list-py-1">
-											<li><i class="bi-person dropdown-item-icon"></i> 23,912 staff</li>
-											<li><i class="bi-chat-left-dots dropdown-item-icon"></i> 1,533 task</li>
+											<li><i class="bi-chat-left-dots dropdown-item-icon"></i>
+												<?= $val->total_task;?> task</li>
 										</ul>
 									</div>
 								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<!-- End Modal -->
-
-				<!-- Modal -->
-				<div id="assign-<?= $val->user_id;?>" class="modal fade" tabindex="-1" role="dialog"
-					aria-labelledby="modalTambah" aria-hidden="true">
-					<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title" id="modalTambah">Tugaskan staff ke proyek</h5>
-								<button type="button" class="btn-close" data-bs-dismiss="modal"
-									aria-label="Close"></button>
-							</div>
-							<div class="modal-body">
-
-								<!-- Form -->
-								<div class="mb-3">
-									<form action="<?= site_url('api/staff/undang');?>" method="post"
-										class="js-validate need-validate" novalidate>
-										<label class="form-label" for="formEmail">Proyek</label>
-										<div class="row">
-											<div class="col-8">
-												<input type="email" name="email" id="formEmail"
-													class="form-control form-control-sm" placeholder="Email staff"
-													required>
-											</div>
-											<div class="col-4">
-												<button type="submit"
-													class="btn btn-sm btn-primary w-100">Tugaskan</button>
-											</div>
-										</div>
-										<small class="text-secondary">Tugaskan staff ke proyek yang diinginkan</small>
-									</form>
-								</div>
-								<?php if(!empty($undanganStaff)):?>
-								<hr>
-								<!-- End Form -->
-								<div class="modal-footer p-0">
-									<!-- List Striped -->
-									<ul class="list-group list-group-lg w-100"
-										style="max-height: 300px; overflow: auto;">
-										<?php foreach($undanganStaff as $key => $val):?>
-										<li class="list-group-item">
-											<div class="row justify-content-between">
-												<div class="col-sm-6 mb-2 mb-sm-0">
-													<span
-														class="h6"><?= mb_substr($val->email, 0, 4) ?>***@<?php $mail = explode("@", $val->email);echo $mail[1]; ?></span>
-												</div>
-												<!-- End Col -->
-
-
-												<!-- End Col -->
-
-												<div class="col-sm-4 mb-2 mb-sm-0">
-													<?php if($val->status == 1):?>
-													<span class="badge bg-secondary">pending</span>
-													<?php else:?>
-													<span class="badge bg-success">joined</span>
-													<?php endif;?>
-												</div>
-												<!-- End Col -->
-
-												<div class="col-sm-2 text-sm-end">
-													<a href="<?= site_url('api/staff/kirimUndangan/'.$val->email);?>"><i
-															class="bi bi-envelope"></i></a>
-												</div>
-												<!-- End Col -->
-											</div>
-											<!-- End Row -->
-										</li>
-										<?php endforeach;?>
-									</ul>
-									<!-- End List Striped -->
-								</div>
-								<?php endif;?>
 							</div>
 						</div>
 					</div>
@@ -275,7 +423,7 @@
 <!-- End Card -->
 <!-- Modal -->
 <div id="tambah" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalTambah" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="modalTambah">Tambah Staff</h5>
@@ -287,8 +435,8 @@
 					<!-- Form -->
 					<div class="mb-3">
 						<label class="form-label" for="formNama">Nama</label>
-						<input type="text" name="nama" id="formNama" class="form-control" placeholder="Nama staff"
-							required>
+						<input type="text" name="nama" id="formNama" class="form-control form-control-sm"
+							placeholder="Nama staff" required>
 					</div>
 					<!-- End Form -->
 
@@ -299,8 +447,8 @@
 							<div class="col-md-10">
 								<!-- Select -->
 								<div class="tom-select-custom">
-									<select class="js-select form-select" autocomplete="off" name="jabatan"
-										data-hs-tom-select-options='{"placeholder": "Pilih jabatan..."}'
+									<select class="js-select form-select form-select-sm" autocomplete="off"
+										name="jabatan" data-hs-tom-select-options='{"placeholder": "Pilih jabatan..."}'
 										<?php if(empty($jabatan)):?>disabled<?php endif;?>>
 										<?php if(!empty($jabatan)):?>
 										<?php foreach($jabatan as $key => $val):?>
@@ -314,8 +462,8 @@
 								<!-- End Select -->
 							</div>
 							<div class="col-md-2">
-								<a href="<?= site_url('admin/pengaturan?p=jabatan');?>" class="btn btn-primary w-100"><i
-										class="bi bi-plus"></i></a>
+								<a href="<?= site_url('admin/pengaturan?p=jabatan');?>"
+									class="btn btn-sm btn-primary w-100"><i class="bi bi-plus"></i></a>
 							</div>
 						</div>
 					</div>
@@ -324,8 +472,8 @@
 					<!-- Form -->
 					<div class="mb-3">
 						<label class="form-label" for="formEmail">Email</label>
-						<input type="email" name="email" id="formEmail" class="form-control" placeholder="Email staff"
-							required>
+						<input type="email" name="email" id="formEmail" class="form-control form-control-sm"
+							placeholder="Email staff" required>
 						<small class="text-secondary">Pengguna akan mendapatkan email pemberitahuan telah ditambahkan
 							sebagai staff</small>
 					</div>
@@ -351,7 +499,7 @@
 						<span class="invalid-feedback">Password tidak sama</span>
 					</div>
 					<!-- End From -->
-					<div class="modal-footer p-0">
+					<div class="modal-footer p-0 pt-3">
 						<button type="button" class="btn btn-sm btn-white" data-bs-dismiss="modal">Batal</button>
 						<button type="submit" class="btn btn-sm btn-primary">Tambahkan</button>
 					</div>
@@ -364,7 +512,7 @@
 
 <!-- Modal -->
 <div id="undang" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalTambah" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
+	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="modalTambah">Undang</h5>
@@ -393,9 +541,9 @@
 				<?php if(!empty($undanganStaff)):?>
 				<hr>
 				<!-- End Form -->
-				<div class="modal-footer p-0">
+				<div class="modal-footer p-0 pt-3" style="border-top: none">
 					<!-- List Striped -->
-					<ul class="list-group list-group-lg w-100" style="max-height: 300px; overflow: auto;">
+					<ul class="list-group list-group-lg w-100 mx-0" style="max-height: 300px; overflow: auto;">
 						<?php foreach($undanganStaff as $key => $val):?>
 						<li class="list-group-item">
 							<div class="row justify-content-between">

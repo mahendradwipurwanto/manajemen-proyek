@@ -8,10 +8,6 @@ class Admin extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-
-        if ($this->agent->is_mobile()) {
-            redirect('mobile');
-        }
         
         // cek apakah user sudah masuk
         if ($this->session->userdata('logged_in') == false || !$this->session->userdata('logged_in')) {
@@ -30,7 +26,7 @@ class Admin extends CI_Controller
             redirect(base_url());
         }
 
-        $this->load->model(['M_admin', 'api/M_leader', 'api/M_staff', 'api/M_master']);
+        $this->load->model(['M_admin', 'api/M_leader', 'api/M_staff', 'api/M_master', 'api/M_proyek']);
     }
 
     public function index()
@@ -40,9 +36,26 @@ class Admin extends CI_Controller
 
     public function dashboard()
     {
+        $data['count'] = $this->M_admin->countDashboard();
+        $data['log_proyek'] = $this->M_proyek->getLogProyek();
+        $data['proyek'] = $this->M_proyek->getAll();
+
+        if ($this->agent->is_mobile()) {
+            $this->templatemobile->view('admin/dashboard', $data);
+        }else{
+            $this->templateback->view('admin/dashboard', $data);
+        }
+    }
+
+    public function kelola_pengguna()
+    {
         $data['countLeader'] = $this->M_leader->countLeader();
 
-        $this->templateback->view('admin/dashboard', $data);
+        if ($this->agent->is_mobile()) {
+            $this->templatemobile->view('admin/mobile/pengguna', $data);
+        }else{
+            $this->templateback->view('admin/mobile/pengguna', $data);
+        }
     }
 
     public function kelola_leader()
@@ -52,7 +65,12 @@ class Admin extends CI_Controller
         $data['leader'] = $this->M_leader->getLeader();
         $data['undanganLeader'] = $this->M_master->getUndangan(2);
 
-        $this->templateback->view('admin/leader', $data);
+        if ($this->agent->is_mobile()) {
+            $this->templatemobile->view('admin/leader', $data);
+        }else{
+            $this->templateback->view('admin/leader', $data);
+        }
+
     }
 
     public function kelola_staff()
@@ -61,13 +79,30 @@ class Admin extends CI_Controller
         $data['jabatan'] = $this->M_master->getJabatan();
         $data['staff'] = $this->M_staff->getStaff();
         $data['undanganStaff'] = $this->M_master->getUndangan(3);
+        $data['proyek'] = $this->M_proyek->getAllStatus(1);
 
-        $this->templateback->view('admin/staff', $data);
+        if ($this->agent->is_mobile()) {
+            $this->templatemobile->view('admin/staff', $data);
+        }else{
+            $this->templateback->view('admin/staff', $data);
+        }
+
     }
 
     public function kelola_proyek()
     {
-        $this->templateback->view('admin/proyek');
+        $data['countStaff'] = $this->M_staff->countStaff();
+        $data['jabatan'] = $this->M_master->getJabatan();
+        $data['staff'] = $this->M_staff->getStaff();
+        $data['undanganStaff'] = $this->M_master->getUndangan(3);
+        $data['proyekAktif'] = $this->M_proyek->getAllStatus(1);
+        $data['proyekArsip'] = $this->M_proyek->getAllStatus(2);
+
+        if ($this->agent->is_mobile()) {
+            $this->templatemobile->view('proyek/proyek', $data);
+        }else{
+            $this->templateback->view('proyek/proyek', $data);
+        }
     }
 
     public function pengaturan()
@@ -78,35 +113,57 @@ class Admin extends CI_Controller
         switch ($page) {
             case 'general':
 
-                $this->templateback->view('admin/pengaturan/general');
+                if ($this->agent->is_mobile()) {
+                    $this->templatemobile->view('admin/pengaturan/general');
+                }else{
+                    $this->templateback->view('admin/pengaturan/general');
+                }
                 break;
 
             case 'credentials':
                 $data['super_account'] = $this->M_admin->get_superAccount();
                 $data['admin_account'] = $this->M_admin->get_adminAccount();
 
-                $this->templateback->view('admin/settings/credentials', $data);
+                if ($this->agent->is_mobile()) {
+                    $this->templatemobile->view('admin/settings/credentials', $data);
+                }else{
+                    $this->templateback->view('admin/settings/credentials', $data);
+                }
                 break;
 
             case 'mailer':
                 $data['mailer_mode'] = $this->M_admin->get_settingsValue('mailer_mode');
                 $data['mailer_host'] = $this->M_admin->get_settingsValue('mailer_host');
                 $data['mailer_port'] = $this->M_admin->get_settingsValue('mailer_port');
+                $data['mailer_smtp'] = $this->M_admin->get_settingsValue('mailer_smtp');
                 $data['mailer_alias'] = $this->M_admin->get_settingsValue('mailer_alias');
                 $data['mailer_username'] = $this->M_admin->get_settingsValue('mailer_username');
                 $data['mailer_password'] = $this->M_admin->get_settingsValue('mailer_password');
 
-                $this->templateback->view('admin/pengaturan/mailer', $data);
+                if ($this->agent->is_mobile()) {
+                    $this->templatemobile->view('admin/pengaturan/mailer', $data);
+                }else{
+                    $this->templateback->view('admin/pengaturan/mailer', $data);
+                }
                 break;
 
             case 'jabatan':
                 $data['jabatan'] = $this->M_master->getJabatan();
 
-                $this->templateback->view('admin/pengaturan/jabatan', $data);
+                if ($this->agent->is_mobile()) {
+                    $this->templatemobile->view('admin/pengaturan/jabatan', $data);
+                }else{
+                    $this->templateback->view('admin/pengaturan/jabatan', $data);
+                }
                 break;
             
             default:
-                $this->templateback->view('admin/pengaturan');
+
+                if ($this->agent->is_mobile()) {
+                    $this->templatemobile->view('admin/pengaturan');
+                }else{
+                    $this->templateback->view('admin/pengaturan');
+                }
                 break;
         }
     }

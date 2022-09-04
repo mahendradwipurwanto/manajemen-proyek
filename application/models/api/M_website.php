@@ -57,6 +57,10 @@ class M_website extends CI_Model
             $mailer_port = $this->input->post('mailer_port');
             $this->db->where('key', 'mailer_port');
             $this->db->update('tb_settings', ['value' => $mailer_port]);
+
+            $mailer_smtp = $this->input->post('mailer_smtp');
+            $this->db->where('key', 'mailer_smtp');
+            $this->db->update('tb_settings', ['value' => $mailer_smtp == 'on' ? 1 : 0]);
         endif;
 
         $mailer_alias = $this->input->post('mailer_alias');
@@ -67,9 +71,11 @@ class M_website extends CI_Model
         $this->db->where('key', 'mailer_username');
         $this->db->update('tb_settings', ['value' => $mailer_username]);
 
-        $mailer_password = $this->input->post('mailer_password');
-        $this->db->where('key', 'mailer_password');
-        $this->db->update('tb_settings', ['value' => $mailer_password]);
+        if($this->input->post('mailer_password')){
+            $mailer_password = $this->input->post('mailer_password');
+            $this->db->where('key', 'mailer_password');
+            $this->db->update('tb_settings', ['value' => $mailer_password]);
+        }
 
         return true;
     }

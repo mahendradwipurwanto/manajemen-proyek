@@ -30,7 +30,7 @@
 					<div class="mb-3">
 						<label class="form-label" for="inputWebsiteAddress">Alamat <small
 								class="text-danger">*</small></label>
-						<textarea type="text" id="inputWebsiteAddress" class="form-control" rows="3" name="web_alamat"
+						<textarea type="text" id="inputWebsiteAddress" class="form-control form-control-sm" rows="3" name="web_alamat"
 							placeholder="Website Address" required><?= $web_alamat;?></textarea>
 					</div>
 					<div class="mb-3">

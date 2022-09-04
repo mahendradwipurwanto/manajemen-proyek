@@ -98,7 +98,7 @@ class Authentication extends CI_Controller
                     } elseif ($this->input->get('act') == "resend-email") {
                         $subject = "Kode verifikasi";
                         $message = "Kode verifikasimu : <br><br><center><h1 style='font-size: 62px;'>{$this->encryption->decrypt($verifikasi->key)}</h1></center><br><br><small class='text-muted'>Kode aktivasimu hanya akan valid selama 1x24 jam. <span class='text-danger'>Jika telah kadaluarsa harap lakukan kembali proses aktivasi akun anda.</span></small>";
-
+                        
                         // mengirim email
                         if (sendMail($email, $subject, $message) == true) {
                             $this->session->set_flashdata('success', 'Berhasil mengirim kan email ke ' . $email . ' !');

@@ -9,10 +9,6 @@ class Leader extends CI_Controller
     {
         parent::__construct();
 
-        if ($this->agent->is_mobile()) {
-            redirect('mobile');
-        }
-
         // cek apakah user sudah masuk
         if ($this->session->userdata('logged_in') == false || !$this->session->userdata('logged_in')) {
             if (!empty($_SERVER['QUERY_STRING'])) {
@@ -30,7 +26,7 @@ class Leader extends CI_Controller
             redirect(base_url());
         }
 
-        $this->load->model(['api/M_auth', 'api/M_leader', 'api/M_staff', 'api/M_master']);
+        $this->load->model(['api/M_auth', 'api/M_leader', 'api/M_staff', 'api/M_master', 'api/M_proyek']);
     }
 
     public function index()
@@ -40,15 +36,25 @@ class Leader extends CI_Controller
 
     public function dashboard()
     {
-        $data['countLeader'] = $this->M_leader->countLeader();
-
-        $this->templateback->view('leader/dashboard', $data);
+        $data['countDashboard'] = $this->M_leader->countLeaderDashboard();
+        $data['log_proyek'] = $this->M_proyek->getLogProyekLeader();
+        $data['proyek'] = $this->M_proyek->getAll();
+        
+        if ($this->agent->is_mobile()) {
+            $this->templatemobile->view('leader/dashboard', $data);
+        }else{
+            $this->templateback->view('leader/dashboard', $data);
+        }
     }
 
     public function kpi()
     {
-
-        $this->templateback->view('leader/kpi');
+        
+        if ($this->agent->is_mobile()) {
+            $this->templatemobile->view('leader/kpi');
+        }else{
+            $this->templateback->view('leader/kpi');
+        }
     }
 
     public function kelola_staff()
@@ -57,18 +63,39 @@ class Leader extends CI_Controller
         $data['jabatan'] = $this->M_master->getJabatan();
         $data['staff'] = $this->M_staff->getStaff();
         $data['undanganStaff'] = $this->M_master->getUndangan(3);
+        $data['proyek'] = $this->M_proyek->getAllStatus(1);
 
-        $this->templateback->view('leader/staff', $data);
+        if ($this->agent->is_mobile()) {
+            $this->templatemobile->view('leader/staff', $data);
+        }else{
+            $this->templateback->view('leader/staff', $data);
+        }
     }
 
     public function kelola_proyek()
     {
-        $this->templateback->view('leader/proyek');
+        $data['countStaff'] = $this->M_staff->countStaff();
+        $data['jabatan'] = $this->M_master->getJabatan();
+        $data['staff'] = $this->M_staff->getStaff();
+        $data['undanganStaff'] = $this->M_master->getUndangan(3);
+        $data['proyekAktif'] = $this->M_proyek->getAllStatus(1);
+        $data['proyekArsip'] = $this->M_proyek->getAllStatus(2);
+        // ej($data);
+        if ($this->agent->is_mobile()) {
+            $this->templatemobile->view('proyek/proyek', $data);
+        }else{
+            $this->templateback->view('proyek/proyek', $data);
+        }
     }
 
     public function pengaturan()
     {
         $data['user'] = $this->M_auth->get_userByID($this->session->userdata('user_id'));
-        $this->templateback->view('leader/pengaturan', $data);
+        
+        if ($this->agent->is_mobile()) {
+            $this->templatemobile->view('leader/pengaturan', $data);
+        }else{
+            $this->templateback->view('leader/pengaturan', $data);
+        }
     }
 }
