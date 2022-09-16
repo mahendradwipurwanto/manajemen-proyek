@@ -16,7 +16,7 @@
 						<!-- Form -->
 						<div class="mb-4">
 							<label class="form-label" for="signupHeroFormWorkEmail">Email</label>
-							<input type="email" class="form-control form-control-lg" name="email"
+							<input type="email" class="form-control form-control-sm" name="email"
 								id="signupHeroFormWorkEmail" placeholder="email@site.com" aria-label="email@site.com"
 								required>
 							<span class="invalid-feedback">Masukkan email valid dengan benar</span>

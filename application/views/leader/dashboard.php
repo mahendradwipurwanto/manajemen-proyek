@@ -10,10 +10,10 @@
 <!-- End Page Header -->
 <div class="row mb-4">
 	<div class="col-md-3 col-sm-12">
-		<div class="card" style="text-align: center;">
+		<div class="card h-100" style="text-align: center;">
 			<div class="card-body">
 				<h1 class="h1"><?= number_format($countDashboard['totalProyek'],0,",",".")?></h1>
-				<div class="h6">Proyek</div>
+				<div class="h6">Total Proyek</div>
 				<div style="position: absolute;right: 10px;bottom: 0px;">
 					<i class="bi bi-kanban text-primary" style="font-size: 2.5em;"></i>
 				</div>
@@ -21,10 +21,10 @@
 		</div>
 	</div>
 	<div class="col-md-3 col-sm-12">
-		<div class="card" style="text-align: center;">
+		<div class="card h-100" style="text-align: center;">
 			<div class="card-body">
 				<h1 class="h1"><?= number_format($countDashboard['totalStaff'],0,",",".")?></h1>
-				<div class="h6">Total Staff</div>
+				<div class="h6">Total Staff <br><small class="text-secondary fw-normal">yang aktif dalam proyek anda</small></div>
 				<div style="position: absolute;right: 10px;bottom: 0px;">
 					<i class="bi bi-people text-secondary" style="font-size: 2.5em;"></i>
 				</div>
@@ -32,7 +32,7 @@
 		</div>
 	</div>
 	<div class="col-md-3 col-sm-12">
-		<div class="card" style="text-align: center;">
+		<div class="card h-100" style="text-align: center;">
 			<div class="card-body">
 				<h1 class="h1"><?= number_format($countDashboard['totalTask'],0,",",".")?></h1>
 				<div class="h6">Total Task</div>
@@ -43,10 +43,10 @@
 		</div>
 	</div>
 	<div class="col-md-3 col-sm-12">
-		<div class="card" style="text-align: center;">
+		<div class="card h-100" style="text-align: center;">
 			<div class="card-body">
-				<h1 class="h1"><?= number_format(0,0,",",".")?>%</h1>
-				<div class="h6">Presentase proyek</div>
+				<h1 class="h1"><?= (($countDashboard['totalSelesai']/$countDashboard['totalProyek'])*100)?>%</h1>
+				<div class="h6">Presentase Proyek <br><small class="text-secondary fw-normal">proyek anda yang selesai sesuai deadline</small></div>
 				<div style="position: absolute;right: 10px;bottom: 0px;">
 					<i class="bi bi-person-check text-success" style="font-size: 2.5em;"></i>
 				</div>
@@ -117,7 +117,7 @@
 	<div class="col-md-4">
 		<div class="card">
 			<div class="card-header py-3">
-				<h4 class="card-title mb-0">Aktifitas terbaru</h4>
+				<h4 class="card-title mb-0">Aktifitas terbaru <small class="text-secondary fw-normal">aktifitas dalam proyek anda</small></h4>
 			</div>
 			<div class="card-body p-3">
 				<ul class="list-group list-group-lg w-100" style="max-height: 500px; overflow: auto;">

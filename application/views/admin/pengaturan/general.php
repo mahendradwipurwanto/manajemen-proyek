@@ -16,6 +16,15 @@
 				<form action="<?= site_url('api/website/ubahGeneral');?>" method="post"
 					class="js-validate needs-validation" novalidate enctype="multipart/form-data">
 					<div class="mb-3">
+						<label for="inputWebsiteTitle" class="form-label">Buka pendaftaran untuk leader <small
+								class="text-danger">*</small></label>
+						<div class="form-check form-switch mb-4">
+							<input type="checkbox" class="form-check-input" id="formPendaftaranLeader" name="leader_daftar"
+								<?= $leader_daftar == 1 ? 'checked' : '';?>>
+							<label class="form-check-label" for="formPendaftaranLeader">buka pendaftaran?</label>
+						</div>
+					</div>
+					<div class="mb-3">
 						<label for="inputWebsiteTitle" class="form-label">Judul Website <small
 								class="text-danger">*</small></label>
 						<input type="text" id="inputWebsiteTitle" class="form-control form-control-sm" name="web_title"
@@ -30,8 +39,8 @@
 					<div class="mb-3">
 						<label class="form-label" for="inputWebsiteAddress">Alamat <small
 								class="text-danger">*</small></label>
-						<textarea type="text" id="inputWebsiteAddress" class="form-control form-control-sm" rows="3" name="web_alamat"
-							placeholder="Website Address" required><?= $web_alamat;?></textarea>
+						<textarea type="text" id="inputWebsiteAddress" class="form-control form-control-sm" rows="3"
+							name="web_alamat" placeholder="Website Address" required><?= $web_alamat;?></textarea>
 					</div>
 					<div class="mb-3">
 						<label for="inputWebsiteFacebook" class="form-label">Website Facebook<small

@@ -16,7 +16,7 @@
 						<!-- Form -->
 						<div class="mb-4">
 							<label class="form-label" for="signupHeroFormWorkEmail">Email</label>
-							<input type="email" class="form-control form-control-lg" name="email"
+							<input type="email" class="form-control form-control-sm" name="email"
 								id="signupHeroFormWorkEmail" value="<?= $email;?>" aria-label="email@site.com"
 								readonly>
 							<span class="invalid-feedback">Masukkan email valid dengan benar</span>
@@ -26,7 +26,7 @@
 						<!-- Form -->
 						<div class="mb-4">
 							<label class="form-label" for="signupHeroFormSignupPassword">Password Baru</label>
-							<input type="password" class="form-control form-control-lg" name="password"
+							<input type="password" class="form-control form-control-sm" name="password"
 								id="signupHeroFormSignupPassword" placeholder="8+ karakter diperlukan"
 								aria-label="8+ characters required" required>
 							<span class="invalid-feedback">Masukkan password valid dengan benar</span>
@@ -36,7 +36,7 @@
 						<!-- From -->
 						<div class="mb-4" data-hs-validation-validate-class>
 							<label class="form-label" for="daftarKonfirmasiPassword">Konfirmasi password</label>
-							<input type="password" class="form-control form-control-lg" name="confirmPassword"
+							<input type="password" class="form-control form-control-sm" name="confirmPassword"
 								id="daftarKonfirmasiPassword" placeholder="8+ characters required"
 								aria-label="8+ characters required" required
 								data-hs-validation-equal-field="#signupHeroFormSignupPassword">

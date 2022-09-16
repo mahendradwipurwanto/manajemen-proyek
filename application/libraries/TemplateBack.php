@@ -16,6 +16,12 @@ class TemplateBack
         return $query->row()->value;
     }
 
+    public function getProyekSemat()
+    {
+        $query = $this->_ci->db->get_where('tb_proyek', ['semat' => 1, 'created_by' => $this->_ci->session->userdata('user_id'), 'is_deleted' => 0]);
+        return $query->result();
+    }
+
     public function view($content, $data = null)
     {
         $data['web_title'] = $this->getSettingsValue('web_title');
@@ -29,6 +35,10 @@ class TemplateBack
         $data['sosmed_twitter'] = $this->getSettingsValue('sosmed_twitter');
         $data['sosmed_facebook'] = $this->getSettingsValue('sosmed_facebook');
         $data['sosmed_yt'] = $this->getSettingsValue('sosmed_yt');
+
+        $data['leader_daftar'] = $this->getSettingsValue('leader_daftar');
+        
+        $data['proyek_semat'] = $this->getProyekSemat();
 
         $this->_ci->load->view('template/backend/header', $data);
         $this->_ci->load->view('template/alert', $data);

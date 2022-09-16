@@ -23,9 +23,10 @@ class M_proyek extends CI_Model
     }
 
     function getLogProyek(){
-        $this->db->select('a.*, b.nama');
+        $this->db->select('a.*, b.nama, c.judul');
         $this->db->from('log_proyek a');
         $this->db->join('tb_user b', 'a.user_id = b.user_id');
+        $this->db->join('tb_proyek c', 'a.proyek_id = c.id');
         $this->db->where(['a.is_deleted' => 0]);
         $this->db->order_by('a.created_at DESC');
         $models = $this->db->get()->result();
@@ -33,10 +34,103 @@ class M_proyek extends CI_Model
         foreach($models as $key => $val){
             $nama = explode(" ", $val->nama);
             $val->nama = $nama[0];
+            if(!strpos($val->message, $val->judul)){
+                $val->message .= " <b>{$val->judul}</b>";
+            }
             $val->created_at = time_ago(date('Y-m-d H:i:s', $val->created_at));
         }
 
         return $models;
+    }
+
+    function getDataKPI(){
+        // get data staff
+        $this->db->select('b.*, d.jabatan, c.proyek_id')
+        ->from('tb_auth a')
+        ->join('tb_user b', 'a.user_id = b.user_id')
+        ->join('tb_assign_staff c', 'a.user_id = c.user_id', 'left')
+        ->join('tb_jabatan d', 'b.jabatan_id = d.id', 'left')
+        ->where(['a.role' => 3, 'a.status' => 1, 'a.is_deleted' => 0, 'c.status' => 1])
+        ->group_by('a.user_id');
+        ;
+
+        $staff = $this->db->get()->result();
+        
+        $arrKpi = [];
+        foreach($staff as $key => $val){
+            $arrKpi[$key] = $val;
+            if(isset($val->proyek_id)){
+                $arrKpi[$key]->proyek = $this->getProyekStaff($val->proyek_id);
+                $arrKpi[$key]->totalProyek = count($this->getProyekStaff($val->proyek_id));
+
+                $arrKpi[$key]->task = $this->getTaskStaffKpi($val->user_id);
+                $arrKpi[$key]->totalTask = count($this->getTaskStaffKpi($val->user_id, 0));
+                $arrKpi[$key]->taskSelesai = count($this->getTaskStaffKpi($val->user_id, 1));
+                $arrKpi[$key]->taskSelesaiData = $this->getTaskStaffKpi($val->user_id, 1);
+                $arrKpi[$key]->taskProses = count($this->getTaskStaffKpi($val->user_id, 2));
+                $arrKpi[$key]->taskProsesData = $this->getTaskStaffKpi($val->user_id, 2);
+
+                $arrKpi[$key]->nilai = $arrKpi[$key]->totalTask > 0 && $arrKpi[$key]->taskSelesai > 0 ? number_format((float)($arrKpi[$key]->taskSelesai/$arrKpi[$key]->totalTask)*10, 1, '.', '') : 0;
+                $arrKpi[$key]->persentase = $arrKpi[$key]->totalTask > 0 && $arrKpi[$key]->taskSelesai > 0 ? number_format((float)(($arrKpi[$key]->taskSelesai/$arrKpi[$key]->totalTask)*100), 2, '.', '') : 0;
+            }else{
+                $arrKpi[$key]->proyek = [];
+                $arrKpi[$key]->totalProyek = 0;
+
+                $arrKpi[$key]->task = [];
+                $arrKpi[$key]->totalTask = 0;
+                $arrKpi[$key]->taskSelesai = 0;
+                $arrKpi[$key]->taskSelesaiData = [];
+                $arrKpi[$key]->taskProses = 0;
+                $arrKpi[$key]->taskProsesData = [];
+
+                $arrKpi[$key]->nilai = 0;
+                $arrKpi[$key]->persentase = 0;
+            }
+            if($arrKpi[$key]->persentase > 100){
+                $color = 'success';
+            }elseif($arrKpi[$key]->persentase >= 75 ){
+                $color = 'primary';
+            }elseif($arrKpi[$key]->persentase >= 50){
+                $color = 'info';
+            }elseif($arrKpi[$key]->persentase >= 25){
+                $color = 'warning';
+            }elseif($arrKpi[$key]->persentase > 0){
+                $color = 'secondary';
+            }else{
+                $color = 'danger';
+            }
+
+            $arrKpi[$key]->color_badge = $color;
+        }
+
+        $tempData = array_column($arrKpi, 'persentase');
+        array_multisort($tempData, SORT_DESC, $arrKpi);
+        // ej($arrKpi);
+        return $arrKpi;
+    }
+
+    function getProyekStaff($proyek_id = null){
+        $this->db->select('*')
+        ->from('tb_proyek')
+        ->where(['id' => $proyek_id, 'is_deleted' => 0])
+        ;
+
+        return $this->db->get()->result();
+    }
+
+    function getTaskStaffKpi($user_id, $is_selesai = 0){
+        $this->db->select('*')
+        ->from('tb_proyek_task')
+        ->where(['user_id' => $user_id, 'is_deleted' => 0])
+        ;
+
+        if($is_selesai == 1){
+            $this->db->where(['is_closed' => 1]);
+        }elseif($is_selesai == 2){
+            $this->db->where(['is_closed' => 0]);
+        }
+
+        return $this->db->get()->result();
     }
 
     function sisaBobotProyek($proyek_id){
@@ -72,6 +166,9 @@ class M_proyek extends CI_Model
         $this->db->select('*');
         $this->db->from('tb_proyek');
         $this->db->where(['is_deleted' => 0]);
+        if($this->session->userdata('role') == 2 || $this->session->userdata('role') == 3){
+            $this->db->where('created_by', $this->session->userdata('user_id'));
+        }
         $this->db->order_by('created_at DESC');
         return $this->db->get()->result();
     }
@@ -81,6 +178,13 @@ class M_proyek extends CI_Model
         $this->db->from('tb_proyek');
         $this->db->where('kode', $kode);;
         return $this->db->get()->row()->id;
+    }
+
+    function getProyekDetail($proyek_id){
+        $this->db->select('*');
+        $this->db->from('tb_proyek');
+        $this->db->where('id', $proyek_id);;
+        return $this->db->get()->row();
     }
 
     function getAllStatus($status = 1, $archived = 0){
@@ -96,11 +200,34 @@ class M_proyek extends CI_Model
         $arr = [];
         foreach($proyek as $key => $val):
             $arr[$key] = $val;
+            $arr[$key]->progress = $this->getProgressProyek($val->id);
             $arr[$key]->staff = $this->getStaffProyek($val->id, 1);
             $arr[$key]->staff_free = $this->getStaffProyek($val->id, 0);
         endforeach;
 
         return $arr;
+    }
+
+    function getProgressProyek($id){
+        $this->db->select('*')
+        ->from('tb_proyek_task')
+        ->where(['is_deleted' => 0, 'proyek_id' => $id])
+        ;
+
+        $taskTotal = $this->db->get()->num_rows();
+        
+        $this->db->select('*')
+        ->from('tb_proyek_task')
+        ->where(['is_closed' => 1, 'is_deleted' => 0, 'proyek_id' => $id])
+        ;
+
+        $taskSelesai = $this->db->get()->num_rows();
+
+        if($taskTotal > 0 && $taskSelesai > 0){
+            return (($taskSelesai/$taskTotal)*100);
+        }else{
+            return 0;
+        }
     }
 
     function getStaffProyek($id, $status){
@@ -222,6 +349,8 @@ class M_proyek extends CI_Model
             }
             $val->bobot_color = $color;
             $val->dibuat_pada = date("d M Y", $val->created_at);
+            $val->deadline_tgl = date("d M Y", $val->deadline);
+            $val->deadline = date("Y-m-d", $val->deadline);
             $val->diubah_pada = $val->modified_at == 0 ? '-' : date("d M Y", $val->modified_at);
         }
 
@@ -258,15 +387,27 @@ class M_proyek extends CI_Model
         return $this->db->get()->row();
     }
 
-    function getProyekStatus($kode = null){
+    function getProyekStatus($kode = null, $use = 0){
 
         $idProyek = $this->getDetail($kode);
 
         $this->db->select('*');
         $this->db->from('tb_proyek_status');
         $this->db->where(['proyek_id' => $idProyek->id, 'is_deleted' => 0]);
+        if($use == 1){
+            $this->db->where(['is_selesai' => 0, 'is_closed' => 0]);
+        }
         $this->db->order_by('urutan ASC');
         return $this->db->get()->result();
+    }
+
+    function cekKodeProyek($kode){
+        
+        if($this->db->get_where('tb_proyek', ['kode' => $kode])->get()->num_rows() == 0){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     function save(){
@@ -299,11 +440,24 @@ class M_proyek extends CI_Model
             'periode_mulai' => strtotime($this->input->post('periode_mulai')),
             'periode_selesai' => strtotime($this->input->post('periode_selesai')),
             'keterangan' => $this->input->post('keterangan'),
+            'is_selesai' => $this->input->post('is_selesai') == 'on' ? 1 : 0,
             'modified_at' => time(),
             'modified_by' => $this->session->userdata('user_id')
         ];
 
         $this->db->where('id', $this->input->post('id'));
+        $this->db->update('tb_proyek', $data);
+        return ($this->db->affected_rows() != 1) ? false : true;
+    }
+
+    function hapus($proyek_id){
+        $data = [
+            'is_deleted' => 1,
+            'modified_at' => time(),
+            'modified_by' => $this->session->userdata('user_id')
+        ];
+
+        $this->db->where('id', $proyek_id);
         $this->db->update('tb_proyek', $data);
         return ($this->db->affected_rows() != 1) ? false : true;
     }
@@ -321,6 +475,15 @@ class M_proyek extends CI_Model
             $this->db->where(['proyek_id' => $this->input->post('proyek_id'), 'user_id' => $this->input->post('staff_id')]);
             $this->db->update('tb_assign_staff', ['status' => 1]);
         }else{
+            
+            $proyek = $this->getProyekDetail($this->input->post('proyek_id'));
+            $staff = $this->getStaffDetail($this->input->post('staff_id'));
+            // email
+            $subject = "Proyek Baru";
+            $message = 'Hi '.$staff->nama.', kamu telah ditambahkan kedalam proyek <b>'.$proyek->judul.'</b>. Masuk kedalam akun staffmu dan mulai berkolaborasi dalam proyek tersebut';
+
+            sendMail($staff->email, $subject, $message);
+
             $data = [
                 'proyek_id' => $this->input->post('proyek_id'),
                 'user_id' => $this->input->post('staff_id'),
@@ -343,6 +506,15 @@ class M_proyek extends CI_Model
                 $this->db->where(['proyek_id' => $this->input->post('proyek_id'), 'user_id' => $val]);
                 $this->db->update('tb_assign_staff', ['status' => 1]);
             }else{
+            
+                $proyek = $this->getProyekDetail($this->input->post('proyek_id'));
+                $staff = $this->getStaffDetail($val);
+                // email
+                $subject = "Proyek Baru";
+                $message = 'Hi '.$staff->nama.', kamu telah ditambahkan kedalam proyek <b>'.$proyek->judul.'</b>. Masuk kedalam akun staffmu dan mulai berkolaborasi dalam proyek tersebut';
+
+                sendMail($staff->email, $subject, $message);
+
                 $data = [
                     'proyek_id' => $this->input->post('proyek_id'),
                     'user_id' => $val,
@@ -412,6 +584,7 @@ class M_proyek extends CI_Model
                 'urutan' => $val->urutan,
                 'is_mulai' => $val->is_mulai,
                 'is_selesai' => $val->is_selesai,
+                'is_closed' => $val->is_closed,
                 'is_default' => $val->is_default,
                 'created_at' => time(),
                 'created_by' => $this->session->userdata('user_id')
@@ -424,6 +597,13 @@ class M_proyek extends CI_Model
     function insertStaffProyek($data, $proyek_id){
 
         foreach($data as $key => $val):
+            $staff = $this->getStaffDetail($val);
+            // email
+            $subject = "Proyek Baru";
+            $message = 'Hi '.$staff->nama.', kamu telah ditambahkan kedalam proyek <b>'.$this->input->post('judul').'</b>. Masuk kedalam akun staffmu dan mulai berkolaborasi dalam proyek tersebut';
+
+            sendMail($staff->email, $subject, $message);
+
             $data = [
                 'proyek_id' => $proyek_id,
                 'user_id' => $val,
@@ -434,6 +614,16 @@ class M_proyek extends CI_Model
             $this->db->insert('tb_assign_staff', $data);
         endforeach;
         return true;
+    }
+
+    function getStaffDetail($user_id){
+        $this->db->select('a.email, b.*')
+        ->from('tb_auth a')
+        ->join('tb_user b', 'a.user_id = b.user_id')
+        ->where('a.user_id', $user_id)
+        ;
+
+        return $this->db->get()->row();
     }
 
     function getUrutanStatus(){
@@ -455,7 +645,7 @@ class M_proyek extends CI_Model
             'status' => $this->input->post('status'),
             'warna' => $this->input->post('warna'),
             'keterangan' => $this->input->post('keterangan'),
-            'urutan' => $urutan,
+            'urutan' => $urutan-1,
             'created_at' => time(),
             'created_by' => $this->session->userdata('user_id')
         ];
@@ -463,21 +653,34 @@ class M_proyek extends CI_Model
         $this->db->insert('tb_proyek_status', $data);
         $cek = ($this->db->affected_rows() != 1) ? false : true;
         if($cek == true){
-            $this->updateStatusSelesai($urutan+1);
+            $this->updateStatusSelesai($urutan+1, $this->input->post('proyek_id'));
+            $this->updateStatusClosed($urutan+1, $this->input->post('proyek_id'));
             return true;
         }else{
             return false;
         }
     }
 
-    function updateStatusSelesai($urutan){
+    function updateStatusSelesai($urutan, $proyek_id){
         $data = [
             'urutan' => $urutan,
             'modified_at' => time(),
             'modified_by' => $this->session->userdata('user_id')
         ];
 
-        $this->db->where('is_selesai', 1);
+        $this->db->where(['is_selesai' => 1, 'proyek_id' => $proyek_id]);
+        $this->db->update('tb_proyek_status', $data);
+        return ($this->db->affected_rows() != 1) ? false : true;
+    }
+
+    function updateStatusClosed($urutan, $proyek_id){
+        $data = [
+            'urutan' => $urutan,
+            'modified_at' => time(),
+            'modified_by' => $this->session->userdata('user_id')
+        ];
+
+        $this->db->where(['is_closed' => 1, 'proyek_id' => $proyek_id]);
         $this->db->update('tb_proyek_status', $data);
         return ($this->db->affected_rows() != 1) ? false : true;
     }
@@ -505,7 +708,8 @@ class M_proyek extends CI_Model
 
         $cek = ($this->db->affected_rows() != 1) ? false : true;
         if($cek == true){
-            $this->updateStatusSelesai($urutan);
+            $this->updateStatusSelesai($urutan, $this->input->post('proyek_id'));
+            $this->updateStatusClosed($urutan, $this->input->post('proyek_id'));
             return true;
         }else{
             return false;
@@ -516,12 +720,21 @@ class M_proyek extends CI_Model
         
         $status_id = $this->getDefaultStatus($this->input->post('proyek_id'));
 
+        $proyek = $this->getProyekDetail($this->input->post('proyek_id'));
+        $staff = $this->getStaffDetail($this->input->post('staff_id'));
+        // email
+        $subject = "Task baru pada proyek {$proyek->judul}";
+        $message = 'Hi '.$staff->nama.', kamu telah mendapatkan task baru, <b>'.$this->input->post('task').'</b> pada proyek <b>'.$proyek->judul.'</b>. Harap selesaikan task tersebut sebelum '.date("d-m-Y", strtotime($this->input->post('deadline')));
+
+        sendMail($staff->email, $subject, $message);
+
         $data = [
             'proyek_id' => $this->input->post('proyek_id'),
             'user_id' => $this->input->post('staff_id'),
             'task' => $this->input->post('task'),
             'bobot' => $this->input->post('bobot'),
             'keterangan' => $this->input->post('keterangan'),
+            'deadline' => strtotime($this->input->post('deadline')),
             'status_id' => $status_id,
             'created_at' => time(),
             'created_by' => $this->session->userdata('user_id')
@@ -540,6 +753,9 @@ class M_proyek extends CI_Model
             'task' => $this->input->post('task'),
             'bobot' => $this->input->post('bobot'),
             'keterangan' => $this->input->post('keterangan'),
+            'is_selesai' => 0,
+            'is_closed' => 0,
+            'deadline' => strtotime($this->input->post('deadline')),
             'status_id' => $this->input->post('status_id'),
             'modified_at' => time(),
             'modified_by' => $this->session->userdata('user_id')
@@ -557,5 +773,87 @@ class M_proyek extends CI_Model
         $this->db->where('id', $id);
         $this->db->update('tb_proyek_task', ['is_deleted' => 1]);
         return ($this->db->affected_rows() != 1) ? false : true;
+    }
+
+    function selesaikan_task($file = null){
+        
+        $id = $this->input->post('id');
+        if($file == null){
+            $data = [
+                'catatan' => $this->input->post('catatan'),
+                'is_selesai' => 1,
+                'status_id' => $this->getStatus($this->input->post('proyek_id'), 1),
+                'modified_at' => time(),
+                'modified_by' => $this->session->userdata('user_id')
+            ];
+        }else{
+            $data = [
+                'bukti' => $file,
+                'catatan' => $this->input->post('catatan'),
+                'is_selesai' => 1,
+                'status_id' => $this->getStatus($this->input->post('proyek_id'), 1),
+                'modified_at' => time(),
+                'modified_by' => $this->session->userdata('user_id')
+            ];
+        }
+
+        $this->db->where('id', $id);
+        $this->db->update('tb_proyek_task', $data);
+        return ($this->db->affected_rows() != 1) ? false : true;
+    }
+
+    function tolak_task(){
+        
+        $id = $this->input->post('id');
+
+        $data = [
+            'catatan_ditolak' => $this->input->post('catatan_ditolak'),
+            'is_selesai' => 0,
+            'status_id' => $this->getStatus($this->input->post('proyek_id'), 0),
+            'modified_at' => time(),
+            'modified_by' => $this->session->userdata('user_id')
+        ];
+
+        $this->db->where('id', $id);
+        $this->db->update('tb_proyek_task', $data);
+        return ($this->db->affected_rows() != 1) ? false : true;
+    }
+
+    function verifikasi_task(){
+        
+        $id = $this->input->post('id');
+
+        $data = [
+            'catatan_diterima' =>  $this->input->post('catatan_diterima'),
+            'is_selesai' => 0,
+            'is_closed' => 1,
+            'status_id' => $this->getStatus($this->input->post('proyek_id'), 2),
+            'modified_at' => time(),
+            'modified_by' => $this->session->userdata('user_id')
+        ];
+
+        $this->db->where('id', $id);
+        $this->db->update('tb_proyek_task', $data);
+        return ($this->db->affected_rows() != 1) ? false : true;
+    }
+
+    function sematkan($id, $status){
+
+        $this->db->where('id', $id);
+        $this->db->update('tb_proyek', ['semat' => $status == 0 ? 1: 0]);
+        return ($this->db->affected_rows() != 1) ? false : true;
+    }
+
+    function getStatus($proyek_id = null, $status = 1){
+
+        if($status == 0){
+            return $this->db->get_where('tb_proyek_status', ['urutan' => 2, 'proyek_id' => $proyek_id])->row()->id;
+        }elseif($status == 1){
+            return $this->db->get_where('tb_proyek_status', ['is_selesai' => 1, 'proyek_id' => $proyek_id])->row()->id;
+        }elseif($status == 2){
+            return $this->db->get_where('tb_proyek_status', ['is_closed' => 1, 'proyek_id' => $proyek_id])->row()->id;
+        }else{
+            return $this->db->get_where('tb_proyek_status', ['is_mulai' => 1, 'proyek_id' => $proyek_id])->row()->id;
+        }
     }
 }

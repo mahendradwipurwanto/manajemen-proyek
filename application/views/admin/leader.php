@@ -281,14 +281,12 @@
 											<li><i class="bi-briefcase dropdown-item-icon"></i>
 												<?= isset($val->jabatan) || $val->jabatan != null ? $val->jabatan : '-';?>
 											</li>
-											<li><i class="bi-box-seam dropdown-item-icon"></i>
-												<?= count($val->proyek_aktif)+count($val->proyek_arsip);?> Proyek</li>
 										</ul>
 									</div>
 									<div class="col-6">
 										<ul class="list-unstyled list-py-1">
-											<li><i class="bi-person dropdown-item-icon"></i> 23,912 staff</li>
-											<li><i class="bi-archive dropdown-item-icon"></i> 1,533 task</li>
+											<li><i class="bi-box-seam dropdown-item-icon"></i>
+												<?= count($val->proyek_aktif)+count($val->proyek_arsip);?> Proyek</li>
 										</ul>
 									</div>
 								</div>

@@ -15,7 +15,7 @@ class Master extends CI_Controller
     {
         if ($this->M_master->simpanJabatan() == true) {
             $this->session->set_flashdata('notif_success', 'Berhasil menyimpan jabatan');
-            redirect(site_url('admin/pengaturan/?p=jabatan'));
+            redirect($this->agent->referrer());
         } else {
             $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba menyimpan jabatan');
             redirect($this->agent->referrer());
@@ -26,7 +26,7 @@ class Master extends CI_Controller
     {
         if ($this->M_master->hapusJabatan() == true) {
             $this->session->set_flashdata('notif_success', 'Berhasil menghapus jabatan');
-            redirect(site_url('admin/pengaturan/?p=jabatan'));
+            redirect($this->agent->referrer());
         } else {
             $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba menghapus jabatan');
             redirect($this->agent->referrer());

@@ -139,104 +139,113 @@ class Auth extends CI_Controller
         $password = htmlspecialchars($this->input->post('password'), true);
         $password_ver = htmlspecialchars($this->input->post('confirmPassword'), true);
 
-        // cek apakahemailvalid
-        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $post_code      = $this->input->post('captcha');
+        $captcha        = $this->session->userdata('captcha');
+        
+        // cek captcha
+        if($post_code && ($post_code == $captcha)){
+            // cek apakahemailvalid
+            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
-            // cek apakah password sama dengan konfirmasi password
-            if ($password == $password_ver) {
+                // cek apakah password sama dengan konfirmasi password
+                if ($password == $password_ver) {
 
-                // cek apakahemailtelah digunakan
-                if ($this->M_auth->get_auth($email) == false) {
+                    // cek apakahemailtelah digunakan
+                    if ($this->M_auth->get_auth($email) == false) {
 
-                    // mendaftarkan user ke sistem
-                    if ($this->M_auth->register_user() == true) {
+                        // mendaftarkan user ke sistem
+                        if ($this->M_auth->register_user() == true) {
 
-                        // mengambil data user dengan param email
-                        $user = $this->M_auth->get_auth($email);
+                            // mengambil data user dengan param email
+                            $user = $this->M_auth->get_auth($email);
 
-                        // mengatur data session
-                        $sessiondata = [
-                            'user_id' => $user->user_id,
-                            'email' => $user->email,
-                            'nama' => $user->nama,
-                            'role' => $user->role,
-                            'logged_in' => true
-                        ];
+                            // mengatur data session
+                            $sessiondata = [
+                                'user_id' => $user->user_id,
+                                'email' => $user->email,
+                                'nama' => $user->nama,
+                                'role' => $user->role,
+                                'logged_in' => true
+                            ];
 
-                        // menyimpan data session
-                        $this->session->set_userdata($sessiondata);
+                            // menyimpan data session
+                            $this->session->set_userdata($sessiondata);
 
-                        if($undangan == false){
-                            // mengirimkan email selamat bergabung
-                            $subject = "Selamat bergabung";
-                            $message = "Hi {$user->nama}, Selamat telah bergabung bersama kami. Harap verifikasi akunmu dengan kode verifikasi yang telah kami kirimkan ke emailmu";
-    
-                            sendMail($email, $subject, $message);
-                            redirect(site_url('verifikasi-email?act=send-email'));
-                        }else{
-                            // $this->bypas_otp = $this->M_auth->getSetting('bypass_otp') == 'true' ? true : false;
+                            if($undangan == false){
+                                // mengirimkan email selamat bergabung
+                                $subject = "Selamat bergabung";
+                                $message = "Hi {$user->nama}, Selamat telah bergabung bersama kami. Harap verifikasi akunmu dengan kode verifikasi yang telah kami kirimkan ke emailmu";
+        
+                                sendMail($email, $subject, $message);
+                                redirect(site_url('verifikasi-email?act=send-email'));
+                            }else{
+                                // $this->bypas_otp = $this->M_auth->getSetting('bypass_otp') == 'true' ? true : false;
 
-                            // if($this->bypas_otp == true){
-                            //     $session_data = array(
-                            //         'otp' => true,
-                            //     );
+                                // if($this->bypas_otp == true){
+                                //     $session_data = array(
+                                //         'otp' => true,
+                                //     );
 
-                            //     $this->session->set_userdata($session_data);
-                            // }
+                                //     $this->session->set_userdata($session_data);
+                                // }
 
-                            // // CEK HAK AKSES
-                            // // ADMIN
-                            // if ($user->role == 1) {
-                            //     if ($this->session->userdata('redirect')) {
-                            //         $this->session->set_flashdata('notif_success', 'Hi, berhasil masuk, harap lanjutkan aktivitas anda !');
-                            //         redirect($this->session->userdata('redirect'));
-                            //     } else {
-                            //         $this->session->set_flashdata('notif_success', "Welcome super admin, {$user->nama}");
-                            //         redirect(site_url('admin'));
-                            //     }
+                                // // CEK HAK AKSES
+                                // // ADMIN
+                                // if ($user->role == 1) {
+                                //     if ($this->session->userdata('redirect')) {
+                                //         $this->session->set_flashdata('notif_success', 'Hi, berhasil masuk, harap lanjutkan aktivitas anda !');
+                                //         redirect($this->session->userdata('redirect'));
+                                //     } else {
+                                //         $this->session->set_flashdata('notif_success', "Welcome super admin, {$user->nama}");
+                                //         redirect(site_url('admin'));
+                                //     }
 
-                            // // LEADER
-                            // } elseif ($user->role == 2) {
-                            //     if ($this->session->userdata('redirect')) {
-                            //         $this->session->set_flashdata('notif_success', 'Hi, berhasil masuk, harap lanjutkan aktivitas anda !');
-                            //         redirect($this->session->userdata('redirect'));
-                            //     } else {
-                            //         $this->session->set_flashdata('notif_success', "Welcome admin, {$user->nama}");
-                            //         redirect(site_url('leader'));
-                            //     }
-                            
-                            // // STAFF
-                            // } elseif ($user->role == 3) {
-                            //     if ($this->session->userdata('redirect')) {
-                            //         $this->session->set_flashdata('notif_success', 'Hi, berhasil masuk, harap lanjutkan aktivitas anda !');
-                            //         redirect($this->session->userdata('redirect'));
-                            //     } else {
-                            //         $this->session->set_flashdata('notif_success', "Selamat datang, {$user->nama}");
-                            //         redirect(site_url('staff'));
-                            //     }
-                            // } else {
-                            //     $this->session->set_flashdata('notif_success', "Welcome, {$user->nama}");
-                            //     redirect(base_url());
-                            // }
-                            $this->session->set_flashdata('success', 'Pendaftaran berhasil, Harap verifikasi akunmu dengan kode verifikasi yang telah kami kirimkan ke emailmu');
-                            redirect(site_url('verifikasi-email?act=send-email'));
+                                // // LEADER
+                                // } elseif ($user->role == 2) {
+                                //     if ($this->session->userdata('redirect')) {
+                                //         $this->session->set_flashdata('notif_success', 'Hi, berhasil masuk, harap lanjutkan aktivitas anda !');
+                                //         redirect($this->session->userdata('redirect'));
+                                //     } else {
+                                //         $this->session->set_flashdata('notif_success', "Welcome admin, {$user->nama}");
+                                //         redirect(site_url('leader'));
+                                //     }
+                                
+                                // // STAFF
+                                // } elseif ($user->role == 3) {
+                                //     if ($this->session->userdata('redirect')) {
+                                //         $this->session->set_flashdata('notif_success', 'Hi, berhasil masuk, harap lanjutkan aktivitas anda !');
+                                //         redirect($this->session->userdata('redirect'));
+                                //     } else {
+                                //         $this->session->set_flashdata('notif_success', "Selamat datang, {$user->nama}");
+                                //         redirect(site_url('staff'));
+                                //     }
+                                // } else {
+                                //     $this->session->set_flashdata('notif_success', "Welcome, {$user->nama}");
+                                //     redirect(base_url());
+                                // }
+                                $this->session->set_flashdata('success', 'Pendaftaran berhasil, Harap verifikasi akunmu dengan kode verifikasi yang telah kami kirimkan ke emailmu');
+                                redirect(site_url('verifikasi-email?act=send-email'));
+                            }
+
+                            // mengirimkan user untuk verifikasi email
+                        } else {
+                            $this->session->set_flashdata('error', 'Terjadi kesalahan saat mendaftarkan diri!');
+                            redirect($this->agent->referrer());
                         }
-
-                        // mengirimkan user untuk verifikasi email
                     } else {
-                        $this->session->set_flashdata('error', 'Terjadi kesalahan saat mendaftarkan diri!');
+                        $this->session->set_flashdata('warning', 'Email telah digunakan!');
                         redirect($this->agent->referrer());
                     }
                 } else {
-                    $this->session->set_flashdata('warning', 'Email telah digunakan!');
+                    $this->session->set_flashdata('warning', 'Password tidak sesuai!');
                     redirect($this->agent->referrer());
                 }
             } else {
-                $this->session->set_flashdata('warning', 'Password tidak sesuai!');
+                $this->session->set_flashdata('warning', 'Email tidal valid, harap masukkan email yang valid!');
                 redirect($this->agent->referrer());
             }
-        } else {
-            $this->session->set_flashdata('warning', 'Email tidal valid, harap masukkan email yang valid!');
+        }else{
+            $this->session->set_flashdata('warning', "Captcha yang anda masukkan salah !");
             redirect($this->agent->referrer());
         }
     }

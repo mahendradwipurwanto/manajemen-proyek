@@ -29,6 +29,8 @@ class TemplateAuth
         $data['sosmed_facebook'] = $this->getSettingsValue('sosmed_facebook');
         $data['sosmed_yt'] = $this->getSettingsValue('sosmed_yt');
 
+        $data['leader_daftar'] = $this->getSettingsValue('leader_daftar');
+
         $this->_ci->load->view('template/auth/header', $data);
         $this->_ci->load->view('template/alert', $data);
         $this->_ci->load->view($content, $data);

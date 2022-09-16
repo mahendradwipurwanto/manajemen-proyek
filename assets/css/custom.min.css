@@ -323,15 +323,15 @@ div.dataTables_wrapper {
 	right: 0;
 	z-index: 98;
 	width: 25rem;
-    padding-bottom: 55px;
-    height: 98%;
+	padding-bottom: 55px;
+	height: 98%;
 	background-color: #fff;
 	box-shadow: -5px 0 12px rgb(103 119 136 / 10%);
 }
 
 .sidebar-body,
 .sidebar-content {
-	height: 100%;
+	height: 90%;
 }
 
 .sidebar-left {
@@ -356,11 +356,57 @@ div.dataTables_wrapper {
 	width: 100%;
 	position: absolute;
 	right: 0;
-	bottom: 0;
+	bottom: 55px;
 	left: 0;
 }
 
 .sidebar-footer-offset {
 	height: 100%;
 	box-sizing: border-box;
+}
+
+.text-overflow {
+	overflow: hidden !important;
+	text-overflow: ellipsis !important;
+}
+
+/* loading */
+.loader {
+	position: fixed;
+	height: 100vh;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #fff;
+	transition: all 0.5s;
+	z-index: 9999;
+}
+
+.loader .ring {
+	height: 45px;
+	width: 45px;
+	border: 5px solid #ddd;
+	border-radius: 50%;
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.loader .ring:after {
+	position: absolute;
+	content: "";
+	height: 100%;
+	width: 100%;
+	border-radius: 50%;
+	border: 5px solid #4067f9;
+	border-top-color: transparent;
+	animation: rotate 1.5s linear infinite;
+}
+
+@keyframes rotate {
+	100% {
+		transform: rotate(360deg);
+	}
 }

@@ -160,6 +160,7 @@
 										<p>Apakah anda yakin? ingin menghapus status ini?</p>
 										<!-- End Form -->
 										<input type="hidden" name="id" value="<?= $val->id;?>">
+										<input type="hidden" name="proyek_id" value="<?= $val->id;?>">
 										<input type="hidden" name="urutan" value="<?= $val->urutan;?>">
 										<div class="modal-footer p-0 pt-3">
 											<button type="button" class="btn btn-sm btn-white"

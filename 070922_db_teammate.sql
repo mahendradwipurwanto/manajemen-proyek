@@ -28,21 +28,9 @@ CREATE TABLE `log_proyek` (
   `modified_by` int(11) NOT NULL DEFAULT 0,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `log_proyek` */
-
-insert  into `log_proyek`(`id`,`proyek_id`,`user_id`,`message`,`created_at`,`created_by`,`modified_at`,`modified_by`,`is_deleted`) values 
-(2,9,19,'Mengeluarkan staff dari proyek  <b>Test staff from start</b>',1661159868,19,0,0,0),
-(3,9,19,'Menambahkan staff kedalam proyek  <b>Test staff from start</b>',1661159868,19,0,0,0),
-(4,9,19,'Menambahkan Task baru kedalam proyek  <b>Test staff from start</b>',1661159868,19,0,0,0),
-(5,9,19,'Menambahkan Task baru kedalam proyek  <b>Test staff from start</b>',1661918375,19,0,0,0),
-(6,9,19,'Menambahkan Task baru kedalam proyek  <b>Test staff from start</b>',1661961208,19,0,0,0),
-(7,9,19,'Menambahkan Task baru kedalam proyek  <b>Test staff from start</b>',1661961752,19,0,0,0),
-(8,9,19,'Menambahkan Task baru kedalam proyek  <b>Test staff from start</b>',1662005240,19,0,0,0),
-(9,9,19,'Mengubah Task baru kedalam proyek  <b>Test staff from start</b>',1662006692,19,0,0,0),
-(10,9,19,'Menghapus Task baru kedalam proyek  <b>Test staff from start</b>',1662006717,19,0,0,0),
-(11,9,16,'Mengubah Task baru kedalam proyek  <b>Test staff from start</b>',1662007227,16,0,0,0);
 
 /*Table structure for table `m_status` */
 
@@ -87,13 +75,9 @@ CREATE TABLE `tb_assign_staff` (
   `modified_by` int(11) NOT NULL DEFAULT 0,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `tb_assign_staff` */
-
-insert  into `tb_assign_staff`(`id`,`proyek_id`,`user_id`,`status`,`created_at`,`created_by`,`modified_at`,`modified_by`,`is_deleted`) values 
-(13,9,16,1,1661856223,19,0,0,0),
-(14,9,24,1,1661856223,19,0,0,0);
 
 /*Table structure for table `tb_auth` */
 
@@ -112,16 +96,12 @@ CREATE TABLE `tb_auth` (
   `created_at` int(11) NOT NULL DEFAULT 0,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
 
 /*Data for the table `tb_auth` */
 
 insert  into `tb_auth`(`user_id`,`email`,`password`,`status`,`role`,`otp`,`expired_otp`,`log_time`,`modified_at`,`created_at`,`is_deleted`) values 
-(15,'admin@manpro.com','$2y$10$1hg1pDmFo9NYLXLuKxr86.qZpBwWcFo.gQgLLye5Hsk9VXmZqdW12',1,0,NULL,NULL,1661159868,0,1660450439,0),
-(16,'mahendradwipurwanto@gmail.com','$2y$10$4d3WK8ty16b90vQiDBNgN.5ECkfeFukiCvATnup.Ladd6Pwy07jVS',1,3,NULL,NULL,1662006768,0,1660450439,0),
-(19,'ngodingin.indonesia@gmail.com','$2y$10$hZpfAuPSJozux/6RyvUxJuHLsUBXctLZz9YseCnmOhkghTsnB4XSG',1,2,NULL,NULL,1661992099,0,1660478436,0),
-(23,'181221006@mhs.stiki.ac.id','$2y$10$LTrgOT4mkPWGjTbka2kYLemtQOsXFZj0YnY.3DJV/tJ/KFO1KjLAy',1,2,NULL,NULL,0,0,1660480851,0),
-(24,'developpertech@gmail.com','$2y$10$nxnRYWpwzDUFdxoYHzgqMOSnvf1O8HtZN/hZWFDvarwJ1X1/K.Bv6',1,3,NULL,NULL,0,0,1660481985,0);
+(15,'admin@bagusproject.com','$2y$10$1hg1pDmFo9NYLXLuKxr86.qZpBwWcFo.gQgLLye5Hsk9VXmZqdW12',1,0,NULL,NULL,1662390011,0,1660450439,0);
 
 /*Table structure for table `tb_jabatan` */
 
@@ -140,10 +120,9 @@ CREATE TABLE `tb_jabatan` (
 /*Data for the table `tb_jabatan` */
 
 insert  into `tb_jabatan`(`id`,`jabatan`,`keterangan`,`created_at`,`modified_at`,`is_deleted`) values 
-(1,'Manager Umum','',1660477555,0,1),
-(2,'Manager Umum','',1660477576,0,0),
-(3,'Staff Umum','',1660477582,0,0),
-(4,'Staff Operasional','',1660477588,0,0);
+(1,'Manager','',1660477555,0,1),
+(2,'GA','',1660477576,0,0),
+(3,'Staff','',1660477582,0,0);
 
 /*Table structure for table `tb_proyek` */
 
@@ -156,6 +135,7 @@ CREATE TABLE `tb_proyek` (
   `keterangan` text DEFAULT NULL,
   `periode_mulai` int(11) NOT NULL DEFAULT 0,
   `periode_selesai` int(11) NOT NULL DEFAULT 0,
+  `semat` tinyint(1) NOT NULL DEFAULT 0,
   `status` int(5) NOT NULL DEFAULT 1 COMMENT '1: aktif; 2: selesai/arsip',
   `hide_log` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` int(11) NOT NULL DEFAULT 0,
@@ -164,12 +144,9 @@ CREATE TABLE `tb_proyek` (
   `modified_by` int(11) NOT NULL DEFAULT 0,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `tb_proyek` */
-
-insert  into `tb_proyek`(`id`,`kode`,`judul`,`keterangan`,`periode_mulai`,`periode_selesai`,`status`,`hide_log`,`created_at`,`created_by`,`modified_at`,`modified_by`,`is_deleted`) values 
-(9,'pyk00','Test staff from start','',1661792400,1664470800,1,0,1661848327,19,0,0,0);
 
 /*Table structure for table `tb_proyek_status` */
 
@@ -184,20 +161,16 @@ CREATE TABLE `tb_proyek_status` (
   `urutan` int(11) NOT NULL DEFAULT 1,
   `is_mulai` tinyint(1) NOT NULL DEFAULT 0,
   `is_selesai` tinyint(1) NOT NULL DEFAULT 0,
+  `is_default` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` int(11) NOT NULL DEFAULT 0,
   `created_by` int(11) NOT NULL DEFAULT 0,
   `modified_at` int(11) NOT NULL DEFAULT 0,
   `modified_by` int(11) NOT NULL DEFAULT 0,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `tb_proyek_status` */
-
-insert  into `tb_proyek_status`(`id`,`proyek_id`,`status`,`warna`,`keterangan`,`urutan`,`is_mulai`,`is_selesai`,`created_at`,`created_by`,`modified_at`,`modified_by`,`is_deleted`) values 
-(13,9,'To Do','secondary','Status awal task yang baru dibuat',1,1,0,1661848327,19,0,0,0),
-(14,9,'In Progress','info','Status untuk task dalam proses pengerjaan',2,0,0,1661848327,19,0,0,0),
-(15,9,'Done','success','Status untuk task yang telah selesai',3,0,1,1661848327,19,0,0,0);
 
 /*Table structure for table `tb_proyek_task` */
 
@@ -211,7 +184,9 @@ CREATE TABLE `tb_proyek_task` (
   `keterangan` text DEFAULT NULL,
   `bobot` varchar(11) NOT NULL DEFAULT '0',
   `is_selesai` tinyint(1) NOT NULL DEFAULT 0,
+  `deadline` int(11) NOT NULL DEFAULT 0,
   `bukti` varchar(255) NOT NULL DEFAULT '0',
+  `catatan` text DEFAULT NULL,
   `status_id` int(5) NOT NULL DEFAULT 0,
   `created_at` int(11) NOT NULL DEFAULT 0,
   `created_by` int(11) NOT NULL DEFAULT 0,
@@ -219,17 +194,9 @@ CREATE TABLE `tb_proyek_task` (
   `modified_by` int(11) NOT NULL DEFAULT 0,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `tb_proyek_task` */
-
-insert  into `tb_proyek_task`(`id`,`proyek_id`,`user_id`,`task`,`keterangan`,`bobot`,`is_selesai`,`bukti`,`status_id`,`created_at`,`created_by`,`modified_at`,`modified_by`,`is_deleted`) values 
-(1,9,16,'Membuat makanan','buatkan makanan yang enak untuk 10 orang malan ini','0',0,'0',13,1661875603,19,0,0,0),
-(2,9,16,'makanan test',NULL,'0',0,'0',13,1661875603,19,0,0,0),
-(3,9,24,'Membuat','feafa','0',0,'0',13,1661918375,19,0,0,0),
-(4,9,16,'Membuat rgfs','','50',0,'0',13,1661961208,19,0,0,0),
-(5,9,16,'awdad','','25',0,'0',13,1661961752,19,0,0,0),
-(6,9,24,'Youtubekan','','0',0,'0',14,1662007227,16,0,0,1);
 
 /*Table structure for table `tb_settings` */
 
@@ -302,13 +269,9 @@ CREATE TABLE `tb_token` (
   `status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0: inactive, 1: active',
   `date_created` int(20) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id_token`)
-) ENGINE=InnoDB AUTO_INCREMENT=640 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=641 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `tb_token` */
-
-insert  into `tb_token`(`id_token`,`user_id`,`key`,`type`,`status`,`date_created`) values 
-(636,15,'61bd5d477dcba8efaa1c8b3bc8055a27aede317e9590303e1fddce2bd6c9f201624cd65d779d6a2e042f7bf9ed9fe7f16995e7da086a4b38bdbaa6dc98687966dGDQq/NMRF3rTWGVTJ+MDWnXGTiH9vxnhxukQqCiT5k=',1,1,1660450439),
-(639,16,'d64c10bffae48bb01b8957c639830db48cb20d9984d6d9058003c93a50e9be8d',2,0,1661159859);
 
 /*Table structure for table `tb_token_type` */
 
@@ -366,11 +329,7 @@ CREATE TABLE `tb_user` (
 /*Data for the table `tb_user` */
 
 insert  into `tb_user`(`user_id`,`nama`,`profil`,`no_telp`,`jk`,`jabatan_id`,`gaji`,`notifikasi`) values 
-(15,'ADMIN','assets/images/profile.png','085785111746','L',0,NULL,0),
-(16,'Mahendra Dwi Purwanto','assets/images/profile.png','085785111746','L',1,NULL,1),
-(19,'Mahendra Dwi Purwanto','berkas/user/19/profile/1660484535.jpg','085785111746','P',3,NULL,1),
-(23,'Test Account','assets/images/profile.png','085785111746','L',2,NULL,0),
-(24,'Test','assets/images/profile.png',NULL,'L',4,NULL,0);
+(15,'ADMIN','assets/images/profile.png','085785111746','L',0,NULL,0);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

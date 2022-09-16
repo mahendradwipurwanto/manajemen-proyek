@@ -80,6 +80,11 @@
 						<div class="project-box bg-soft-<?= $color;?>">
 							<div class="project-box-header">
 								<span>Dibuat pada, <?= date("d F Y", $val->created_at);?></span>
+								<?php if($this->session->userdata('role') == 2):?>
+								<span class="cursor" data-bs-toggle="tooltip" data-bs-html="true"
+									title="Sematkan proyek" onclick="sematkan(<?=$val->id;?>, <?=$val->semat;?>)"><i
+										class="bi <?= $val->semat == 1 ? 'bi-flag-fill text-danger' : 'bi-flag';?>"></i></span>
+								<?php endif;?>
 							</div>
 							<div class="project-box-content-header">
 								<p class="box-content-header"><?= $val->judul;?></p>
@@ -87,9 +92,9 @@
 							<div class="box-progress-wrapper">
 								<p class="box-progress-header">Progress</p>
 								<div class="box-progress-bar">
-									<span class="box-progress bg-<?= $color;?>" style="width: 0%;"></span>
+									<span class="box-progress bg-<?= $color;?>" style="width: <?= $val->progress;?>%;"></span>
 								</div>
-								<p class="box-progress-percentage">0%</p>
+								<p class="box-progress-percentage"><?= $val->progress;?>%</p>
 							</div>
 							<div class="project-box-footer">
 								<div class="participants">
@@ -205,9 +210,9 @@
 							<div class="box-progress-wrapper">
 								<p class="box-progress-header">Progress</p>
 								<div class="box-progress-bar">
-									<span class="box-progress text-soft-<?= $color;?>" style="width: 60%;"></span>
+									<span class="box-progress text-soft-<?= $color;?>" style="width: <?= $val->progress;?>%;"></span>
 								</div>
-								<p class="box-progress-percentage">0%</p>
+								<p class="box-progress-percentage"><?= $val->progress;?>%</p>
 							</div>
 							<div class="project-box-footer">
 								<div class="participants">
@@ -265,8 +270,7 @@
 					<!-- Form -->
 					<div class="mb-3 row">
 						<div class="col-8">
-							<label class="form-label" for="formJudul">Nama Proyek <small
-									class="text-danger">*</small></label>
+							<label class="form-label" for="formJudul">Nama Proyek</label>
 							<input type="text" name="judul" id="formJudul" class="form-control form-control-sm"
 								placeholder="Judul Proyek" required>
 						</div>
@@ -275,20 +279,18 @@
 									class="bi bi-info-square-fill" data-bs-toggle="tooltip" data-bs-html="true"
 									title="Pilih kode sebagai kunci/id proyek anda untuk mengenali pekerjaan dari proyek ini."></i></label>
 							<input type="text" name="kode" id="formKode" class="form-control form-control-sm alphanum"
-								placeholder="Ex: PYK01" value="PYK0<?= (count($proyekAktif)+count($proyekAktif));?>"
+								placeholder="Ex: PYK01" value="PYK0<?= $this->session->userdata('user_id');?><?= (count($proyekAktif)+count($proyekAktif));?>"
 								required>
 						</div>
 					</div>
 					<div class="mb-3 row">
 						<div class="col-6">
-							<label class="form-label" for="formPeriodeMulai">Periode Mulai <small
-									class="text-danger">*</small></label>
+							<label class="form-label" for="formPeriodeMulai">Periode Mulai</label>
 							<input type="date" name="periode_mulai" id="formPeriodeMulai"
 								class="form-control form-control-sm" value="<?= date('Y-m-d');?>" required>
 						</div>
 						<div class="col-6">
-							<label class="form-label" for="formPeriodeSelesai">Periode Selesai <small
-									class="text-danger">*</small></label>
+							<label class="form-label" for="formPeriodeSelesai">Periode Selesai</label>
 							<input type="date" name="periode_selesai" id="formPeriodeSelesai"
 								class="form-control form-control-sm" value="<?= date('Y-m-d', strtotime('+1 month'));?>"
 								required>
@@ -323,8 +325,8 @@
 					<div class="mb-3">
 						<label for="formKeterangan" class="form-label">Keterangan <small
 								class="text-secondary">(optional)</small></label>
-						<textarea name="keterangan" class="form-control form-control-sm" id="formKeterangan" rows="3"
-							placeholder="Keterangan"></textarea>
+						<textarea name="keterangan" class="form-control form-control-sm ckeditor" id="formKeterangan"
+							rows="3" placeholder="Keterangan"></textarea>
 					</div>
 					<!-- End Form -->
 					<div class="modal-footer p-0 pt-3">
@@ -337,3 +339,10 @@
 	</div>
 </div>
 <!-- End Modal -->
+
+<script>
+	function sematkan(proyek_id, status) {
+		document.location.href = `<?= site_url('api/proyek/sematkan/` + proyek_id + `/` + status + `');?>`;
+	}
+
+</script>

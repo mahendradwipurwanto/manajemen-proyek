@@ -21,11 +21,9 @@
 </a>
 <!-- ========== END SECONDARY CONTENTS ========== -->
 
-<!-- JS Global Compulsory  -->
-<script src="<?= base_url();?>assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
 <!-- JS Implementing Plugins -->
 <script src="<?= base_url();?>assets/vendor/hs-header/dist/hs-header.min.js"></script>
+<script src="<?= base_url();?>assets/vendor/prism/prism.js"></script>
 <script src="<?= base_url();?>assets/vendor/hs-mega-menu/dist/hs-mega-menu.min.js"></script>
 <script src="<?= base_url();?>assets/vendor/hs-show-animation/dist/hs-show-animation.min.js"></script>
 <script src="<?= base_url();?>assets/vendor/hs-go-to/dist/hs-go-to.min.js"></script>
@@ -37,7 +35,6 @@
 <script src="<?= base_url();?>assets/vendor/hs-file-attach/dist/hs-file-attach.min.js"></script>
 <script src="<?= base_url();?>assets/vendor/imask/dist/imask.min.js"></script>
 <script src="<?= base_url();?>assets/vendor/quill/dist/quill.min.js"></script>
-<script src="<?= base_url();?>assets/vendor/prism/prism.js"></script>
 <script src="<?= base_url();?>assets/vendor/tom-select/dist/js/tom-select.complete.min.js"></script>
 <script src="<?= base_url();?>assets/vendor/nouislider/dist/nouislider.min.js"></script>
 <script src="<?= base_url();?>assets/vendor/hs-unfold/dist/hs-unfold.min.js"></script>
@@ -123,18 +120,54 @@
 
 		$(document).ready(function () {
 			$('#table').DataTable({
-				scrollX: true,
-				responsive: true
+				"language": {
+					"emptyTable": '<div class="text-center p-4">' +
+						'<img class="mb-3" src="<?= base_url() ?>assets/svg/illustrations/sorry.svg" alt="Image Description" style="width: 7rem;">' +
+						'<p class="mb-0">Tidak ada data untuk ditampilkan</p>' +
+						'</div>'
+				},
+				"scrollX": true,
+				"responsive": true
+			});
+
+			$('#table-kpi').DataTable({
+				"language": {
+					"emptyTable": '<div class="text-center p-4">' +
+						'<img class="mb-3" src="<?= base_url() ?>assets/svg/illustrations/sorry.svg" alt="Image Description" style="width: 7rem;">' +
+						'<p class="mb-0">Tidak ada data untuk ditampilkan</p>' +
+						'</div>'
+				},
+				"scrollX": true,
+				"responsive": true,
+				"order": false,
+				"columnDefs": [{
+					"targets": [0,1],
+					"orderable": false
+				}],
 			});
 
 			$(".alphanum").keydown(function (event) {
 				var inputValue = event.which;
 				// allow letters and whitespaces only.
 				if (!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 0 &&
-						inputValue != 8 && inputValue != 37 && inputValue != 39)) {
+						inputValue != 8 && inputValue != 37 && inputValue != 39) && (!inputValue >=
+						48 && !inputValue <= 57)) {
 					event.preventDefault();
 				}
 			});
+
+			window.addEventListener('load', function () {
+				$('.loader').addClass('d-none');
+			})
+			
+			setTimeout(function () {
+				const loader = document.querySelector('.loader');
+				// if 'hasClass' is exist on 'loader'
+				if(!loader.classList.contains('d-none')) {
+					// do something if 'hasClass' is exist.
+					$('.loader').addClass('d-none');
+				}
+			}, 5000);
 		})
 	})()
 

@@ -4,7 +4,7 @@
 		<div class="col-sm">
 			<h1 class="docs-page-header-title">Staff
 				<button type="button" class="btn btn-xs btn-soft-primary float-end" data-bs-toggle="modal"
-					data-bs-target="#tambah-staff">Tambah staff</button>
+					data-bs-target="#tambah-staff">Assign staff</button>
 				<a href="<?= site_url('proyek/kelola/'.$proyek_kode);?>"
 					class="btn btn-xs btn-light float-end me-3">kembali</a>
 			</h1>

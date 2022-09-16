@@ -9,8 +9,12 @@
 					class="btn btn-xs btn-soft-info float-end me-2">Kelola Staff</a>
 				<button type="button" class="btn btn-xs btn-soft-secondary float-end me-2" data-bs-toggle="modal"
 					href="#edit-proyek">informasi proyek</button>
+				<?php if($this->session->userdata('role') == 2):?>
 				<a href="<?= site_url('leader/kelola-proyek');?>"
 					class="btn btn-xs btn-light float-end me-3">kembali</a>
+				<?php else:?>
+				<a href="<?= site_url('admin/kelola-proyek');?>" class="btn btn-xs btn-light float-end me-3">kembali</a>
+				<?php endif;?>
 			</h1>
 			<p class="docs-page-header-text">
 				<?= isset($proyek->keterangan) && $proyek->keterangan != '' ? $proyek->keterangan : 'Kelola semua komponen pendukung proyek anda disini';?>
@@ -22,6 +26,17 @@
 
 <div class="row">
 	<div class="col-md-9">
+		<?php if($proyek->is_selesai == 1):?>
+		<div class="alert bg-soft-primary py-1">
+			<small>Proyek ini telah selesai, staff tidak akan dapat mengakses proyek ini dari akun mereka. Anda dapat
+				mengaktifkan proyek ini lagi, pada tombol informasi proyek.</small>
+		</div>
+		<?php endif;?>
+		<?php if(time() > $proyek->periode_selesai && $proyek->is_selesai == 0):?>
+		<div class="alert bg-soft-warning py-1">
+			<small>Proyek ini telah melewati batas waktu pengerjaan.</small>
+		</div>
+		<?php endif;?>
 		<div class="card mb-3">
 			<div class="card-header py-3">
 				<h4 class="card-title mb-0">Kelola Task <span class="badge bg-soft-info ms-2">bobot:
@@ -56,12 +71,23 @@
 					<?php foreach ($task as $key => $val):?>
 					<div class="tab-pane fade <?= $val->urutan == "1" ? 'show active' : '';?>"
 						id="status-<?= $val->id;?>" role="tabpanel" aria-labelledby="status-<?= $val->id;?>-tab">
+						<?php if($val->is_selesai == 1):?>
+						<div class="alert bg-soft-primary py-1">
+							<small>Pada tab <b>Done</b>, anda dapat memverifikasi task yang telah selesai agar
+								dapat berpindah ke status closed</small>
+						</div>
+						<?php endif;?>
+						<?php if($val->is_closed == 1):?>
+						<div class="alert bg-soft-primary py-1">
+							<small>Pada tab <b>Closed</b>, semua task pada tab ini telah diverifikasi oleh leader dan
+								dinyatakan selesai. Staff akan mendapatkan poin sesuai dari bobot task yang ada.</small>
+						</div>
+						<?php endif;?>
 						<ul class="list-group list-group-lg w-100" style="max-height: 500px; overflow: auto;">
 							<?php if(!empty($val->tasks)):?>
 							<?php foreach($val->tasks as $k => $v):?>
 							<li class="js-hs-unfold-invoker list-group-item py-2 cursor"
-								onclick='showDetail(`<?= json_encode($val);?>`, `<?= json_encode($v);?>`)'
-								href="javascript:;" data-hs-unfold-options='{
+								onclick='showDetail(<?= $key;?>, <?= $k;?>)' href="javascript:;" data-hs-unfold-options='{
 									"target": "#sidebarContent",
 									"type": "css-animation",
 									"animationIn": "fadeInRight",
@@ -75,6 +101,9 @@
 									<div class="col-sm-7 mb-2 mb-sm-0">
 										<span class="h5 fw-normal"><?= $v->task;?></span>
 										<span class="badge bg-<?= $v->bobot_color;?>"><?= $v->bobot;?>%</span>
+										<?php if($v->pernah_ditolak == 1):?>
+										<span class="badge bg-soft-danger">ditolak</span>
+										<?php endif;?>
 									</div>
 									<div class="col-sm-3 mb-2 mb-sm-0 d-flex justify-content-end">
 										<span class="badge bg-<?= $val->warna;?> me-3"><?= $val->status;?></span>
@@ -134,9 +163,9 @@
 														<div class="input-group input-group-sm">
 															<input type="number" class="form-control form-control-sm"
 																name="bobot" placeholder="Bobot task" min="0"
-																max="<?= (100-$bobot->quota_bobot);?>" value="<?= $v->bobot;?>"
-																aria-label="Bobot" aria-describedby="input-bobot-task"
-																required>
+																max="<?= ($bobot->quota_bobot);?>"
+																value="<?= $v->bobot;?>" aria-label="Bobot"
+																aria-describedby="input-bobot-task" required>
 															<span class="input-group-text"
 																id="input-bobot-task">%</span>
 														</div>
@@ -147,32 +176,42 @@
 													</div>
 												</div>
 
-												<div class="mb-3">
-													<label class="form-label" for="formTaskKeterangan">Staff <small
-															class="text-danger">*</small></label>
-													<div class="tom-select-custom">
-														<select class="js-select form-select form-select-sm"
-															autocomplete="off" name="staff_id"
-															data-hs-tom-select-options='{"placeholder": "Pilih staff"}'
-															required>
-															<option value="<?= $v->user_id;?>"><?= $v->nama;?>
-																<?php if(!empty($staff)):?>
-																<?php foreach($staff as $keys => $value):?>
-															<option value="<?= $value->user_id;?>"><?= $value->nama;?>
-															</option>
-															<?php endforeach;?>
-															<?php endif;?>
-														</select>
+												<div class="mb-3 row">
+													<div class="col">
+														<label class="form-label" for="formTaskKeterangan">Staff <small
+																class="text-danger">*</small></label>
+														<div class="tom-select-custom">
+															<select class="js-select form-select form-select-sm"
+																autocomplete="off" name="staff_id"
+																data-hs-tom-select-options='{"placeholder": "Pilih staff"}'
+																required>
+																<option value="<?= $v->user_id;?>"><?= $v->nama;?>
+																	<?php if(!empty($staff)):?>
+																	<?php foreach($staff as $keys => $value):?>
+																<option value="<?= $value->user_id;?>">
+																	<?= $value->nama;?></option>
+																<?php endforeach;?>
+																<?php endif;?>
+															</select>
+														</div>
+														<small class="text-secondary">Staff akan mendapatkan email
+															pemberitahuan</small>
 													</div>
-													<small class="text-secondary">Staff akan mendapatkan email
-														pemberitahuan</small>
+													<div class="col">
+														<label class="form-label" for="formDeadline">Deadline Task
+															<small class="text-danger">*</small></label>
+														<input type="date" name="deadline" id="formDeadline"
+															class="form-control form-control-sm"
+															value="<?= $v->deadline;?>" required>
+													</div>
 												</div>
 
 												<div class="mb-3">
 													<label class="form-label" for="formTaskKeterangan">Keterangan <small
-															class="text-danger">*</small></label>
+															class="text-secondary">(optional)</small></label>
 													<textarea type="text" name="keterangan"
-														class="form-control form-control-sm ckeditor" placeholder="Keterangan"
+														class="form-control form-control-sm ckeditor"
+														placeholder="Keterangan"
 														rows="3"><?= $v->keterangan;?></textarea>
 												</div>
 												<!-- End Form -->
@@ -183,6 +222,169 @@
 													<button type="submit" class="btn btn-sm btn-primary">Simpan</button>
 													<a href="<?= site_url('api/proyek/hapusTask/'.$v->id);?>"
 														class="btn btn-sm btn-soft-danger">Hapus</a>
+												</div>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- End Modal -->
+
+							<!-- Modal -->
+							<div id="selesaikan-task-<?= $v->id;?>" class="modal fade" tabindex="-1" role="dialog"
+								aria-labelledby="modalTambah" aria-hidden="true">
+								<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="modalTambah">Selesaikan task -
+												<strong><?= $v->task;?></strong></h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal"
+												aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+											<form action="<?= site_url('api/proyek/selesaikanTask');?>" method="post"
+												class="js-validate needs-validation" enctype="multipart/form-data"
+												novalidate>
+												<input type="hidden" name="id" value="<?= $v->id;?>">
+												<input type="hidden" name="proyek_id" value="<?= $v->proyek_id;?>">
+												<?php if($v->bukti != null && $v->bukti != 0 && $v->bukti != ''):?>
+												<div class="mb-3">
+													<label class="form-label" for="formTask">Bukti penyelesaian <small
+															class="text-danger">*</small></label>
+													<div class="row">
+														<div class="col-4">
+															<a href="<?= base_url();?><?= $v->bukti;?>" target="_blank"
+																class="btn btn-outline-primary btn-sm text-left"><i
+																	class="bi bi-file-earmark-pdf"></i> Bukti
+																penyelesaian</a>
+														</div>
+														<div class="col-8">
+															<input type="file" name="file" id="formTask"
+																class="form-control form-control-sm"
+																accept="application/pdf,.pdf">
+														</div>
+													</div>
+													<small class="text-secondary">Upload bukti penyelesaian task, berupa
+														file pdf</small>
+												</div>
+												<input type="hidden" name="sudah_upload" value="1">
+												<?php else:?>
+												<div class="mb-3">
+													<label class="form-label" for="formTask">Bukti penyelesaian <small
+															class="text-danger">*</small></label>
+													<input type="file" name="file" id="formTask"
+														class="form-control form-control-sm"
+														accept="application/pdf,.pdf" required>
+													<small class="text-secondary">Upload bukti penyelesaian task, berupa
+														file pdf</small>
+												</div>
+												<input type="hidden" name="sudah_upload" value="0">
+												<?php endif;?>
+
+												<div class="mb-3">
+													<label class="form-label" for="formTaskKeterangan">Catatan <small
+															class="text-secondary">(optional)</small></label>
+													<textarea type="text" name="catatan"
+														class="form-control form-control-sm ckeditor"
+														placeholder="Keterangan" rows="3"><?= $v->catatan;?></textarea>
+												</div>
+												<!-- End Form -->
+												<!-- End From -->
+												<div class="modal-footer p-0 pt-3">
+													<button type="button" class="btn btn-sm btn-white"
+														data-bs-dismiss="modal">Batal</button>
+													<button type="submit"
+														class="btn btn-sm btn-success">Selesaikan</button>
+												</div>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- End Modal -->
+
+							<!-- Modal -->
+							<div id="verifikasi-task-<?= $v->id;?>" class="modal fade" tabindex="-1" role="dialog"
+								aria-labelledby="modalTambah" aria-hidden="true">
+								<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="modalTambah">verifikasi task -
+												<strong><?= $v->task;?></strong></h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal"
+												aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+											<form action="<?= site_url('api/proyek/verifikasiTask');?>" method="post"
+												class="js-validate needs-validation" enctype="multipart/form-data"
+												novalidate>
+												<input type="hidden" name="id" value="<?= $v->id;?>">
+												<input type="hidden" name="proyek_id" value="<?= $v->proyek_id;?>">
+												<div class="mb-3">
+													<a href="<?= base_url();?><?= $v->bukti;?>" target="_blank"
+														class="btn btn-outline-primary btn-sm text-left"><i
+															class="bi bi-file-earmark-pdf"></i> Bukti
+														penyelesaian</a>
+												</div>
+												<p>Verifikasi penyelesaian task ini, tambahkan catatan jika ada</p>
+												<div class="mb-3">
+													<label class="form-label" for="formTaskKeterangan">Catatan <small
+															class="text-secondary">(optional)</small></label>
+													<textarea type="text" name="catatan_diterima"
+														class="form-control form-control-sm ckeditor"
+														placeholder="Keterangan"
+														rows="3"><?= $v->catatan_diterima;?></textarea>
+												</div>
+												<!-- End Form -->
+												<!-- End From -->
+												<div class="modal-footer p-0 pt-3">
+													<button type="button" class="btn btn-sm btn-white"
+														data-bs-dismiss="modal">Batal</button>
+													<button type="submit"
+														class="btn btn-sm btn-success">verifikasi</button>
+												</div>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- End Modal -->
+
+							<!-- Modal -->
+							<div id="tolak-task-<?= $v->id;?>" class="modal fade" tabindex="-1" role="dialog"
+								aria-labelledby="modalTambah" aria-hidden="true">
+								<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="modalTambah">tolak task -
+												<strong><?= $v->task;?></strong></h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal"
+												aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+											<form action="<?= site_url('api/proyek/tolakTask');?>" method="post"
+												class="js-validate needs-validation" enctype="multipart/form-data"
+												novalidate>
+												<input type="hidden" name="id" value="<?= $v->id;?>">
+												<input type="hidden" name="proyek_id" value="<?= $v->proyek_id;?>">
+
+												<p>Tolak penyelesaian task ini, berikan alasan jika diperlukan</p>
+
+												<div class="mb-3">
+													<label class="form-label" for="formTaskKeterangan">Catatan <small
+															class="text-secondary">(optional)</small></label>
+													<textarea type="text" name="catatan_ditolak"
+														class="form-control form-control-sm ckeditor"
+														placeholder="Keterangan"
+														rows="3"><?= $v->catatan_ditolak;?></textarea>
+												</div>
+												<!-- End Form -->
+												<!-- End From -->
+												<div class="modal-footer p-0 pt-3">
+													<button type="button" class="btn btn-sm btn-white"
+														data-bs-dismiss="modal">Batal</button>
+													<button type="submit"
+														class="btn btn-sm btn-soft-danger">tolak</button>
 												</div>
 											</form>
 										</div>
@@ -290,20 +492,26 @@
 						<?php endif;?>
 					</div>
 
-					<div class="mb-3">
-						<label class="form-label" for="formTaskKeterangan">Staff <small
-								class="text-danger">*</small></label>
-						<div class="tom-select-custom">
-							<select class="js-select form-select form-select-sm" autocomplete="off" name="staff_id"
-								data-hs-tom-select-options='{"placeholder": "Pilih staff"}' required>
-								<?php if(!empty($staff)):?>
-								<?php foreach($staff as $keys => $value):?>
-								<option value="<?= $value->user_id;?>"><?= $value->nama;?></option>
-								<?php endforeach;?>
-								<?php endif;?>
-							</select>
+					<div class="mb-3 row">
+						<div class="col">
+							<label class="form-label" for="formTaskKeterangan">Staff</label>
+							<div class="tom-select-custom">
+								<select class="js-select form-select form-select-sm" autocomplete="off" name="staff_id"
+									data-hs-tom-select-options='{"placeholder": "Pilih staff"}' required>
+									<?php if(!empty($staff)):?>
+									<?php foreach($staff as $keys => $value):?>
+									<option value="<?= $value->user_id;?>"><?= $value->nama;?></option>
+									<?php endforeach;?>
+									<?php endif;?>
+								</select>
+							</div>
+							<small class="text-secondary">Staff akan mendapatkan email pemberitahuan</small>
 						</div>
-						<small class="text-secondary">Staff akan mendapatkan email pemberitahuan</small>
+						<div class="col">
+							<label class="form-label" for="formDeadline">Deadline Task</label>
+							<input type="date" name="deadline" id="formDeadline" class="form-control form-control-sm"
+								placeholder="Deadline task" required>
+						</div>
 					</div>
 
 					<div class="mb-3">
@@ -342,30 +550,36 @@
 					<!-- Form -->
 					<div class="mb-3 row">
 						<div class="col-8">
-							<label class="form-label" for="formJudul">Nama Proyek <small
-									class="text-danger">*</small></label>
+							<label class="form-label" for="formJudul">Nama Proyek</label>
 							<input type="text" name="judul" id="formJudul" class="form-control form-control-sm"
 								value="<?= $proyek->judul;?>" required>
 						</div>
 						<div class="col-4">
 							<label class="form-label" for="formKode">Kode Proyek <small class="text-danger">*</small> <i
 									class="bi bi-info-square-fill" data-bs-toggle="tooltip" data-bs-html="true"
-									title="Pilih kode sebagai kunci/id proyek anda untuk mengenali pekerjaan dari proyek ini."></i></label>
+									title="Kode sebagai kunci/id proyek anda untuk mengenali pekerjaan dari proyek ini."></i></label>
 							<input type="text" name="kode" id="formKode" class="form-control form-control-sm alphanum"
-								placeholder="Ex: PYK01" value="<?= $proyek->kode;?>" required>
+								placeholder="Ex: PYK01" value="<?= $proyek->kode;?>" readonly>
+						</div>
+					</div>
+					<div class="mb-3">
+						<label class="form-label" for="formSelesaikanProyek">Selesaikan Proyek</label>
+						<div class="form-check form-switch mb-4">
+							<input type="checkbox" class="form-check-input" id="formSelesaikan" name="is_selesai"
+								<?= $proyek->is_selesai == 1 ? 'checked' : '';?>>
+							<label class="form-check-label" for="formSelesaikan">Selesaikan proyek? saat proyek selesai,
+								maka staff tidak dapat mengakses proyek ini</label>
 						</div>
 					</div>
 					<div class="mb-3 row">
 						<div class="col-6">
-							<label class="form-label" for="formPeriodeMulai">Periode Mulai <small
-									class="text-danger">*</small></label>
+							<label class="form-label" for="formPeriodeMulai">Periode Mulai</label>
 							<input type="date" name="periode_mulai" id="formPeriodeMulai"
 								class="form-control form-control-sm"
 								value="<?= date('Y-m-d', $proyek->periode_mulai);?>" required>
 						</div>
 						<div class="col-6">
-							<label class="form-label" for="formPeriodeSelesai">Periode Selesai <small
-									class="text-danger">*</small></label>
+							<label class="form-label" for="formPeriodeSelesai">Periode Selesai</label>
 							<input type="date" name="periode_selesai" id="formPeriodeSelesai"
 								class="form-control form-control-sm"
 								value="<?= date('Y-m-d', $proyek->periode_selesai);?>" required>
@@ -382,13 +596,15 @@
 					<div class="mb-3">
 						<label for="formKeterangan" class="form-label">Keterangan <small
 								class="text-secondary">(optional)</small></label>
-						<textarea name="keterangan" class="form-control form-control-sm ckeditor" id="formKeterangan" rows="3"
-							placeholder="Keterangan"><?= $proyek->keterangan;?></textarea>
+						<textarea name="keterangan" class="form-control form-control-sm ckeditor" id="formKeterangan"
+							rows="3" placeholder="Keterangan"><?= $proyek->keterangan;?></textarea>
 					</div>
 					<!-- End Form -->
 					<div class="modal-footer p-0 pt-3">
 						<button type="button" class="btn btn-sm btn-white" data-bs-dismiss="modal">Batal</button>
 						<button type="submit" class="btn btn-sm btn-primary">Ubah Proyek</button>
+						<a href="<?= site_url('api/proyek/hapus/'.$proyek->id);?>"
+							class="btn btn-sm btn-soft-danger">Hapus Proyek</a>
 					</div>
 				</form>
 			</div>
@@ -403,8 +619,8 @@
 			type: "POST",
 			url: `<?= site_url('api/proyek/detailTask');?>`,
 			data: {
-				status: JSON.parse(status),
-				task: JSON.parse(task)
+				status: status,
+				task: task
 			},
 			success: function (data) {
 				$('#detailTask').html(data);

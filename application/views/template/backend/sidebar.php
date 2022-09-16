@@ -1,5 +1,6 @@
   <!-- ========== MAIN CONTENT ========== -->
   <main id="content" role="main" class="content-space-t-1">
+  	<?php if($this->session->userdata('role') != 3):?>
   	<!-- Navbar -->
   	<nav class="js-nav-scroller navbar navbar-expand-lg navbar-sidebar navbar-vertical navbar-light bg-white border-end"
   		data-hs-nav-scroller-options='{
@@ -67,13 +68,29 @@
   					<li class="nav-item">
   						<span class="nav-subtitle">Proyek</span>
   					</li>
+  					<?php if(empty($proyek_semat)):?>
   					<li class="nav-item" id="tour-menu-proyek">
   						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-proyek" || $this->uri->segment(1) == "proyek" ? "active" : "") ?>"
   							href="<?= site_url('admin/kelola-proyek'); ?>">Proyek
   							<span class="ms-auto badge bg-primary"></span>
   						</a>
   					</li>
+  					<?php else:?>
+  					<li class="nav-item ">
+  						<a class="nav-link dropdown-toggle" href="#proyek-sidebar" role="button"
+  							data-bs-toggle="collapse" aria-expanded="true" aria-controls="proyek-sidebar">Proyek</a>
 
+  						<div id="proyek-sidebar" class="nav-collapse collapse show">
+  							<a class="nav-link <?= (($this->uri->segment(2) == "kelola-proyek" || $this->uri->segment(1) == "proyek")  && !$this->uri->segment(3) ? "active" : "") ?>"
+  								href="<?= site_url('admin/kelola-proyek'); ?>">Semua Proyek</a>
+  							<?php foreach($proyek_semat as $key => $val):?>
+  							<a class="nav-link text-overflow <?= ($this->uri->segment(1) == "proyek" && $this->uri->segment(3) ? "active" : "") ?>"
+  								href="<?= site_url('proyek/kelola/'.$val->kode);?>">#
+  								<?= substr($val->judul, 0, 20);?> <?= strlen($val->judul) > 20 ? '...' : '';?></a>
+  							<?php endforeach;?>
+  						</div>
+  					</li>
+  					<?php endif;?>
   					<li class="nav-item my-2 my-lg-5"></li>
 
   					<li class="nav-item">
@@ -106,12 +123,29 @@
   						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-staff" && $this->uri->segment(1) != "proyek" ? "active" : "") ?>"
   							href="<?= site_url('leader/kelola-staff'); ?>">Staff</a>
   					</li>
+  					<?php if(empty($proyek_semat)):?>
   					<li class="nav-item" id="tour-menu-proyek">
   						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-proyek" || $this->uri->segment(1) == "proyek" ? "active" : "") ?>"
   							href="<?= site_url('leader/kelola-proyek'); ?>">Proyek
   							<span class="ms-auto badge bg-primary"></span>
   						</a>
   					</li>
+  					<?php else:?>
+  					<li class="nav-item ">
+  						<a class="nav-link dropdown-toggle" href="#proyek-sidebar" role="button"
+  							data-bs-toggle="collapse" aria-expanded="true" aria-controls="proyek-sidebar">Proyek</a>
+
+  						<div id="proyek-sidebar" class="nav-collapse collapse show">
+  							<a class="nav-link <?= (($this->uri->segment(2) == "kelola-proyek" || $this->uri->segment(1) == "proyek")  && !$this->uri->segment(3) ? "active" : "") ?>"
+  								href="<?= site_url('leader/kelola-proyek'); ?>">Semua Proyek</a>
+  							<?php foreach($proyek_semat as $key => $val):?>
+  							<a class="nav-link text-overflow <?= ($this->uri->segment(1) == "proyek" && $this->uri->segment(3) ? "active" : "") ?>"
+  								href="<?= site_url('proyek/kelola/'.$val->kode);?>">#
+  								<?= substr($val->judul, 0, 20);?> <?= strlen($val->judul) > 20 ? '...' : '';?></a>
+  							<?php endforeach;?>
+  						</div>
+  					</li>
+  					<?php endif;?>
 
   					<li class="nav-item my-2 my-lg-5"></li>
 
@@ -150,3 +184,6 @@
   	<!-- End Navbar -->
   	<!-- Content -->
   	<div class="navbar-sidebar-aside-content content-space-1 content-space-md-2 px-lg-5 px-xl-10">
+	<?php else:?>
+	<div class="container-fuild mx-10 px-10 content-space-1 content-space-md-2">
+	<?php endif;?>

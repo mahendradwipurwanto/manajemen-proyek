@@ -31,6 +31,8 @@ class Staff extends CI_Controller
 
     public function dashboard()
     {
+        $data['user'] = $this->M_auth->get_userByID($this->session->userdata('user_id'));
+        $data['countDashboard'] = $this->M_staff->countDashboardStaff();
         $data['countLeader'] = $this->M_leader->countLeader();
         $data['proyek'] = $this->M_proyek->getAll();
 
@@ -43,6 +45,8 @@ class Staff extends CI_Controller
 
     public function kelola_proyek()
     {
+        $data['user'] = $this->M_auth->get_userByID($this->session->userdata('user_id'));
+        $data['countDashboard'] = $this->M_staff->countDashboardStaff();
         $data['countStaff'] = $this->M_staff->countStaff();
         $data['jabatan'] = $this->M_master->getJabatan();
         $data['staff'] = $this->M_staff->getStaff();

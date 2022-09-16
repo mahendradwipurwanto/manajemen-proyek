@@ -8,25 +8,52 @@ class Proyek extends CI_Controller
     public function __construct()
     {
         parent::__construct();
+
+        // cek apakah user sudah masuk
+        if ($this->session->userdata('logged_in') == false || !$this->session->userdata('logged_in')) {
+            if (!empty($_SERVER['QUERY_STRING'])) {
+                $uri = uri_string() . '?' . $_SERVER['QUERY_STRING'];
+            } else {
+                $uri = uri_string();
+            }
+            $this->session->set_userdata('redirect', $uri);
+            $this->session->set_flashdata('notif_warning', "Please login to continue");
+            redirect('masuk');
+        }
+        if(!$this->session->userdata('proyek')){
+            if($this->session->userdata('role') == 0 || $this->session->userdata('role') == 1){
+                redirect(site_url('admin/kelola-staff'));
+            }else{
+                redirect(site_url('leader/kelola-staff'));
+            }
+        }
         $this->load->model(['api/M_proyek']);
     }
 
     public function detailTask()
     {
+        $task = $this->M_proyek->getProyekTask($this->session->userdata('proyek')['id']);
+        // ej($task);
         // ej($this->input->post('task'));
-        $data['task'] = $this->input->post('task');
-        $data['status'] = $this->input->post('status');
+        $data['status'] = $task[$this->input->post('status')];
+        $data['task'] = $task[$this->input->post('status')]->tasks[$this->input->post('task')];
+        $data['statusAll'] = $this->M_proyek->getProyekStatus($this->session->userdata('proyek')['kode']);
+        $data['staff'] = $this->M_proyek->getStaffProyek($this->session->userdata('proyek')['id'], 1);
         $this->load->view('proyek/task', $data);
     }
 
     public function save()
     {
-
-        if ($this->M_proyek->save() == true) {
-            $this->session->set_flashdata('notif_success', 'Berhasil menambahkan proyek baru');
-            redirect($this->agent->referrer());
+        if($this->M_proyek->cekKodeProyek($this->input->post('kode'))){
+            if ($this->M_proyek->save() == true) {
+                $this->session->set_flashdata('notif_success', 'Berhasil menambahkan proyek baru');
+                redirect($this->agent->referrer());
+            } else {
+                $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba menambahkan proyek baru');
+                redirect($this->agent->referrer());
+            }
         } else {
-            $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba menambahkan proyek baru');
+            $this->session->set_flashdata('notif_warning', 'Kode telah digunakan, harap ganti kode proyek anda !');
             redirect($this->agent->referrer());
         }
     }
@@ -34,7 +61,6 @@ class Proyek extends CI_Controller
     public function edit()
     {
         if ($this->M_proyek->edit() == true) {
-            
             // log
             $this->M_proyek->insert_log($this->session->userdata('proyek')['id'], 'Mengubah informasi proyek  <b>'.$this->session->userdata('proyek')['judul'].'</b>');
 
@@ -42,6 +68,25 @@ class Proyek extends CI_Controller
             redirect($this->agent->referrer());
         } else {
             $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba mengubah informasi proyek baru');
+            redirect($this->agent->referrer());
+        }
+    }
+
+    public function hapus($id)
+    {
+        if ($this->M_proyek->hapus($id) == true) {
+            
+            // log
+            $this->M_proyek->insert_log($this->session->userdata('proyek')['id'], 'Menghapus proyek  <b>'.$this->session->userdata('proyek')['judul'].'</b>');
+
+            $this->session->set_flashdata('notif_success', 'Berhasil menghapus proyek baru');
+            if($this->session->userdata('role') == 0 || $this->session->userdata('role') == 1){
+                redirect(site_url('admin/kelola-proyek'));
+            }else{
+                redirect(site_url('leader/kelola-proyek'));
+            }
+        } else {
+            $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba menghapus proyek baru');
             redirect($this->agent->referrer());
         }
     }
@@ -134,7 +179,7 @@ class Proyek extends CI_Controller
 
     public function tambahTask()
     {
-        if($this->M_proyek->sisaBobotProyek($this->input->post('proyek_id'))->quota_bobot > 100){
+        // if($this->M_proyek->sisaBobotProyek($this->input->post('proyek_id')) == null || $this->M_proyek->sisaBobotProyek($this->input->post('proyek_id'))->quota_bobot > 100){
             if ($this->M_proyek->tambah_task() == true) {
                 // log
                 $this->M_proyek->insert_log($this->session->userdata('proyek')['id'], 'Menambahkan Task baru kedalam proyek  <b>'.$this->session->userdata('proyek')['judul'].'</b>');
@@ -145,10 +190,10 @@ class Proyek extends CI_Controller
                 $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba menambahkan task baru');
                 redirect($this->agent->referrer());
             }
-        } else {
-            $this->session->set_flashdata('notif_warning', 'Total bobot task melebihi 100%');
-            redirect($this->agent->referrer());
-        }
+        // } else {
+        //     $this->session->set_flashdata('notif_warning', 'Total bobot task melebihi 100%');
+        //     redirect($this->agent->referrer());
+        // }
     }
 
     public function editTask()
@@ -175,6 +220,88 @@ class Proyek extends CI_Controller
             redirect($this->agent->referrer());
         } else {
             $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba menghapus task baru');
+            redirect($this->agent->referrer());
+        }
+    }
+
+    public function selesaikanTask()
+    {
+        if (isset($_FILES['file'])) {
+            $path = "berkas/proyek/{$this->input->post('proyek_id')}/{$this->session->userdata('user_id')}/bukti/";
+            $upload = $this->uploader->uploadFile($_FILES['file'], $path);
+            
+            if ($upload == true) {
+                if ($this->M_proyek->selesaikan_task($upload['filename']) == true) {
+                    // log
+                    $this->M_proyek->insert_log($this->session->userdata('proyek')['id'], 'Menyelesaikan Task pada proyek  <b>'.$this->session->userdata('proyek')['judul'].'</b>');
+
+                    $this->session->set_flashdata('notif_success', 'Berhasil menyelesaikan task');
+                    redirect($this->agent->referrer());
+                } else {
+                    $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba menyelesaikan task');
+                    redirect($this->agent->referrer());
+                }
+            } else {
+                $this->session->set_flashdata('notif_warning', $upload['message']);
+                redirect($this->agent->referrer());
+            }
+        } else {
+            if($this->input->post('sudah_upload') == 1){
+                if ($this->M_proyek->selesaikan_task(null) == true) {
+                    // log
+                    $this->M_proyek->insert_log($this->session->userdata('proyek')['id'], 'Menyelesaikan Task pada proyek  <b>'.$this->session->userdata('proyek')['judul'].'</b>');
+
+                    $this->session->set_flashdata('notif_success', 'Berhasil menyelesaikan task');
+                    redirect($this->agent->referrer());
+                } else {
+                    $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba menyelesaikan task');
+                    redirect($this->agent->referrer());
+                }
+            }else{
+                $this->session->set_flashdata('notif_warning', 'Harap sertakan bukti penyelesaian !');
+                redirect($this->agent->referrer());
+            }
+        }
+    }
+
+    public function tolakTask()
+    {
+        if ($this->M_proyek->tolak_task() == true) {
+            // log
+            $this->M_proyek->insert_log($this->session->userdata('proyek')['id'], 'Menolak Task pada proyek  <b>'.$this->session->userdata('proyek')['judul'].'</b>');
+
+            $this->session->set_flashdata('notif_success', 'Berhasil menolak task');
+            redirect($this->agent->referrer());
+        } else {
+            $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba menolak task');
+            redirect($this->agent->referrer());
+        }
+    }
+
+    public function verifikasiTask()
+    {
+        if ($this->M_proyek->verifikasi_task() == true) {
+            // log
+            $this->M_proyek->insert_log($this->session->userdata('proyek')['id'], 'Memverifikasi Task pada proyek  <b>'.$this->session->userdata('proyek')['judul'].'</b>');
+
+            $this->session->set_flashdata('notif_success', 'Berhasil verifikasi task');
+            redirect($this->agent->referrer());
+        } else {
+            $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba verifikasi task');
+            redirect($this->agent->referrer());
+        }
+    }
+
+    public function sematkan($id, $status)
+    {
+        if ($this->M_proyek->sematkan($id, $status) == true) {
+            // log
+            $this->M_proyek->insert_log($id, 'Menyematkan proyek');
+
+            $this->session->set_flashdata('notif_success', 'Berhasil menyematkan proyek');
+            redirect($this->agent->referrer());
+        } else {
+            $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba menyematkan proyek');
             redirect($this->agent->referrer());
         }
     }

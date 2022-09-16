@@ -16,7 +16,7 @@
 						<!-- Form -->
 						<div class="mb-4">
 							<label class="form-label" for="signupHeroFormWorkEmail">Email</label>
-							<input type="email" class="form-control form-control-lg" name="email"
+							<input type="email" class="form-control form-control-sm" name="email"
 								id="signupHeroFormWorkEmail" placeholder="email@site.com" aria-label="email@site.com"
 								required>
 							<span class="invalid-feedback">Masukkan email valid dengan benar</span>
@@ -28,7 +28,7 @@
 						<!-- Form -->
 						<div class="mb-4">
 							<label class="form-label" for="signupHeroFormSignupPassword">Password</label>
-							<input type="password" class="form-control form-control-lg" name="password"
+							<input type="password" class="form-control form-control-sm" name="password"
 								id="signupHeroFormSignupPassword" placeholder="8+ karakter diperlukan"
 								aria-label="8+ characters required" required>
 							<span class="invalid-feedback">Masukkan password valid dengan benar</span>

@@ -40,6 +40,10 @@ class M_website extends CI_Model
         $this->db->where('key', 'sosmed_ig');
         $this->db->update('tb_settings', ['value' => $sosmed_ig]);
 
+        $leader_daftar = $this->input->post('leader_daftar');
+        $this->db->where('key', 'leader_daftar');
+        $this->db->update('tb_settings', ['value' => $leader_daftar == 'on' ? 1 : 0]);
+
         return true;
     }
     // mailer

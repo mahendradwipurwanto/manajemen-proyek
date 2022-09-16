@@ -23,10 +23,40 @@ class Authentication extends CI_Controller
 
     public function register()
     {
+        $vals = [
+            // 'word' -> nantinya akan digunakan sebagai random teks yang akan keluar di captchanya
+            'word'          => substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 8),
+            'img_path'      => './berkas/captcha/',
+            'img_url'       => base_url('berkas/captcha/'),
+            'img_width'     => 150,
+            'img_height'    => 30,
+            'expiration'    => 7200,
+            'word_length'   => 8,
+            'font_size'     => 16,
+            'img_id'        => 'Imageid',
+            'pool'          => '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+            'colors'        => [
+                    'background'=> [255, 255, 255],
+                    'border'    => [255, 255, 255],
+                    'text'      => [0, 0, 0],
+                    'grid'      => [255, 40, 40]
+            ]
+        ];
+        
+        $captcha = create_captcha($vals);
+        // ej($captcha);
+        $this->session->set_userdata('captcha', $captcha['word']);
+        $data['captcha'] = $captcha['image'];
+        
         $data['role'] = 3;
         if($this->input->get('act') == "undangan-leader"){
             $data['email'] = $this->input->get('email');
             $data['role'] = 2;
+        }
+        
+        if($this->input->get('act') == "undangan-staff"){
+            $data['email'] = $this->input->get('email');
+            $data['role'] = 3;
         }
 
         $this->templateauth->view('authentication/register', $data);

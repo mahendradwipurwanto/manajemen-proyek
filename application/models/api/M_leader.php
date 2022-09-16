@@ -46,8 +46,9 @@ class M_leader extends CI_Model
         $totalProyek = $this->db->get_where('tb_proyek', ['created_by' => $this->session->userdata('user_id'), 'is_deleted' => 0])->num_rows();
         $totalStaff = $this->db->get_where('tb_assign_staff', ['created_by' => $this->session->userdata('user_id'), 'is_deleted' => 0])->num_rows();
         $totalTask = $this->db->get_where('tb_proyek_task', ['created_by' => $this->session->userdata('user_id'), 'is_deleted' => 0])->num_rows();
+        $totalSelesai = $this->db->get_where('tb_proyek', ['created_by' => $this->session->userdata('user_id'), 'is_deleted' => 0, 'is_selesai' => 0])->num_rows();
 
-        return ['totalProyek' => $totalProyek, 'totalStaff' => $totalStaff, 'totalTask' => $totalTask];
+        return ['totalProyek' => $totalProyek, 'totalStaff' => $totalStaff, 'totalTask' => $totalTask, 'totalSelesai' => $totalSelesai];
     }
 
     function getLeader(){

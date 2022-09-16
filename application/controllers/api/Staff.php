@@ -17,14 +17,18 @@ class Staff extends CI_Controller
         if($this->M_master->cekUndangan($email) === 0){
             if($this->M_master->undang(3) == true){
 
-                // mengirimkan email selamat bergabung
+                // mengirimkan email telah diundang
                 $subject = "Undangan menjadi staff";
-                $message = `Hi, kamu telah diundang untuk menjadi staff.<br> Harap click tombol dibawah ini untuk membuat akun staff! <br><hr><br><center><a href="' . base_url() . 'register?act=undangan-staff&email={$email}" style="background-color: #377dff;border:none;color:#fff;padding:15px 32px;text-align:center;text-decoration:none;display:inline-block;font-size:16px;">Bergabung Sekarang</a></center><br><br>atau click link dibawah ini: <br>' . base_url() . 'register?act=undangan-staff&email={$email}`;
+                $message = 'Hi, kamu telah diundang untuk menjadi staff.<br> Harap click tombol dibawah ini untuk membuat akun staff! <br><hr><br><center><a href="' . base_url() . 'daftar?act=undangan-staff&email='.$email.'" style="background-color: #377dff;border:none;color:#fff;padding:15px 32px;text-align:center;text-decoration:none;display:inline-block;font-size:16px;">Bergabung Sekarang</a></center><br><br>atau click link dibawah ini: <br>' . base_url() . 'daftar?act=undangan-staff&email='.$email;
 
                 sendMail($email, $subject, $message);
 
                 $this->session->set_flashdata('notif_success', 'Berhasil mengundang staff');
-                redirect(site_url('admin/kelola-staff'));
+                if($this->session->userdata('role') == 0 || $this->session->userdata('role') == 1){
+                    redirect(site_url('admin/kelola-staff'));
+                }else{
+                    redirect(site_url('leader/kelola-staff'));
+                }
             }else{
                 $this->session->set_flashdata('warning', 'Terjadi kesalahan saat mengundang');
                 redirect($this->agent->referrer());
@@ -37,14 +41,18 @@ class Staff extends CI_Controller
 
     function kirimUndangan($email = null){
         $this->M_master->logUndangan($email);
-        // mengirimkan email selamat bergabung
+        // mengirimkan email telah diundang
         $subject = "Undangan menjadi staff";
         $message = 'Hi, kamu telah diundang untuk menjadi staff.<br> Harap click tombol dibawah ini untuk membuat akun staff! <br><hr><br><center><a href="' . base_url() . 'daftar?act=undangan-staff&email='.$email.'" style="background-color: #377dff;border:none;color:#fff;padding:15px 32px;text-align:center;text-decoration:none;display:inline-block;font-size:16px;">Bergabung Sekarang</a></center><br><br>atau click link dibawah ini: <br>' . base_url() . 'daftar?act=undangan-staff&email='.$email;
 
         sendMail($email, $subject, $message);
 
         $this->session->set_flashdata('notif_success', 'Berhasil mengirim ulang undangan staff');
-        redirect(site_url('admin/kelola-staff'));
+        if($this->session->userdata('role') == 0 || $this->session->userdata('role') == 1){
+            redirect(site_url('admin/kelola-staff'));
+        }else{
+            redirect(site_url('leader/kelola-staff'));
+        }
     }
 
     function tambahStaff(){
@@ -68,7 +76,11 @@ class Staff extends CI_Controller
                         sendMail($email, $subject, $message);
 
                         $this->session->set_flashdata('notif_success', 'Berhasil menambahkan staff');
-                        redirect(site_url('admin/kelola-staff'));
+                        if($this->session->userdata('role') == 0 || $this->session->userdata('role') == 1){
+                            redirect(site_url('admin/kelola-staff'));
+                        }else{
+                            redirect(site_url('leader/kelola-staff'));
+                        }
                     } else {
                         $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba menambahkan staff');
                         redirect($this->agent->referrer());

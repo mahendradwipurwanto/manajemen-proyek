@@ -18,8 +18,8 @@
 		<?= ($this->uri->segment(1) ? ucwords(str_replace('-', ' ', $this->uri->segment(1)) . ' ' . ($this->uri->segment(2) ? str_replace('-', ' ', $this->uri->segment(2)) : "") . " - ".$web_title) : $web_title); ?>
 	</title>
 
-    <!-- Favicon -->
-    <link rel="shortcut icon" href="<?= base_url(); ?><?= $web_icon;?>">
+	<!-- Favicon -->
+	<link rel="shortcut icon" href="<?= base_url(); ?><?= $web_icon;?>">
 
 	<!-- Font -->
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -36,13 +36,13 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js@5.0.0/minified/introjs.min.css">
 	<link rel="stylesheet" href="<?= base_url(); ?>assets/plugin/intro-js-modern.css">
 	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-	
+
 	<!-- CSS Front Template -->
 	<link rel="stylesheet" href="<?= base_url(); ?>assets/css/theme.min.css">
 	<link rel="stylesheet" href="<?= base_url(); ?>assets/css/docs.min.css">
 	<link rel="stylesheet" href="<?= base_url(); ?>assets/css/custom.min.css?<?= time();?>">
 	<link rel="stylesheet" href="<?= base_url(); ?>assets/css/proyek.css?<?= time();?>">
-	
+
 
 	<!-- JS Global Compulsory  -->
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
@@ -63,8 +63,10 @@
 
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <script type="text/javascript" src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script>
+	<script type="text/javascript" src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script>
 	<script type="text/javascript" src="<?= base_url();?>assets/js/apexchart.js"></script>
 </head>
-
+<div class="loader">
+	<div class="ring"></div>
+</div>
 <body class="navbar-sidebar-aside-lg">

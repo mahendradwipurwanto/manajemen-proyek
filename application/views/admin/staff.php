@@ -7,6 +7,8 @@
 					data-bs-target="#tambah">Tambah staff</button>
 				<button type="button" class="btn btn-xs btn-outline-secondary float-end me-2" data-bs-toggle="modal"
 					data-bs-target="#undang"><i class="bi bi-link-45deg"></i> Undang staff</button>
+				<a href="<?= site_url('admin/pengaturan?p=jabatan');?>"
+					class="btn btn-xs btn-soft-info float-end me-2">Jabatan</a>
 			</h1>
 			<p class="docs-page-header-text">Kelola semua akun staff yang telah terdaftar pada website</p>
 		</div>
@@ -96,7 +98,7 @@
 					</td>
 					<td>
 						<span
-							class="badge bg-soft-<?= $val->status_staff == 1 ? 'warning' : 'primary';?>"><?= $val->status_staff == 1 ? 'idle' : 'mengerjakan task';?></span>
+							class="badge bg-soft-<?= $val->status_staff == 1 ? 'secondary' : 'primary';?>"><?= $val->status_staff == 1 ? 'idle' : 'mengerjakan task';?></span>
 					</td>
 					<td>
 						<span data-bs-toggle="modal" data-bs-target="#listAllProyek-<?= $val->user_id;?>"><span
@@ -150,9 +152,9 @@
 											<!-- End Col -->
 											<div class="col-sm-4 mb-2 mb-sm-0">
 												<?php if($value->status == 1):?>
-												<span class="badge bg-soft-primary">proses pengerjaan</span>
+												<span class="badge bg-soft-primary">aktif dalam proyek</span>
 												<?php else:?>
-												<span class="badge bg-soft-secondary">arsip</span>
+												<span class="badge bg-soft-secondary">nonaktif / dikeluarkan</span>
 												<?php endif;?>
 											</div>
 											<!-- End Col -->
@@ -199,9 +201,9 @@
 											<!-- End Col -->
 											<div class="col-sm-4 mb-2 mb-sm-0">
 												<?php if($value->status == 1):?>
-												<span class="badge bg-soft-primary">proses pengerjaan</span>
+												<span class="badge bg-soft-primary">aktif dalam proyek</span>
 												<?php else:?>
-												<span class="badge bg-soft-secondary">arsip</span>
+												<span class="badge bg-soft-secondary">nonaktif / dikeluarkan</span>
 												<?php endif;?>
 											</div>
 											<!-- End Col -->
@@ -331,7 +333,7 @@
 								<!-- End List Striped -->
 								<?php else:?>
 								<div class="alert alert-secondary mb-0">
-									Belum ada proyek
+									Belum ada task
 								</div>
 								<?php endif;?>
 							</div>

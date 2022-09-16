@@ -22,8 +22,8 @@
 			<!-- Form -->
 			<form action="<?= site_url('api/auth/register');?>" method="post" class="js-validate needs-validation"
 				novalidate>
-				<input type="hidden" name="role" value="<?= $role;?>">
-				<input type="hidden" name="undangan" value="<?php if (isset($email)):?>true<?php else:?>false<?php endif;?>">
+				<input type="hidden" name="undangan"
+					value="<?php if (isset($email)):?>true<?php else:?>false<?php endif;?>">
 				<!-- Card -->
 				<div class="card">
 					<div class="card-header bg-primary text-center py-4">
@@ -40,7 +40,7 @@
 						<!-- Form -->
 						<div class="mb-4">
 							<label class="form-label" for="daftarNamaLengkap">Nama lengkap</label>
-							<input type="text" class="form-control form-control-lg" name="nama" id="daftarNamaLengkap"
+							<input type="text" class="form-control form-control-sm" name="nama" id="daftarNamaLengkap"
 								placeholder="Jhon Doe" aria-label="Jhon Doe" required>
 							<span class="invalid-feedback">Masukkan nama anda valid dengan benar</span>
 						</div>
@@ -49,7 +49,7 @@
 						<!-- Form -->
 						<div class="mb-4">
 							<label class="form-label" for="daftarNomorTelepon">Nomor Telepon</label>
-							<input type="text" class="form-control form-control-lg" name="no_telp"
+							<input type="text" class="form-control form-control-sm" name="no_telp"
 								id="daftarNomorTelepon" placeholder="085847xxxxxx" aria-label="085847xxxxxx" required>
 							<span class="invalid-feedback">Masukkan nomor telepon valid dengan benar</span>
 						</div>
@@ -58,7 +58,7 @@
 						<!-- Form -->
 						<div class="mb-4">
 							<label class="form-label" for="signupHeroFormWorkEmail">Email</label>
-							<input type="email" class="form-control form-control-lg" name="email"
+							<input type="email" class="form-control form-control-sm" name="email"
 								id="signupHeroFormWorkEmail" <?php if(isset($email)):?>value="<?= $email;?>"
 								<?php else:?>placeholder="email@site.com" aria-label="email@site.com" <?php endif;?>
 								required <?php if(isset($email)):?>readonly<?php endif;?>>
@@ -66,10 +66,39 @@
 						</div>
 						<!-- End Form -->
 
+						<?php if($leader_daftar == 1):?>
+						<div class="row mb-4">
+							<label class="form-label">Daftarkan akun sebagai</label>
+							<div class="col-sm mb-2 mb-sm-0">
+								<!-- Form Radio -->
+								<label class="form-control" for="daftar-staff">
+									<span class="form-check">
+										<input type="radio" class="form-check-input" name="role" value="3"
+											id="daftar-staff" <?= $role == 3 ? 'checked' : '';?>>
+										<span class="form-check-label">Sebagai staff</span>
+									</span>
+								</label>
+								<!-- End Form Radio -->
+							</div>
+							<div class="col-sm mb-2 mb-sm-0">
+								<!-- Form Radio -->
+								<label class="form-control" for="daftar-leader">
+									<span class="form-check">
+										<input type="radio" class="form-check-input" name="role" value="2"
+											id="daftar-leader" <?= $role == 2 ? 'checked' : '';?>>
+										<span class="form-check-label">Sebagai leader</span>
+									</span>
+								</label>
+								<!-- End Form Radio -->
+							</div>
+						</div>
+						<!-- End Row -->
+						<?php endif;?>
+
 						<!-- Form -->
 						<div class="mb-4">
 							<label class="form-label" for="signupHeroFormSignupPassword">Password</label>
-							<input type="password" class="form-control form-control-lg" name="password"
+							<input type="password" class="form-control form-control-sm" name="password"
 								id="signupHeroFormSignupPassword" placeholder="8+ karakter diperlukan"
 								aria-label="8+ characters required" required>
 							<span class="invalid-feedback">Masukkan password valid dengan benar</span>
@@ -79,13 +108,30 @@
 						<!-- From -->
 						<div class="mb-4" data-hs-validation-validate-class>
 							<label class="form-label" for="daftarKonfirmasiPassword">Konfirmasi password</label>
-							<input type="password" class="form-control form-control-lg" name="confirmPassword"
+							<input type="password" class="form-control form-control-sm" name="confirmPassword"
 								id="daftarKonfirmasiPassword" placeholder="8+ characters required"
 								aria-label="8+ characters required" required
 								data-hs-validation-equal-field="#signupHeroFormSignupPassword">
 							<span class="invalid-feedback">Password tidak sama</span>
 						</div>
 						<!-- End From -->
+
+						<!-- Form -->
+						<div class="mb-4">
+							<label class="form-label" for="daftarCaptcha">Captcha</label><br>
+							<div class="row d-flex align-items-center">
+								<div class="col-4">
+									<?=$captcha?>
+								</div>
+								<div class="col-8">
+									<input type="text" class="form-control form-control-sm" name="captcha"
+										id="daftarCaptcha" placeholder="Masukkan captcha" aria-label="Masukkan captcha"
+										required>
+								</div>
+							</div>
+							<span class="invalid-feedback">Masukkan captcha dengan benar</span>
+						</div>
+						<!-- End Form -->
 
 						<div class="row align-items-center">
 							<div class="col-sm-7 mb-3 mb-sm-0">
@@ -95,8 +141,9 @@
 							<!-- End Col -->
 
 							<div class="col-sm-5 text-sm-end">
-								<button type="submit" class="btn btn-primary btn-sm btn-lg"><?php if(isset($email)):?>Bergabung Sekarang
-								<?php else:?>Daftar Sekarang<?php endif;?></button>
+								<button type="submit"
+									class="btn btn-primary btn-sm btn-sm"><?php if(isset($email)):?>Bergabung Sekarang
+									<?php else:?>Daftar Sekarang<?php endif;?></button>
 							</div>
 							<!-- End Col -->
 						</div>

@@ -49,11 +49,13 @@ class Leader extends CI_Controller
 
     public function kpi()
     {
+
+        $data['kpi'] = $this->M_proyek->getDataKPI();
         
         if ($this->agent->is_mobile()) {
-            $this->templatemobile->view('leader/kpi');
+            $this->templatemobile->view('leader/kpi', $data);
         }else{
-            $this->templateback->view('leader/kpi');
+            $this->templateback->view('leader/kpi', $data);
         }
     }
 
@@ -90,12 +92,33 @@ class Leader extends CI_Controller
 
     public function pengaturan()
     {
-        $data['user'] = $this->M_auth->get_userByID($this->session->userdata('user_id'));
         
-        if ($this->agent->is_mobile()) {
-            $this->templatemobile->view('leader/pengaturan', $data);
-        }else{
-            $this->templateback->view('leader/pengaturan', $data);
+        $page = $this->input->get('p');
+
+        switch ($page) {
+
+            case 'jabatan':
+                $data['jabatan'] = $this->M_master->getJabatan();
+
+                if ($this->agent->is_mobile()) {
+                    $this->templatemobile->view('admin/pengaturan/jabatan', $data);
+                }else{
+                    $this->templateback->view('admin/pengaturan/jabatan', $data);
+                }
+                break;
+            
+            default:
+
+                $data['user'] = $this->M_auth->get_userByID($this->session->userdata('user_id'));
+                
+                if ($this->agent->is_mobile()) {
+                    $this->templatemobile->view('leader/pengaturan', $data);
+                }else{
+                    $this->templateback->view('leader/pengaturan', $data);
+                }
+                break;
         }
     }
+
+    
 }

@@ -53,28 +53,40 @@ class M_staff extends CI_Model
 
         return ['totalStaff' => $totalStaff, 'aktifStaff' => $aktifStaff, 'idleStaff' => $idleStaff, 'suspendStaff' => $suspendStaff];
     }
+    function countDashboardStaff(){
+        $this->db->select('*')
+        ->from('tb_assign_staff a')
+        ->join('tb_proyek b', 'a.proyek_id = b.id')
+        ->where(['a.user_id' => $this->session->userdata('user_id'), 'a.status' => 1, 'b.is_deleted' => 0])
+        ;
 
-    function cekStaffIdle($staff_id){
-        $this->db->select('a.user_id');
-        $this->db->from('tb_proyek_task a');
-        $this->db->join('tb_proyek_status b', 'a.status_id = b.id');
-        $this->db->where(['b.is_mulai' => 1, 'a.is_deleted' => 0, 'user_id' => $staff_id]);
-        $tasks = $this->db->get()->num_rows();
+        $totalProyek = $this->db->get()->num_rows();
 
-        if($tasks > 0){
-            return [
-                'status' => false,
-                'tasks' => $this->db->get_where('tb_proyek_task', ['user_id' => $staff_id, 'is_deleted' => 0])->result(),
-                'total_tasks' => $this->db->get_where('tb_proyek_task', ['user_id' => $staff_id, 'is_deleted' => 0])->num_rows()
-            ];
-        }else{
-            return [
-                'status' => true,
-                'tasks' => $this->db->get_where('tb_proyek_task', ['user_id' => $staff_id, 'is_deleted' => 0])->result(),
-                'total_tasks' => $this->db->get_where('tb_proyek_task', ['user_id' => $staff_id, 'is_deleted' => 0])->num_rows()
-            ];
-        }
-        
+        $this->db->select('*')
+        ->from('tb_proyek_task a')
+        ->join('tb_proyek b', 'a.proyek_id = b.id')
+        ->where(['a.user_id' => $this->session->userdata('user_id'), 'a.is_deleted' => 0, 'b.is_deleted' => 0])
+        ;
+
+        $totalTask = $this->db->get()->num_rows();
+
+        $this->db->select('*')
+        ->from('tb_proyek_task a')
+        ->join('tb_proyek b', 'a.proyek_id = b.id')
+        ->where(['a.user_id' => $this->session->userdata('user_id'), 'a.is_selesai' => 0, 'a.is_closed' => 0, 'a.is_deleted' => 0, 'b.is_deleted' => 0])
+        ;
+
+        $taskProses = $this->db->get()->num_rows();
+
+        $this->db->select('*')
+        ->from('tb_proyek_task a')
+        ->join('tb_proyek b', 'a.proyek_id = b.id')
+        ->where(['a.user_id' => $this->session->userdata('user_id'), 'a.is_selesai' => 1, 'a.is_closed' => 1, 'a.is_deleted' => 0, 'b.is_deleted' => 0])
+        ;
+
+        $taskSelesai = $this->db->get()->num_rows();
+
+        return ['totalProyek' => $totalProyek, 'totalTask' => $totalTask, 'taskProses' => $taskProses, 'taskSelesai' => $taskSelesai];
     }
 
     function getStaff(){
@@ -96,9 +108,9 @@ class M_staff extends CI_Model
                 $arr[$key]->proyek_all = $proyekAll;
                 $arr[$key]->proyek_aktif = $proyekAktif;
                 $arr[$key]->proyek_arsip = $proyekArsip;
-                $arr[$key]->status_staff = $this->cekStaffIdle($val->user_id)['status'] == true ? 1 : 0;
-                $arr[$key]->total_task = $this->cekStaffIdle($val->user_id)['total_tasks'];
-                $arr[$key]->tasks = $this->cekStaffIdle($val->user_id)['tasks'];
+                $arr[$key]->status_staff = $this->cekStaffIdle($val->user_id, 0)['status'] == true ? 1 : 0;
+                $arr[$key]->total_task = $this->cekStaffIdle($val->user_id, 1)['total_tasks'];
+                $arr[$key]->tasks = $this->cekStaffIdle($val->user_id, 1)['tasks'];
             endforeach;
             
             return $arr;
@@ -115,9 +127,39 @@ class M_staff extends CI_Model
         if($status > 0){
         $this->db->where('a.status', $status);
         }
-        $this->db->group_by('a.proyek_id');
         return $this->db->get()->result();
     }
+
+
+
+    function cekStaffIdle($staff_id, $type = 0)
+    {
+        $this->db->select('a.*, b.*');
+        $this->db->from('tb_proyek_task a');
+        $this->db->join('tb_proyek_status b', 'a.status_id = b.id');
+        $this->db->join('tb_proyek c', 'a.proyek_id = c.id');
+        if($type == 1){
+            $this->db->where(['c.is_deleted' => 0, 'a.is_deleted' => 0, 'b.is_deleted' => 0, 'a.user_id' => $staff_id]);
+        }else{
+            $this->db->where(['b.is_mulai' => 0, 'b.is_selesai' => 0, 'c.is_deleted' => 0, 'a.is_deleted' => 0, 'b.is_deleted' => 0, 'a.user_id' => $staff_id]);
+        }
+        $tasks = $this->db->get();
+
+        if ($tasks->num_rows() > 0) {
+            return [
+                'status' => false,
+                'tasks' => $tasks->result(),
+                'total_tasks' => $tasks->num_rows()
+            ];
+        } else {
+            return [
+                'status' => true,
+                'tasks' => $tasks->result(),
+                'total_tasks' => $tasks->num_rows()
+            ];
+        }
+    }
+
 
     function getProyekStaffAll($status){
 
@@ -134,6 +176,7 @@ class M_staff extends CI_Model
         $arr = [];
         foreach($proyek as $key => $val):
             $arr[$key] = $val;
+            $arr[$key]->progress = $this->getProgressProyek($val->id);
             $arr[$key]->staff = $this->getStaffProyek($val->id, 1);
             $arr[$key]->staff_free = $this->getStaffProyek($val->id, 0);
         endforeach;
@@ -141,7 +184,28 @@ class M_staff extends CI_Model
         return $arr;
     }
 
+    function getProgressProyek($id){
+        $this->db->select('*')
+        ->from('tb_proyek_task')
+        ->where(['is_deleted' => 0, 'proyek_id' => $id])
+        ;
 
+        $taskTotal = $this->db->get()->num_rows();
+        
+        $this->db->select('*')
+        ->from('tb_proyek_task')
+        ->where(['is_closed' => 1, 'is_deleted' => 0, 'proyek_id' => $id])
+        ;
+
+        $taskSelesai = $this->db->get()->num_rows();
+        // ej($taskTotal);
+
+        if($taskTotal > 0 && $taskSelesai > 0){
+            return (($taskSelesai/$taskTotal)*100);
+        }else{
+            return 0;
+        }
+    }
 
     function getStaffProyek($id, $status)
     {

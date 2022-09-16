@@ -42,7 +42,7 @@ class Proyek extends CI_Controller
         $data['proyek'] = $this->M_proyek->getDetail($kode);
         $data['bobot'] = $this->M_proyek->sisaBobotProyek($proyekDetail->id);
         $data['log_proyek'] = $this->M_proyek->getLogProyek($proyekDetail->id);
-        $data['status'] = $this->M_proyek->getProyekStatus($kode);
+        $data['status'] = $this->M_proyek->getProyekStatus($kode, 1);
         $data['task'] = $this->M_proyek->getProyekTask($proyekDetail->id);
         $data['staff'] = $this->M_proyek->getStaffProyek($proyekDetail->id, 1);
         // ej($data['task']);
