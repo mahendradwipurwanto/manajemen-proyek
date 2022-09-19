@@ -89,7 +89,15 @@
 
 							<div class="flex-grow-1 ms-3">
 								<a class="d-inline-block link-dark" href="#">
-									<h6 class="text-hover-primary mb-0"><?= $val->nama;?></h6>
+									<h6 class="text-hover-primary mb-0"><?= $val->nama;?>
+										<?php if(!empty($val->leader)):?>
+										<span data-bs-toggle="modal"
+											data-bs-target="#listAllProyekLeader-<?= $val->user_id;?>"><span
+												data-bs-toggle="tooltip" data-bs-html="true"
+												title="Lihat daftar proyek staff sebagai leader"
+												class="badge bg-soft-danger small ms-2">leader</span></span>
+										<?php endif;?>
+									</h6>
 								</a>
 								<small
 									class="d-block"><?= isset($val->jabatan) || $val->jabatan != null ? $val->jabatan : '-';?></small>
@@ -125,6 +133,45 @@
 							data-bs-target="#detail-<?= $val->user_id;?>">detail</button>
 					</td>
 				</tr>
+
+				<!-- Modal -->
+				<div id="listAllProyekLeader-<?= $val->user_id;?>" class="modal fade" tabindex="-1" role="dialog"
+					aria-labelledby="modalTambah" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="modalTambah">Daftar proyek staff sebagai leader</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<?php if(!empty($val->leader)):?>
+								<!-- List Striped -->
+								<ul class="list-group list-group-lg w-100 mx-0"
+									style="max-height: 300px; overflow: auto;">
+									<?php foreach($val->leader as $keys => $value):?>
+									<li class="list-group-item py-2">
+										<div class="row justify-content-between">
+											<div class="col-sm-6 mb-2 mb-sm-0">
+												<span class="h6"><?= $value->judul;?></span>
+											</div>
+											<!-- End Col -->
+										</div>
+										<!-- End Row -->
+									</li>
+									<?php endforeach;?>
+								</ul>
+								<!-- End List Striped -->
+								<?php else:?>
+								<div class="alert alert-secondary mb-0">
+									Belum ada proyek sebagai leader
+								</div>
+								<?php endif;?>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- End Modal -->
 
 				<!-- Modal -->
 				<div id="listAllProyek-<?= $val->user_id;?>" class="modal fade" tabindex="-1" role="dialog"

@@ -37,20 +37,6 @@
   						</li>
   						<!-- End Beranda -->
 
-  						<!-- Company -->
-  						<li class="hs-has-sub-menu nav-item">
-  							<a id="companyMegaMenu" class="hs-mega-menu-invoker nav-link dropdown-toggle " href="#"
-  								role="button" aria-expanded="false">Informasi</a>
-
-  							<!-- Mega Menu -->
-  							<div class="hs-sub-menu dropdown-menu" aria-labelledby="companyMegaMenu"
-  								style="min-width: 14rem;">
-  								<a class="dropdown-item " href="<?= site_url('tentang-kami');?>">Tentang Kami</a>
-  							</div>
-  							<!-- End Mega Menu -->
-  						</li>
-  						<!-- End Company -->
-
   						<?php if($this->session->userdata('logged_in') == true || $this->session->userdata('logged_in')):?>
 
   						<!-- Button -->

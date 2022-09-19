@@ -256,4 +256,44 @@ class M_auth extends CI_Model
             return false;
         }
     }
+
+    public function cekIfLeader($user_id = 0){
+        $this->db->select('*')
+        ->from('tb_assign_leader')
+        ->where('user_id', $user_id);
+
+        $models = $this->db->get()->result();
+
+        if(!empty($models)){
+            return [
+                'status' => true,
+                'data' => $models
+            ];
+        }else{
+            return [
+                'status' => false,
+                'data' => null
+            ];
+        }
+    }
+
+    public function cekIfLeaderProyek($user_id = 0, $proyek_id = 0){
+        $this->db->select('*')
+        ->from('tb_assign_leader')
+        ->where(['user_id' => $user_id, 'proyek_id' => $proyek_id]);
+
+        $models = $this->db->get()->result();
+
+        if(count($models) > 0){
+            return [
+                'status' => true,
+                'data' => $models
+            ];
+        }else{
+            return [
+                'status' => false,
+                'data' => null
+            ];
+        }
+    }
 }

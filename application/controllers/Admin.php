@@ -91,13 +91,18 @@ class Admin extends CI_Controller
 
     public function kelola_proyek()
     {
+        $periode = [];
+        if($this->input->post('periode')){
+            $periode = explode(' - ', $this->input->post('periode'));
+            // ej($periode);
+        }
         $data['countStaff'] = $this->M_staff->countStaff();
         $data['jabatan'] = $this->M_master->getJabatan();
         $data['staff'] = $this->M_staff->getStaff();
         $data['undanganStaff'] = $this->M_master->getUndangan(3);
-        $data['proyekAktif'] = $this->M_proyek->getAllStatus(1);
-        $data['proyekArsip'] = $this->M_proyek->getAllStatus(2);
-
+        $data['proyekAktif'] = $this->M_proyek->getAllStatus(1, $periode);
+        $data['proyekArsip'] = $this->M_proyek->getAllStatus(2, $periode);
+        // ej($data['proyekAktif'][0]->leader);
         if ($this->agent->is_mobile()) {
             $this->templatemobile->view('proyek/proyek', $data);
         }else{

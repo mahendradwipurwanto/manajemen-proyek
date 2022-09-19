@@ -6,7 +6,7 @@
   			<div class="row flex-grow-1">
   				<!-- Default Logo -->
   				<div class="docs-navbar-sidebar-container d-flex align-items-center mb-2 mb-lg-0">
-  					<a class="navbar-brand" href="<?= site_url('dashboard'); ?>" aria-label="Space">
+  					<a class="navbar-brand" href="<?= base_url();?>" aria-label="Space">
   						<img class="navbar-brand-logo" src="<?= base_url(); ?>assets/images/logo.png" alt="Logo">
   					</a>
   					<a>

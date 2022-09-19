@@ -15,4 +15,9 @@ class Home extends CI_Controller
     {
         $this->templatefront->view('home/home');
     }
+
+    public function e_404()
+    {
+        $this->templateauth->view('home/404');
+    }
 }

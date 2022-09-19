@@ -45,7 +45,7 @@
 	<div class="col-md-3 col-sm-12">
 		<div class="card h-100" style="text-align: center;">
 			<div class="card-body">
-				<h1 class="h1"><?= (($countDashboard['totalSelesai']/$countDashboard['totalProyek'])*100)?>%</h1>
+				<h1 class="h1"><?= ($countDashboard['totalSelesai'] > 0 && $countDashboard['totalProyek'] > 0 ? ($countDashboard['totalSelesai']/$countDashboard['totalProyek'])*100: 0)?>%</h1>
 				<div class="h6">Presentase Proyek <br><small class="text-secondary fw-normal">proyek anda yang selesai sesuai deadline</small></div>
 				<div style="position: absolute;right: 10px;bottom: 0px;">
 					<i class="bi bi-person-check text-success" style="font-size: 2.5em;"></i>

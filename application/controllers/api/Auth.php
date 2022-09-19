@@ -93,6 +93,15 @@ class Auth extends CI_Controller
                         
                         // STAFF
                         } elseif ($user->role == 3) {
+                            // cek if leader of a proyek
+                            if($this->M_auth->cekIfLeader($user->user_id)['status'] == true){
+                                $session_data = array(
+                                    'is_leader' => true,
+                                );
+
+                                $this->session->set_userdata($session_data);
+                            }
+
                             if ($this->session->userdata('redirect')) {
                                 $this->session->set_flashdata('notif_success', 'Hi, berhasil masuk, harap lanjutkan aktivitas anda !');
                                 redirect($this->session->userdata('redirect'));

@@ -22,10 +22,24 @@ class Proyek extends CI_Controller
         }
 
         $this->load->model(['api/M_auth', 'api/M_leader', 'api/M_staff', 'api/M_master', 'api/M_proyek']);
+
+        if($this->session->userdata('role') == 3){
+            if ($this->M_auth->cekIfLeader($this->session->userdata('user_id'))['status'] == true) {
+                $session_data = array(
+                    'is_leader' => true,
+                );
+    
+                $this->session->set_userdata($session_data);
+            }
+        }
     }
 
     public function kelola($kode = null)
     {
+
+        $data['user'] = $this->M_auth->get_userByID($this->session->userdata('user_id'));
+        $data['countDashboard'] = $this->M_staff->countDashboardStaff();
+        
         $proyekDetail = $this->M_proyek->getDetail($kode);
         $proyek = [
             'id' => $proyekDetail->id,
@@ -39,13 +53,30 @@ class Proyek extends CI_Controller
         
         $this->session->set_userdata(['proyek' => $proyek]);
 
+        if($this->session->userdata('role') == 3){
+            if ($this->M_auth->cekIfLeaderProyek($this->session->userdata('user_id'), $proyekDetail->id)['status'] == true) {
+                $session_data = array(
+                    'is_leader' => true,
+                );
+    
+                $this->session->set_userdata($session_data);
+            }else{
+                $session_data = array(
+                    'is_leader' => false,
+                );
+    
+                $this->session->set_userdata($session_data);
+            }
+        }
+
         $data['proyek'] = $this->M_proyek->getDetail($kode);
         $data['bobot'] = $this->M_proyek->sisaBobotProyek($proyekDetail->id);
         $data['log_proyek'] = $this->M_proyek->getLogProyek($proyekDetail->id);
         $data['status'] = $this->M_proyek->getProyekStatus($kode, 1);
         $data['task'] = $this->M_proyek->getProyekTask($proyekDetail->id);
+        $data['leader'] = $this->M_proyek->getLEaderProyek($proyekDetail->id, 1);
         $data['staff'] = $this->M_proyek->getStaffProyek($proyekDetail->id, 1);
-        // ej($data['task']);
+        // ej($data['leader']);
         if ($this->agent->is_mobile()) {
             if($this->session->userdata('role') == 3){
                 $this->templateback->view('staff/task', $data);
@@ -58,6 +89,23 @@ class Proyek extends CI_Controller
             }else{
                 $this->templateback->view('proyek/detail', $data);
             }
+        }
+    }
+
+    public function kpi()
+    {
+        $periode = [];
+        if($this->input->post('periode')){
+            $periode = explode(' - ', $this->input->post('periode'));
+            // ej($periode);
+        }
+
+        $data['kpi'] = $this->M_proyek->getDataKPI($periode);
+        
+        if ($this->agent->is_mobile()) {
+            $this->templatemobile->view('proyek/kpi', $data);
+        }else{
+            $this->templateback->view('proyek/kpi', $data);
         }
     }
 

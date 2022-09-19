@@ -1,18 +1,21 @@
 <!-- Page Header -->
-<div class="docs-page-header <?php if ($this->agent->is_mobile()):?>mb-0<?php endif;?>">
+<div class="docs-page-header pb-1 <?php if ($this->agent->is_mobile()):?>mb-0<?php endif;?>">
 	<div class="row align-items-center">
 		<div class="col-sm">
 			<h1 class="docs-page-header-title">Leader<?php if (!$this->agent->is_mobile()):?>
-				<button type="button" class="btn btn-xs btn-soft-primary float-end" data-bs-toggle="modal"
+				<!-- <button type="button" class="btn btn-xs btn-soft-primary float-end" data-bs-toggle="modal"
 					data-bs-target="#tambah">Tambah leader</button>
 				<button type="button" class="btn btn-xs btn-outline-secondary float-end me-2" data-bs-toggle="modal"
-					data-bs-target="#undang"><i class="bi bi-link-45deg"></i> Undang leader</button><?php endif;?>
+					data-bs-target="#undang"><i class="bi bi-link-45deg"></i> Undang leader</button><?php endif;?> -->
 			</h1>
-			<p class="docs-page-header-text">Kelola semua akun leader yang telah terdaftar pada website</p>
+			<!-- <p class="docs-page-header-text">Kelola semua akun leader yang telah terdaftar pada website</p> -->
+			<div class="alert bg-soft-primary py-1">
+				<small>Daftar leader diambil dari staff yang ditugaskan sebagai leader saat anda membuat proyek.</small>
+			</div>
 		</div>
 	</div>
 </div>
-<?php if ($this->agent->is_mobile()):?>
+<!-- <?php if ($this->agent->is_mobile()):?>
 <div class="row mb-4">
 	<div class="col-6">
 		<button type="button" class="btn btn-xs btn-soft-outline-secondary w-100" data-bs-toggle="modal"
@@ -24,7 +27,7 @@
 			leader</button>
 	</div>
 </div>
-<?php endif;?>
+<?php endif;?> -->
 <!-- End Page Header -->
 <div class="row mb-4">
 	<div class="col-md-3 col-sm-12">

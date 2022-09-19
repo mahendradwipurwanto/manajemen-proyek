@@ -27,7 +27,7 @@ class M_master extends CI_Model
         $jabatan = [
             'email' => $email,
             'role' => $role,
-            'created_at' => time(),
+            'created_at' => strtotime(date("Y-m-d")),
             'created_by' => $this->session->userdata('user_id')
         ];
 
@@ -38,7 +38,7 @@ class M_master extends CI_Model
     function logUndangan($email = null){
 
         $this->db->where('email', $email);
-        $this->db->update('tb_undangan', ['modified_at' => time(), 'modified_by' => $this->session->userdata('user_id')]);
+        $this->db->update('tb_undangan', ['modified_at' => strtotime(date("Y-m-d")), 'modified_by' => $this->session->userdata('user_id')]);
         return ($this->db->affected_rows() != 1) ? false : true;
     }
 
@@ -56,7 +56,7 @@ class M_master extends CI_Model
         $jabatan = [
             'jabatan' => $jabatan,
             'keterangan' => $keterangan,
-            'created_at' => time()
+            'created_at' => strtotime(date("Y-m-d"))
         ];
         if(isset($id) && $id != ''){
             $this->db->where('id', $id);

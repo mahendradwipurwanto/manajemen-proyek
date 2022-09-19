@@ -65,8 +65,8 @@ div.dataTables_wrapper {
 /* width */
 
 ::-webkit-scrollbar {
-	width: 10px;
-	height: 10px;
+	width: 7px;
+	height: 7px;
 	cursor: pointer;
 }
 
@@ -322,7 +322,7 @@ div.dataTables_wrapper {
 	top: 70px;
 	right: 0;
 	z-index: 98;
-	width: 25rem;
+	width: 30rem;
 	padding-bottom: 55px;
 	height: 98%;
 	background-color: #fff;
@@ -341,7 +341,7 @@ div.dataTables_wrapper {
 }
 
 .sidebar-scroller {
-	height: 100%;
+	height: 93%;
 	overflow: hidden;
 	overflow-y: auto;
 }
@@ -356,7 +356,7 @@ div.dataTables_wrapper {
 	width: 100%;
 	position: absolute;
 	right: 0;
-	bottom: 55px;
+	bottom: 0;
 	left: 0;
 }
 
@@ -371,6 +371,40 @@ div.dataTables_wrapper {
 }
 
 /* loading */
+.loader-task {
+	position: fixed;
+	height: 80vh;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #fff;
+	transition: all 0.5s;
+	z-index: 9999;
+}
+
+.loader-task .ring {
+	height: 45px;
+	width: 45px;
+	border: 5px solid #ddd;
+	border-radius: 50%;
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.loader-task .ring:after {
+	position: absolute;
+	content: "";
+	height: 100%;
+	width: 100%;
+	border-radius: 50%;
+	border: 5px solid #4067f9;
+	border-top-color: transparent;
+	animation: rotate 1.5s linear infinite;
+}
+
 .loader {
 	position: fixed;
 	height: 100vh;
@@ -409,4 +443,49 @@ div.dataTables_wrapper {
 	100% {
 		transform: rotate(360deg);
 	}
+}
+
+#multiple-input>.ts-control>.has-items {
+	padding-bottom: 0px !important;
+	padding-left: 3px !important;
+}
+
+.avatar-xs {
+	position: relative;
+	display: inline-block;
+	width: 2rem;
+	height: 2rem;
+	border-radius: 0.5rem;
+}
+
+/* offcanvas override */
+.offcanvas-body {
+	padding: 0px !important;
+}
+
+.offcanvas-backdrop {
+	z-index: 100 !important;
+}
+
+.offcanvas-end {
+	width: 450px !important;
+	z-index: 101 !important;
+}
+
+.comments-has-border {
+	padding-left: 1rem;
+	border-left: 0.1875rem solid rgba(33, 50, 91, .1);
+}
+
+.comments-has-border-right {
+	padding-right: 1rem;
+	border-right: 0.1875rem solid rgba(33, 50, 91, .1);
+}
+
+.dz-image > img {
+	width: 100% !important;
+}
+
+.hidden{
+	display: none;
 }

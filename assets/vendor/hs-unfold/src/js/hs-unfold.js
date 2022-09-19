@@ -123,7 +123,7 @@ export default class HSUnfold {
 				});
 			}
 			
-			index = $items.indexOf(e.target);
+			// index = $items.indexOf(e.target);
 			
 			//
 			// End: HAS ITEMS
@@ -148,32 +148,32 @@ export default class HSUnfold {
 			}
 			
 			// Open Dropdown
-			if (
-				$items.length <= 0 &&
-				(
-					e.which === ARROW_DOWN_KEYCODE ||
-					e.which === ARROW_UP_KEYCODE ||
-					e.which === SPACE_KEYCODE ||
-					e.which === ENTER_KEYCODE
-				)
-			) {
-				if (!$(`${itemSettings.target}:visible`).length) {
-					$(e.target).addClass(itemSettings.invokerActiveClass.slice(1));
+			// if (
+			// 	$items.length <= 0 &&
+			// 	(
+			// 		e.which === ARROW_DOWN_KEYCODE ||
+			// 		e.which === ARROW_UP_KEYCODE ||
+			// 		e.which === SPACE_KEYCODE ||
+			// 		e.which === ENTER_KEYCODE
+			// 	)
+			// ) {
+			// 	if (!$(`${itemSettings.target}:visible`).length) {
+			// 		$(e.target).addClass(itemSettings.invokerActiveClass.slice(1));
 					
-					if (itemSettings.type === 'css-animation') {
-						cssAnimationShow($(itemSettings.target), itemSettings);
-					} else if (itemSettings.type === 'jquery-slide') {
-						slideShow($(itemSettings.target), itemSettings, () => {
-						});
-					} else {
-						simpleShow($(itemSettings.target), itemSettings);
-					}
-				} else if ($(`${itemSettings.target}:visible`).length) {
-					$($(itemSettings.target).find('a')[0]).focus();
+			// 		if (itemSettings.type === 'css-animation') {
+			// 			cssAnimationShow($(itemSettings.target), itemSettings);
+			// 		} else if (itemSettings.type === 'jquery-slide') {
+			// 			slideShow($(itemSettings.target), itemSettings, () => {
+			// 			});
+			// 		} else {
+			// 			simpleShow($(itemSettings.target), itemSettings);
+			// 		}
+			// 	} else if ($(`${itemSettings.target}:visible`).length) {
+			// 		$($(itemSettings.target).find('a')[0]).focus();
 					
-					return;
-				}
-			}
+			// 		return;
+			// 	}
+			// }
 			
 			// Close Self
 			if (e.which === ESC_KEYCODE) {

@@ -1,6 +1,4 @@
-  <!-- Account Sidebar Navigation -->
-  <aside id="sidebarContent" class="hs-unfold-content sidebar">
-  	<!-- Toggle Button -->
+  <!-- <aside id="sidebarContent" class="hs-unfold-content sidebar">
   	<div class="d-flex justify-content-between align-items-center pt-4 px-4">
   		<div class="d-flex justify-content-start align-items-center">
   			<span class="badge bg-soft-primary"><i class="bi bi-chevron-double-up"></i></span>
@@ -23,8 +21,25 @@
   			</a>
   		</div>
   	</div>
-  	<!-- End Toggle Button -->
   	<div class="sidebar-container" id="detailTask">
+  		<div class="loader-task">
+  			<div class="ring"></div>
+  		</div>
   	</div>
-  </aside>
-  <!-- End Account Sidebar Navigation -->
+  </aside> -->
+
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbarSignup">
+  	<div class="offcanvas-header justify-content-between border-0 pb-0">
+  		<div class="d-flex justify-content-start align-items-center">
+  			<span class="badge bg-soft-primary"><i class="bi bi-chevron-double-up"></i></span>
+  			<small class="text-secondary ms-2"><?= $this->session->userdata('proyek')['kode'];?></small>
+  		</div>
+  		<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  	</div>
+
+  	<div class="offcanvas-body" id="detailTask">
+  		<div class="loader-task">
+  			<div class="ring"></div>
+  		</div>
+  	</div>
+  </div>

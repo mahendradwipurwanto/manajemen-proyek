@@ -150,6 +150,7 @@
   <script src="<?= base_url();?>assets/vendor/fslightbox/index.js"></script>
   <script src="<?= base_url();?>assets/vendor/appear/dist/appear.min.js"></script>
   <script src="<?= base_url();?>assets/vendor/circles.js/circles.js"></script>
+  <script src="<?= base_url();?>assets/vendor/typed.js/lib/typed.min.js"></script>
 
   <!-- JS Front -->
   <script src="<?= base_url();?>assets/js/theme.min.js"></script>
@@ -174,6 +175,11 @@
   		// INITIALIZATION OF SHOW ANIMATIONS
   		// =======================================================
   		new HSShowAnimation('.js-animation-link')
+
+
+      // INITIALIZATION OF TEXT ANIMATION (TYPING)
+      // =======================================================
+      HSCore.components.HSTyped.init('.js-typedjs')
 
 
   		// INITIALIZATION OF BOOTSTRAP DROPDOWN

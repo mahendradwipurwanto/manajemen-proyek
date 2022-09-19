@@ -11,5 +11,5 @@ $route['reset-password/(:any)'] = 'authentication/reset_password/$1';
 $route['verifikasi-email'] = 'authentication/verifikasi_email';
 
 $route['default_controller'] = 'home';
-$route['404_override'] = 'utility/not_found';
+$route['404_override'] = 'home/e_404';
 $route['translate_uri_dashes'] = true;

@@ -22,12 +22,17 @@ class M_proyek extends CI_Model
         $cek = ($this->db->affected_rows() != 1) ? false : true;
     }
 
-    function getLogProyek(){
+    function getLogProyek($proyek_id = 0){
         $this->db->select('a.*, b.nama, c.judul');
         $this->db->from('log_proyek a');
         $this->db->join('tb_user b', 'a.user_id = b.user_id');
         $this->db->join('tb_proyek c', 'a.proyek_id = c.id');
         $this->db->where(['a.is_deleted' => 0]);
+
+        if($proyek_id > 0){
+            $this->db->where('a.proyek_id', $proyek_id);
+        }
+
         $this->db->order_by('a.created_at DESC');
         $models = $this->db->get()->result();
 
@@ -43,16 +48,25 @@ class M_proyek extends CI_Model
         return $models;
     }
 
-    function getDataKPI(){
+    function getDataKPI($periode = []){
         // get data staff
         $this->db->select('b.*, d.jabatan, c.proyek_id')
         ->from('tb_auth a')
         ->join('tb_user b', 'a.user_id = b.user_id')
         ->join('tb_assign_staff c', 'a.user_id = c.user_id', 'left')
         ->join('tb_jabatan d', 'b.jabatan_id = d.id', 'left')
+        ->join('tb_assign_leader e', 'a.user_id = e.user_id', 'left')
         ->where(['a.role' => 3, 'a.status' => 1, 'a.is_deleted' => 0, 'c.status' => 1])
         ->group_by('a.user_id');
         ;
+
+        if(!empty($periode)){
+            if(strtotime($periode[0]) == strtotime($periode[1])){
+                $this->db->where(['c.created_at' => strtotime($periode[0])]);
+            }else{
+                $this->db->where(['c.created_at >=' => strtotime($periode[0]), 'c.created_at <=' => strtotime($periode[1])]);
+            }
+        }
 
         $staff = $this->db->get()->result();
         
@@ -187,12 +201,20 @@ class M_proyek extends CI_Model
         return $this->db->get()->row();
     }
 
-    function getAllStatus($status = 1, $archived = 0){
+    function getAllStatus($status = 1, $periode = []){
         $this->db->select('*');
         $this->db->from('tb_proyek');
         $this->db->where(['status' => $status, 'is_deleted' => 0]);
-        if($this->session->userdata('role') == 2 || $this->session->userdata('role') == 3){
-            $this->db->where('created_by', $this->session->userdata('user_id'));
+        // if($this->session->userdata('role') == 2 || $this->session->userdata('role') == 3){
+        //     $this->db->where('created_by', $this->session->userdata('user_id'));
+        // }
+
+        if(!empty($periode)){
+            if(strtotime($periode[0]) == strtotime($periode[1])){
+                $this->db->where(['created_at' => strtotime($periode[0])]);
+            }else{
+                $this->db->where(['created_at >=' => strtotime($periode[0]), 'created_at <=' => strtotime($periode[1])]);
+            }
         }
         $this->db->order_by('created_at DESC');
         $proyek = $this->db->get()->result();
@@ -201,6 +223,7 @@ class M_proyek extends CI_Model
         foreach($proyek as $key => $val):
             $arr[$key] = $val;
             $arr[$key]->progress = $this->getProgressProyek($val->id);
+            $arr[$key]->leader = $this->getLeaderProyek($val->id, 1);
             $arr[$key]->staff = $this->getStaffProyek($val->id, 1);
             $arr[$key]->staff_free = $this->getStaffProyek($val->id, 0);
         endforeach;
@@ -228,6 +251,47 @@ class M_proyek extends CI_Model
         }else{
             return 0;
         }
+    }
+
+    function getLeaderProyek($id, $status){
+        
+        $this->db->select('a.*, b.profil, b.nama, b.jabatan_id, c.jabatan')
+        ->from('tb_assign_leader a')
+        ->join('tb_user b', 'a.user_id = b.user_id')
+        ->join('tb_jabatan c', 'b.jabatan_id = c.id', 'left')
+        ->where(['a.proyek_id' => $id, 'a.status' => 1, 'a.is_deleted' => 0]);
+
+        if($status == 0){
+            $models = $this->db->get()->result();
+            
+            $arrId = [];
+            foreach($models as $key => $val){
+                $arrId[] = $val->user_id;
+            }
+            $arrStaffId = implode(",", $arrId);
+            $staffId = explode(",", $arrStaffId);
+
+            $this->db->select('*')
+            ->from('tb_user a')
+            ->join('tb_auth b', 'a.user_id = b.user_id')
+            ->where(['b.is_deleted' => 0, 'b.role' => 3, 'b.status' => 1]);
+            
+            $this->db->where_not_in('a.user_id', $staffId);
+        }
+
+        $models = $this->db->get()->result();
+        
+        $arr = [];
+        foreach($models as $key => $val){
+            $arr[$key] = $val;
+            if($status == 1){
+                $arr[$key]->task = $this->getTaskStaff($val->proyek_id, $val->user_id, 0, 0); #all
+                $arr[$key]->task_proses = $this->getTaskStaff($val->proyek_id, $val->user_id, 1, 0); #proses
+                $arr[$key]->task_selesai = $this->getTaskStaff($val->proyek_id, $val->user_id, 0, 1); #selesai
+            }
+        }
+        
+        return $arr;
     }
 
     function getStaffProyek($id, $status){
@@ -352,6 +416,7 @@ class M_proyek extends CI_Model
             $val->deadline_tgl = date("d M Y", $val->deadline);
             $val->deadline = date("Y-m-d", $val->deadline);
             $val->diubah_pada = $val->modified_at == 0 ? '-' : date("d M Y", $val->modified_at);
+            $val->bukti_task = $this->getTaskBukti($val->id);
         }
 
         return $models;
@@ -403,7 +468,7 @@ class M_proyek extends CI_Model
 
     function cekKodeProyek($kode){
         
-        if($this->db->get_where('tb_proyek', ['kode' => $kode])->get()->num_rows() == 0){
+        if($this->db->get_where('tb_proyek', ['kode' => $kode])->num_rows() == 0){
             return true;
         }else{
             return false;
@@ -417,7 +482,7 @@ class M_proyek extends CI_Model
             'periode_mulai' => strtotime($this->input->post('periode_mulai')),
             'periode_selesai' => strtotime($this->input->post('periode_selesai')),
             'keterangan' => $this->input->post('keterangan'),
-            'created_at' => time(),
+            'created_at' => strtotime(date("Y-m-d")),
             'created_by' => $this->session->userdata('user_id')
         ];
 
@@ -427,6 +492,7 @@ class M_proyek extends CI_Model
         if($cek == true){
             $proyek_id = $this->db->insert_id();
             $this->insertDefaultStatus($proyek_id);
+            $this->insertLeaderProyek($this->input->post('leader'), $proyek_id);
             $this->insertStaffProyek($this->input->post('staff'), $proyek_id);
             return true;
         }else{
@@ -441,19 +507,30 @@ class M_proyek extends CI_Model
             'periode_selesai' => strtotime($this->input->post('periode_selesai')),
             'keterangan' => $this->input->post('keterangan'),
             'is_selesai' => $this->input->post('is_selesai') == 'on' ? 1 : 0,
-            'modified_at' => time(),
+            'modified_at' => strtotime(date("Y-m-d")),
             'modified_by' => $this->session->userdata('user_id')
         ];
 
         $this->db->where('id', $this->input->post('id'));
         $this->db->update('tb_proyek', $data);
-        return ($this->db->affected_rows() != 1) ? false : true;
+
+        $cek = ($this->db->affected_rows() != 1) ? false : true;
+
+        if($this->input->post('is_selesai') == 'on'){
+            $this->db->where('id', $this->input->post('id'));
+            $this->db->update('tb_proyek', ['status' => 2]);
+        }else{
+            $this->db->where('id', $this->input->post('id'));
+            $this->db->update('tb_proyek', ['status' => 1]);
+        }
+
+        return $cek;
     }
 
     function hapus($proyek_id){
         $data = [
             'is_deleted' => 1,
-            'modified_at' => time(),
+            'modified_at' => strtotime(date("Y-m-d")),
             'modified_by' => $this->session->userdata('user_id')
         ];
 
@@ -487,7 +564,7 @@ class M_proyek extends CI_Model
             $data = [
                 'proyek_id' => $this->input->post('proyek_id'),
                 'user_id' => $this->input->post('staff_id'),
-                'created_at' => time(),
+                'created_at' => strtotime(date("Y-m-d")),
                 'created_by' => $this->session->userdata('user_id')
             ];
     
@@ -518,7 +595,7 @@ class M_proyek extends CI_Model
                 $data = [
                     'proyek_id' => $this->input->post('proyek_id'),
                     'user_id' => $val,
-                    'created_at' => time(),
+                    'created_at' => strtotime(date("Y-m-d")),
                     'created_by' => $this->session->userdata('user_id')
                 ];
                 $this->db->insert('tb_assign_staff', $data);
@@ -550,7 +627,7 @@ class M_proyek extends CI_Model
         //         'warna' => 'secondary',
         //         'keterangan' => 'Status awal task yang baru dibuat',
         //         'urutan' => 1,
-        //         'created_at' => time(),
+        //         'created_at' => strtotime(date("Y-m-d")),
         //         'created_by' => $this->session->userdata('user_id')
         //     ],
         //     [
@@ -559,7 +636,7 @@ class M_proyek extends CI_Model
         //         'warna' => 'info',
         //         'keterangan' => 'Status untuk task dalam proses pengerjaan',
         //         'urutan' => 2,
-        //         'created_at' => time(),
+        //         'created_at' => strtotime(date("Y-m-d")),
         //         'created_by' => $this->session->userdata('user_id')
         //     ],
         //     [
@@ -568,7 +645,7 @@ class M_proyek extends CI_Model
         //         'warna' => 'success',
         //         'keterangan' => 'Status untuk task yang telah selesai',
         //         'urutan' => 3,
-        //         'created_at' => time(),
+        //         'created_at' => strtotime(date("Y-m-d")),
         //         'created_by' => $this->session->userdata('user_id')
         //     ]
         // ];
@@ -586,11 +663,31 @@ class M_proyek extends CI_Model
                 'is_selesai' => $val->is_selesai,
                 'is_closed' => $val->is_closed,
                 'is_default' => $val->is_default,
-                'created_at' => time(),
+                'created_at' => strtotime(date("Y-m-d")),
                 'created_by' => $this->session->userdata('user_id')
             ];
             $this->db->insert('tb_proyek_status', $data);
         endforeach;
+        return true;
+    }
+
+    function insertLeaderProyek($leader_id, $proyek_id){
+
+            $staff = $this->getStaffDetail($leader_id);
+            // email
+            $subject = "Proyek Baru";
+            $message = 'Hi '.$staff->nama.', kamu telah ditambahkan sebagai leader kedalam proyek <b>'.$this->input->post('judul').'</b>. Masuk kedalam akunmu dan mulai berkolaborasi dalam proyek tersebut';
+
+            sendMail($staff->email, $subject, $message);
+
+            $data = [
+                'proyek_id' => $proyek_id,
+                'user_id' => $leader_id,
+                'status' => 1,
+                'created_at' => strtotime(date("Y-m-d")),
+                'created_by' => $this->session->userdata('user_id')
+            ];
+            $this->db->insert('tb_assign_leader', $data);
         return true;
     }
 
@@ -600,7 +697,7 @@ class M_proyek extends CI_Model
             $staff = $this->getStaffDetail($val);
             // email
             $subject = "Proyek Baru";
-            $message = 'Hi '.$staff->nama.', kamu telah ditambahkan kedalam proyek <b>'.$this->input->post('judul').'</b>. Masuk kedalam akun staffmu dan mulai berkolaborasi dalam proyek tersebut';
+            $message = 'Hi '.$staff->nama.', kamu telah ditambahkan sebagai staff kedalam proyek <b>'.$this->input->post('judul').'</b>. Masuk kedalam akunmu dan mulai berkolaborasi dalam proyek tersebut';
 
             sendMail($staff->email, $subject, $message);
 
@@ -608,7 +705,7 @@ class M_proyek extends CI_Model
                 'proyek_id' => $proyek_id,
                 'user_id' => $val,
                 'status' => 1,
-                'created_at' => time(),
+                'created_at' => strtotime(date("Y-m-d")),
                 'created_by' => $this->session->userdata('user_id')
             ];
             $this->db->insert('tb_assign_staff', $data);
@@ -646,7 +743,7 @@ class M_proyek extends CI_Model
             'warna' => $this->input->post('warna'),
             'keterangan' => $this->input->post('keterangan'),
             'urutan' => $urutan-1,
-            'created_at' => time(),
+            'created_at' => strtotime(date("Y-m-d")),
             'created_by' => $this->session->userdata('user_id')
         ];
 
@@ -664,7 +761,7 @@ class M_proyek extends CI_Model
     function updateStatusSelesai($urutan, $proyek_id){
         $data = [
             'urutan' => $urutan,
-            'modified_at' => time(),
+            'modified_at' => strtotime(date("Y-m-d")),
             'modified_by' => $this->session->userdata('user_id')
         ];
 
@@ -676,7 +773,7 @@ class M_proyek extends CI_Model
     function updateStatusClosed($urutan, $proyek_id){
         $data = [
             'urutan' => $urutan,
-            'modified_at' => time(),
+            'modified_at' => strtotime(date("Y-m-d")),
             'modified_by' => $this->session->userdata('user_id')
         ];
 
@@ -691,7 +788,7 @@ class M_proyek extends CI_Model
             'status' => $this->input->post('status'),
             'warna' => $this->input->post('warna'),
             'keterangan' => $this->input->post('keterangan'),
-            'modified_at' => time(),
+            'modified_at' => strtotime(date("Y-m-d")),
             'modified_by' => $this->session->userdata('user_id')
         ];
 
@@ -736,7 +833,7 @@ class M_proyek extends CI_Model
             'keterangan' => $this->input->post('keterangan'),
             'deadline' => strtotime($this->input->post('deadline')),
             'status_id' => $status_id,
-            'created_at' => time(),
+            'created_at' => strtotime(date("Y-m-d")),
             'created_by' => $this->session->userdata('user_id')
         ];
 
@@ -757,7 +854,7 @@ class M_proyek extends CI_Model
             'is_closed' => 0,
             'deadline' => strtotime($this->input->post('deadline')),
             'status_id' => $this->input->post('status_id'),
-            'modified_at' => time(),
+            'modified_at' => strtotime(date("Y-m-d")),
             'modified_by' => $this->session->userdata('user_id')
         ];
 
@@ -783,7 +880,7 @@ class M_proyek extends CI_Model
                 'catatan' => $this->input->post('catatan'),
                 'is_selesai' => 1,
                 'status_id' => $this->getStatus($this->input->post('proyek_id'), 1),
-                'modified_at' => time(),
+                'modified_at' => strtotime(date("Y-m-d")),
                 'modified_by' => $this->session->userdata('user_id')
             ];
         }else{
@@ -792,7 +889,7 @@ class M_proyek extends CI_Model
                 'catatan' => $this->input->post('catatan'),
                 'is_selesai' => 1,
                 'status_id' => $this->getStatus($this->input->post('proyek_id'), 1),
-                'modified_at' => time(),
+                'modified_at' => strtotime(date("Y-m-d")),
                 'modified_by' => $this->session->userdata('user_id')
             ];
         }
@@ -810,7 +907,7 @@ class M_proyek extends CI_Model
             'catatan_ditolak' => $this->input->post('catatan_ditolak'),
             'is_selesai' => 0,
             'status_id' => $this->getStatus($this->input->post('proyek_id'), 0),
-            'modified_at' => time(),
+            'modified_at' => strtotime(date("Y-m-d")),
             'modified_by' => $this->session->userdata('user_id')
         ];
 
@@ -828,7 +925,7 @@ class M_proyek extends CI_Model
             'is_selesai' => 0,
             'is_closed' => 1,
             'status_id' => $this->getStatus($this->input->post('proyek_id'), 2),
-            'modified_at' => time(),
+            'modified_at' => strtotime(date("Y-m-d")),
             'modified_by' => $this->session->userdata('user_id')
         ];
 
@@ -855,5 +952,52 @@ class M_proyek extends CI_Model
         }else{
             return $this->db->get_where('tb_proyek_status', ['is_mulai' => 1, 'proyek_id' => $proyek_id])->row()->id;
         }
+    }
+
+    function getTaskKomentar($id){
+        $this->db->select('*')
+        ->from('tb_komentar_task a')
+        ->join('tb_user b', 'a.user_id = b.user_id')
+        ->where(['a.task_id' => $id, 'is_deleted' => 0])
+        ->order_by('a.created_at DESC')
+        ;
+
+        $models = $this->db->get()->result();
+
+        foreach($models as $key => $val){
+            $val->created_at = time_ago(date('Y-m-d H:i:s', $val->created_at));
+        }
+
+        return $models;
+    }
+
+    function tambahKomentar(){
+        $data = [
+            'task_id' => $this->input->post('id'),
+            'user_id' => $this->session->userdata('user_id'),
+            'komentar' => $this->input->post('komentar'),
+            'created_at' => time(),
+            'created_by' => $this->session->userdata('user_id')
+        ];
+
+        $this->db->insert('tb_komentar_task', $data);
+        return ($this->db->affected_rows() != 1) ? false : true;
+    }
+
+    function hapusKomentar($id){
+        $this->db->where('id', $id);
+        $this->db->update('tb_komentar_task', ['is_deleted' => 1]);
+        return ($this->db->affected_rows() != 1) ? false : true;
+    }
+
+    function getTaskBukti($task_id){
+        $this->db->select('*')
+        ->from('tb_task_bukti')
+        ->where(['task_id' => $task_id, 'is_deleted' => 0])
+        ;
+
+        $models = $this->db->get()->result();
+
+        return $models;
     }
 }

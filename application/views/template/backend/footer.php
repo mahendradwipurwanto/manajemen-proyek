@@ -1,3 +1,10 @@
+<?php if($this->session->userdata('role') == 3):?>
+	
+	</div>
+</div>
+
+<?php endif;?>
+
 </div>
 
 </main>
@@ -168,6 +175,8 @@
 					$('.loader').addClass('d-none');
 				}
 			}, 5000);
+
+			$('input[name="periode"]').daterangepicker();
 		})
 	})()
 

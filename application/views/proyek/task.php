@@ -1,4 +1,4 @@
-<div class="sidebar-footer-offset" style="padding-bottom: 5rem;">
+<div class="sidebar-footer-offset pt-3">
 	<div class="sidebar-scroller">
 
 		<!-- Content -->
@@ -74,34 +74,119 @@
 									<dd class="col-sm-9"><?= $task->catatan_diterima;?></dd>
 								</dl>
 								<?php endif;?>
-								<?php if($task->bukti !== null && $task->bukti !== 0 && $task->bukti !== ''):?>
+								<?php if(!empty($bukti)):?>
 								<dl class="row">
 									<dt class="col-sm-3">Bukti</dt>
 									<dd class="col-sm-9">
-										<a href="<?= base_url();?><?= $task->bukti;?>" target="_blank"
-											class="btn btn-outline-primary btn-xs text-left"><i
-												class="bi bi-file-earmark-pdf"></i> Bukti
-											penyelesaian</a></dd>
+										<?php foreach($bukti as $k => $v):?>
+										<a href="<?= base_url();?><?= $v->bukti;?>" target="_blank"
+											class="btn btn-outline-primary btn-xs text-left mb-2"><i
+												class="bi bi-file-earmark-pdf"></i> <?php $nama_file = explode("/", $v->bukti); echo substr(end($nama_file), 0, 30);?></a>
+										<?php endforeach;?>
+									</dd>
 								</dl>
 								<?php endif;?>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="d-flex justify-content-between align-items-center mt-3">
+				<div class="d-flex justify-content-between align-items-center mt-3 mb-3">
 					<small class="text-secondary">dibuat <?= $task->dibuat_pada;?></small>
 					<small class="text-secondary">diubah <?= $task->diubah_pada;?></small>
+				</div>
+				<hr>
+				<div class="row mb-2">
+					<div class="col-12">
+						<small class="fw-bold">komentar</small>
+
+
+						<!-- Comment -->
+						<ul class="list-comment mt-2 pt-2">
+							<?php if(!empty($komentar)):?>
+							<?php foreach($komentar as $key => $val):?>
+							<?php if($val->user_id == $this->session->userdata('user_id')):?>
+							<!-- Item -->
+							<li class="list-comment-item mt-2 mb-4 comments-has-border">
+								<!-- Media -->
+								<div class="d-flex align-items-center mb-3">
+									<div class="flex-shrink-0">
+										<img class="avatar avatar-xs avatar-circle"
+											src="<?= base_url();?><?= $val->profil;?>" alt="Image Description">
+									</div>
+									<div class="flex-grow-1 ms-3">
+										<div class="d-flex justify-content-between align-items-center">
+											<h6 class="mb-0">
+												<?php $nama = explode(" ", $val->nama); echo $nama[0];?> (You)
+												<a href="<?= site_url('api/proyek/hapusKomentar/'.$val->id);?>"
+													class="text-danger btn-xs"><i class="bi bi-trash"></i></a>
+											</h6>
+											<span class="d-block small text-muted"><?= $val->created_at;?></span>
+										</div>
+									</div>
+								</div>
+								<!-- End Media -->
+
+								<p class="small"><?= $val->komentar;?></p>
+							</li>
+							<!-- End Item -->
+							<?php else:?>
+							<!-- Item -->
+							<li class="list-comment-item mt-2 mb-4 comments-has-border">
+								<!-- Media -->
+								<div class="d-flex align-items-center mb-3">
+									<div class="flex-shrink-0">
+										<img class="avatar avatar-xs avatar-circle"
+											src="<?= base_url();?><?= $val->profil;?>" alt="Image Description">
+									</div>
+
+									<div class="flex-grow-1 ms-3">
+										<div class="d-flex justify-content-between align-items-center">
+											<h6 class="mb-0"><?php $nama = explode(" ", $val->nama); echo $nama[0];?>
+											</h6>
+											<span class="d-block small text-muted"><?= $val->created_at;?></span>
+										</div>
+									</div>
+								</div>
+								<!-- End Media -->
+
+								<p class="small"><?= $val->komentar;?></p>
+							</li>
+							<!-- End Item -->
+							<?php endif;?>
+							<?php endforeach;?>
+							<?php else:?>
+							<h6 class="mb-0 text-center">- belum ada komentar -</h6>
+							<?php endif;?>
+							<hr>
+							<li class="list-comment-item mt-2">
+								<div class="mb-4">
+									<form action="<?= site_url('api/proyek/tambahKomentar');?>" method="post" class="js-validate needs-validation" novalidate>
+										<input type="hidden" name="id" value="<?= $task->id;?>">
+										<input type="hidden" name="task" value="<?= $task->task;?>">
+										<label class="form-label" for="formKomentar">Tambah komentar</label>
+										<textarea class="form-control form-control-sm" name="komentar" id="formKomentar"
+											placeholder="Tambah komentar" aria-label="Tambah komentar"
+											rows="3"></textarea>
+										<button type="submit" class="btn btn-primary btn-xs float-end mt-3">tambah</button>
+									</form>
+								</div>
+							</li>
+							<br>
+						</ul>
+
+
+					</div>
 				</div>
 			</div>
 		</div>
 		<!-- End Content -->
 	</div>
 </div>
-<?php if($this->session->userdata('role') != 3 || ($this->session->userdata('user_id') == $task->user_id && $task->is_selesai == 0 && $task->is_closed == 0)):?>
+<?php if(($this->session->userdata('role') == 0 || $this->session->userdata('role') == 1 || $this->session->userdata('is_leader') == true) || ($this->session->userdata('user_id') == $task->user_id && $task->is_selesai == 0 && $task->is_closed == 0)):?>
 <!-- Footer -->
 <footer class="sidebar-footer border-top p-2">
 	<div class="row">
-		<?php if($task->is_selesai == 1 && $this->session->userdata('role') != 3):?>
+		<?php if($task->is_selesai == 1 && ($this->session->userdata('role') == 0 || $this->session->userdata('role') == 1 || ($this->session->userdata('is_leader') == true && $this->session->userdata('is_leader') != false))):?>
 		<div class="col">
 			<button type="button" class="btn btn-sm btn-danger w-100" data-bs-toggle="modal"
 				data-bs-target="#tolak-task-<?= $task->id;?>">Tolak</button>
@@ -118,7 +203,7 @@
 				data-bs-target="#selesaikan-task-<?= $task->id;?>">selesaikan task</button>
 		</div>
 		<?php endif;?>
-		<?php if($task->is_selesai == 1 && $this->session->userdata('role') != 3):?>
+		<?php if($task->is_selesai == 1 && ($this->session->userdata('role') == 0 || $this->session->userdata('role') == 1 || $this->session->userdata('is_leader') == true)):?>
 		<div class="col">
 			<button type="button" class="btn btn-sm btn-success w-100" data-bs-toggle="modal"
 				data-bs-target="#verifikasi-task-<?= $task->id;?>">Verifikasi</button>

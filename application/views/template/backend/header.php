@@ -35,7 +35,7 @@
 	<link rel="stylesheet" href="<?= base_url(); ?>assets/vendor/hs-unfold/dist/hs-unfold.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intro.js@5.0.0/minified/introjs.min.css">
 	<link rel="stylesheet" href="<?= base_url(); ?>assets/plugin/intro-js-modern.css">
-	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
 	<!-- CSS Front Template -->
 	<link rel="stylesheet" href="<?= base_url(); ?>assets/css/theme.min.css">
@@ -43,11 +43,16 @@
 	<link rel="stylesheet" href="<?= base_url(); ?>assets/css/custom.min.css?<?= time();?>">
 	<link rel="stylesheet" href="<?= base_url(); ?>assets/css/proyek.css?<?= time();?>">
 
+	<!-- Plugins css -->
+	<link href="<?= base_url();?>assets/plugin/dropzone/min/dropzone.min.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css">
 
 	<!-- JS Global Compulsory  -->
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
 	<script type="text/javascript" src="<?= base_url(); ?>assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js">
 	</script>
+
+	<!-- datatables -->
 	<script type="text/javascript" src="//cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 	<script type="text/javascript" src="//cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
 	<!-- sweetalert2 -->
@@ -56,15 +61,24 @@
 	<script type="text/javascript" src="<?= base_url(); ?>assets/plugin/tinymce/jquery.tinymce.min.js"></script>
 	<script type="text/javascript" src="<?= base_url(); ?>assets/plugin/tinymce/tinymce.min.js"></script>
 	<script type="text/javascript" src="<?= base_url(); ?>assets/plugin/tinymce-textarea.js"></script>
+
 	<!-- ckeditor -->
 	<script type="text/javascript" src="<?= base_url(); ?>assets/plugin/ckeditor/ckeditor.js"></script>
+	<script type="text/javascript" src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script>
 
+	<!-- intro js -->
 	<script src="https://cdn.jsdelivr.net/npm/intro.js@5.0.0/minified/intro.min.js"></script>
 
+	<!-- daterange picker -->
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-	<script type="text/javascript" src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script>
+
+	<!-- apex -->
 	<script type="text/javascript" src="<?= base_url();?>assets/js/apexchart.js"></script>
+
+	<!-- Plugins js -->
+	<script src="<?= base_url();?>assets/plugin/dropzone/min/dropzone.min.js"></script>
+
 </head>
 <div class="loader">
 	<div class="ring"></div>

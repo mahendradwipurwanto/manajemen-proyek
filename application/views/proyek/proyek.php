@@ -2,7 +2,18 @@
 <div class="docs-page-header <?php if ($this->agent->is_mobile()):?>mb-0<?php endif;?>">
 	<div class="row align-items-center">
 		<div class="col-sm">
-			<h1 class="docs-page-header-title">Kelola Proyek
+			<h1 class="docs-page-header-title d-flex justify-content-between">Kelola Proyek
+				<form action="<?= site_url('admin/kelola-proyek');?>" method="post" class="d-flex">
+					<div class="input-group input-group-sm">
+						<span class="input-group-text" id="basic-addon2"><i class="bi bi-calendar-week"></i></span>
+						<input type="text" class="form-control form-control-sm" name="periode"
+							placeholder="Periode proyek" aria-describedby="basic-addon2" required>
+					</div>
+					<button type="submit" class="btn btn-primary btn-sm ms-3">Tampilkan</button>
+					<?php if($this->input->post('periode')):?>
+					<a href="<?= current_url();?>" class="btn btn-sm btn-outline-secondary ms-2">Reset</a>
+					<?php endif;?>
+				</form>
 			</h1>
 			<p class="docs-page-header-text">Kelola semua proyek yang pernah anda buat pada halaman ini</p>
 		</div>
@@ -18,12 +29,14 @@
 				<li class="nav-item">
 					<a class="nav-link active" id="proyek-aktif-tab" href="#proyek-aktif" data-bs-toggle="pill"
 						data-bs-target="#proyek-aktif" role="tab" aria-controls="proyek-aktif"
-						aria-selected="true">Proyek Aktif</a>
+						aria-selected="true">Proyek Aktif <?php if(count($proyekAktif) > 0):?><span
+							class="badge bg-danger"><?= count($proyekAktif);?></span><?php endif;?></a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" id="riwayat-proyek-tab" href="#riwayat-proyek" data-bs-toggle="pill"
 						data-bs-target="#riwayat-proyek" role="tab" aria-controls="riwayat-proyek"
-						aria-selected="false">Riwayat Proyek</a>
+						aria-selected="false">Riwayat Proyek <?php if(count($proyekArsip) > 0):?><span
+							class="badge bg-danger"><?= count($proyekArsip);?></span><?php endif;?></a>
 				</li>
 			</ul>
 			<span>Anda memiliki <b><?= count($proyekAktif);?></b> proyek aktif, yang siap anda kelola bersama tim
@@ -49,12 +62,15 @@
 						<line x1="3" y1="12" x2="3.01" y2="12" />
 						<line x1="3" y1="18" x2="3.01" y2="18" /></svg>
 				</button>
-				<button type="button" class="btn btn-sm btn-soft-primary float-end me-3" data-bs-toggle="modal"
+				<button type="button" class="btn btn-sm btn-primary float-end me-3" data-bs-toggle="modal"
 					data-bs-target="#tambah">Buat Proyek Baru</button>
 			</div>
 		</div>
 		<!-- End Nav -->
-
+		<?php if($this->input->post('periode')):?>
+		<span class="text-body pb-3">Menampilkan proyek periode <span
+				class="text-primary"><?= $this->input->post('periode');?></span></span>
+		<?php endif;?>
 		<!-- Tab Content -->
 		<div class="tab-content">
 			<div class="tab-pane fade show active" id="proyek-aktif" role="tabpanel" aria-labelledby="proyek-aktif-tab">
@@ -76,7 +92,7 @@
 							$color = 'primary';
 						}
 					?>
-					<div class="project-box-wrapper">
+					<div class="project-box-wrapper mt-3">
 						<div class="project-box bg-soft-<?= $color;?>">
 							<div class="project-box-header">
 								<span>Dibuat pada, <?= date("d F Y", $val->created_at);?></span>
@@ -92,16 +108,21 @@
 							<div class="box-progress-wrapper">
 								<p class="box-progress-header">Progress</p>
 								<div class="box-progress-bar">
-									<span class="box-progress bg-<?= $color;?>" style="width: <?= $val->progress;?>%;"></span>
+									<span class="box-progress bg-<?= $color;?>"
+										style="width: <?= $val->progress;?>%;"></span>
 								</div>
 								<p class="box-progress-percentage"><?= $val->progress;?>%</p>
 							</div>
 							<div class="project-box-footer">
 								<div class="participants">
+									<?php if(!empty($val->leader)):?>
+									<img src="<?= base_url();?><?= $val->leader[0]->profil;?>" alt="leader: <?= $val->leader[0]->nama;?>"
+										data-bs-toggle="tooltip" data-bs-html="true" title="leader: <?= $val->leader[0]->nama;?>" class="me-3">
+									<?php endif;?>
 									<?php if(!empty($val->staff)):?>
 									<?php foreach($val->staff as $k => $v):?>
-									<img src="<?= base_url();?><?= $v->profil;?>" alt="<?= $v->nama;?>"
-										data-bs-toggle="tooltip" data-bs-html="true" title="<?= $v->nama;?>">
+									<img src="<?= base_url();?><?= $v->profil;?>" alt="staff: <?= $v->nama;?>"
+										data-bs-toggle="tooltip" data-bs-html="true" title="staff: <?= $v->nama;?>">
 									<?php endforeach;?>
 									<?php endif;?>
 									<button class="add-participant text-soft-<?= $color;?>" data-bs-toggle="modal"
@@ -171,7 +192,7 @@
 					<!-- End Modal -->
 					<?php endforeach;?>
 					<?php else:?>
-					<div class="w-100 text-center mt-5">
+					<div class="w-100 text-center mt-3 mx-2">
 						<div class="alert alert-soft-secondary" role="alert">
 							Anda belum memiliki satupun proyek aktif, ayo buat proyek baru bersama tim anda!
 						</div>
@@ -210,7 +231,8 @@
 							<div class="box-progress-wrapper">
 								<p class="box-progress-header">Progress</p>
 								<div class="box-progress-bar">
-									<span class="box-progress text-soft-<?= $color;?>" style="width: <?= $val->progress;?>%;"></span>
+									<span class="box-progress text-soft-<?= $color;?>"
+										style="width: <?= $val->progress;?>%;"></span>
 								</div>
 								<p class="box-progress-percentage"><?= $val->progress;?>%</p>
 							</div>
@@ -240,7 +262,7 @@
 					</div>
 					<?php endforeach;?>
 					<?php else:?>
-					<div class="w-100 text-center mt-5">
+					<div class="w-100 text-center mt-3 mx-2">
 						<div class="alert alert-soft-secondary" role="alert">
 							Anda belum memiliki satupun proyek yang terselesaikan
 						</div>
@@ -277,10 +299,11 @@
 						<div class="col-4">
 							<label class="form-label" for="formKode">Kode Proyek <small class="text-danger">*</small> <i
 									class="bi bi-info-square-fill" data-bs-toggle="tooltip" data-bs-html="true"
-									title="Pilih kode sebagai kunci/id proyek anda untuk mengenali pekerjaan dari proyek ini."></i></label>
+									title="Kode sebagai kunci/id proyek anda untuk mengenali pekerjaan dari proyek ini."></i></label>
 							<input type="text" name="kode" id="formKode" class="form-control form-control-sm alphanum"
-								placeholder="Ex: PYK01" value="PYK0<?= $this->session->userdata('user_id');?><?= (count($proyekAktif)+count($proyekAktif));?>"
-								required>
+								placeholder="Ex: PYK01"
+								value="PYK0<?= $this->session->userdata('user_id');?><?= (count($proyekAktif)+count($proyekArsip)+rand(1,100));?>"
+								required readonly>
 						</div>
 					</div>
 					<div class="mb-3 row">
@@ -305,9 +328,29 @@
 					</div>
 
 					<div class="mb-3">
+						<label for="formKeterangan" class="form-label">Leader</label>
+						<!-- Select -->
+						<div class="tom-select-custom">
+							<select class="js-select form-select form-select-sm" autocomplete="off" name="leader"
+								data-hs-tom-select-options='{"placeholder": "Pilih leader..."}' required>
+								<?php if(!empty($staff)):?>
+								<?php foreach($staff as $key => $val):?>
+								<option value="<?= $val->user_id;?>"><?= $val->nama;?></option>
+								<?php endforeach;?>
+								<?php else:?>
+								<option value="0">Belum ada staff yang tersedia</option>
+								<?php endif;?>
+							</select>
+						</div>
+						<!-- End Select -->
+						<small class="text-secondary">Staff akan mendapatkan email telah ditambahkan sebagai
+							leader</small>
+					</div>
+
+					<div class="mb-3">
 						<label for="formKeterangan" class="form-label">Staff <small
 								class="text-secondary">(optional)</small></label>
-						<div class="tom-select-custom tom-select-custom-with-tags">
+						<div class="tom-select-custom tom-select-custom-with-tags" id="multiple-input">
 							<select class="js-select form-select form-select-sm" autocomplete="off" multiple
 								name="staff[]" data-hs-tom-select-options='{"placeholder": "Pilih staff"}'>
 								<?php if(!empty($staff)):?>

@@ -22,6 +22,16 @@ class Staff extends CI_Controller
         }
 
         $this->load->model(['api/M_auth', 'api/M_leader', 'api/M_staff', 'api/M_master', 'api/M_proyek']);
+
+        if($this->session->userdata('role') == 3){
+            if ($this->M_auth->cekIfLeader($this->session->userdata('user_id'))['status'] == true) {
+                $session_data = array(
+                    'is_leader' => true,
+                );
+    
+                $this->session->set_userdata($session_data);
+            }
+        }
     }
 
     public function index()
@@ -43,7 +53,7 @@ class Staff extends CI_Controller
         }
     }
 
-    public function kelola_proyek()
+    public function daftar_staff()
     {
         $data['user'] = $this->M_auth->get_userByID($this->session->userdata('user_id'));
         $data['countDashboard'] = $this->M_staff->countDashboardStaff();
@@ -51,8 +61,51 @@ class Staff extends CI_Controller
         $data['jabatan'] = $this->M_master->getJabatan();
         $data['staff'] = $this->M_staff->getStaff();
         $data['undanganStaff'] = $this->M_master->getUndangan(3);
-        $data['proyekAktif'] = $this->M_staff->getProyekStaffAll(1);
-        $data['proyekArsip'] = $this->M_staff->getProyekStaffAll(2);
+        $data['proyek'] = $this->M_proyek->getAllStatus(1);
+
+        if ($this->agent->is_mobile()) {
+            $this->templatemobile->view('staff/staff', $data);
+        }else{
+            $this->templateback->view('staff/staff', $data);
+        }
+
+    }
+
+    public function kpi()
+    {
+        $data['user'] = $this->M_auth->get_userByID($this->session->userdata('user_id'));
+        $data['countDashboard'] = $this->M_staff->countDashboardStaff();
+        $periode = [];
+        if($this->input->post('periode')){
+            $periode = explode(' - ', $this->input->post('periode'));
+            // ej($periode);
+        }
+
+        $data['kpi'] = $this->M_proyek->getDataKPI($periode);
+        
+        if ($this->agent->is_mobile()) {
+            $this->templatemobile->view('proyek/kpi', $data);
+        }else{
+            $this->templateback->view('proyek/kpi', $data);
+        }
+    }
+
+    public function kelola_proyek()
+    {
+        $periode = [];
+        if($this->input->post('periode')){
+            $periode = explode(' - ', $this->input->post('periode'));
+            // ej($periode);
+        }
+
+        $data['user'] = $this->M_auth->get_userByID($this->session->userdata('user_id'));
+        $data['countDashboard'] = $this->M_staff->countDashboardStaff();
+        $data['countStaff'] = $this->M_staff->countStaff();
+        $data['jabatan'] = $this->M_master->getJabatan();
+        $data['staff'] = $this->M_staff->getStaff();
+        $data['undanganStaff'] = $this->M_master->getUndangan(3);
+        $data['proyekAktif'] = $this->M_staff->getProyekStaffAll(1, $periode);
+        $data['proyekArsip'] = $this->M_staff->getProyekStaffAll(2, $periode);
 
         if ($this->agent->is_mobile()) {
             $this->templatemobile->view('staff/proyek', $data);

@@ -3,7 +3,15 @@
 	<div class="row align-items-center">
 		<div class="col-sm">
 			<h1 class="docs-page-header-title">Proyek <?= isset($proyek->judul) ? '<b>- '.$proyek->judul.'</b>' : '';?>
-				<a href="<?= site_url('staff/kelola-proyek');?>" class="btn btn-sm btn-outline-primary float-end me-3"><i class="bi bi-chevron-double-left"></i> kembali</a>
+				<?php if($proyek->is_selesai == 1):?>
+				<span class="badge bg-soft-success h5 mx-0 ms-2">proyek selesai</span>
+				<?php endif;?>
+				<?php if($this->session->userdata('role') == 2):?>
+				<a href="<?= site_url('leader/kelola-proyek');?>"
+					class="btn btn-xs btn-light float-end me-3">kembali</a>
+				<?php else:?>
+				<a href="<?= site_url('admin/kelola-proyek');?>" class="btn btn-xs btn-light float-end me-3">kembali</a>
+				<?php endif;?>
 			</h1>
 			<p class="docs-page-header-text">
 				<?= isset($proyek->keterangan) && $proyek->keterangan != '' ? $proyek->keterangan : 'Kelola semua komponen pendukung proyek anda disini';?>
@@ -28,8 +36,31 @@
 		<?php endif;?>
 		<div class="card mb-3">
 			<div class="card-header py-3">
-				<h4 class="card-title mb-0">Kelola Task <span class="badge bg-soft-info ms-2">bobot:
-						<?= $bobot->quota_bobot;?>/100</span>
+				<h4 class="card-title mb-0 d-flex justify-content-between align-items-center">
+					<span class="d-flex justify-content-left align-items-center">
+						Kelola Task
+						<div class="participants ms-2">
+							<?php if(!empty($leader)):?>
+							<img src="<?= base_url();?><?= $leader[0]->profil;?>"
+								alt="leader: <?= $leader[0]->nama;?>" data-bs-toggle="tooltip" data-bs-html="true"
+								title="leader: <?= $leader[0]->nama;?>" class="me-3">
+							<?php endif;?>
+							<?php if(!empty($staff)):?>
+							<?php foreach($staff as $k => $v):?>
+							<img src="<?= base_url();?><?= $v->profil;?>" alt="staff: <?= $v->nama;?>"
+								data-bs-toggle="tooltip" data-bs-html="true" title="staff: <?= $v->nama;?>">
+							<?php endforeach;?>
+							<?php endif;?>
+						</div>
+					</span>
+					<span class="badge bg-soft-info ms-2">bobot:
+						<?= isset($bobot->quota_bobot) ? $bobot->quota_bobot : 0;?>/100</span>
+					<?php if($this->session->userdata('is_leader') == true):?>
+					<button type="button"
+						class="btn btn-xs <?= $proyek->is_selesai == 1 ? 'btn-secondary' : 'btn-outline-primary';?> float-end"
+						data-bs-toggle="modal" data-bs-target="#tambah-task"
+						<?= $proyek->is_selesai == 1 ? 'disabled' : '';?>>Tambahkan task baru</button>
+					<?php endif;?>
 				</h4>
 			</div>
 		</div>
@@ -74,14 +105,7 @@
 							<?php if(!empty($val->tasks)):?>
 							<?php foreach($val->tasks as $k => $v):?>
 							<li class="js-hs-unfold-invoker list-group-item py-2 cursor"
-								onclick='showDetail(<?= $key;?>, <?= $k;?>)' href="javascript:;" data-hs-unfold-options='{
-									"target": "#sidebarContent",
-									"type": "css-animation",
-									"animationIn": "fadeInRight",
-									"animationOut": "fadeOutRight",
-									"hasOverlay": "rgba(55, 125, 255, 0.1)",
-									"smartPositionOff": true
-								}'>
+								onclick='showDetail(<?= $key;?>, <?= $k;?>)' data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarSignup" aria-controls="offcanvasNavbarSignup">
 								<div class="row justify-content-between">
 									<div class="col-sm-7 mb-2 mb-sm-0">
 									</div>
@@ -123,7 +147,7 @@
 															class="text-danger">*</small></label>
 													<input type="text" name="task" id="formTask"
 														class="form-control form-control-sm" value="<?= $v->task;?>"
-														readonly>
+														required>
 													<small class="text-secondary">Task baru akan otomatis masuk kedalam
 														status To Do</small>
 												</div>
@@ -133,7 +157,7 @@
 													<select class="js-select form-select form-select-sm"
 														autocomplete="off" name="status_id"
 														data-hs-tom-select-options='{"placeholder": "Pilih status"}'
-														readonly>
+														required>
 														<option value="<?= $val->id;?>"><?= $val->status;?></option>
 														<?php if(!empty($status)):?>
 														<?php foreach($status as $keys => $value):?>
@@ -150,16 +174,15 @@
 														<div class="input-group input-group-sm">
 															<input type="number" class="form-control form-control-sm"
 																name="bobot" placeholder="Bobot task" min="0"
-																max="<?= ($bobot->quota_bobot);?>"
 																value="<?= $v->bobot;?>" aria-label="Bobot"
-																aria-describedby="input-bobot-task" readonly>
+																aria-describedby="input-bobot-task" required>
 															<span class="input-group-text"
 																id="input-bobot-task">%</span>
 														</div>
 													</div>
 													<div class="col-5">
 														<span class="badge bg-soft-info ms-2">bobot tersisa:
-															<?= $bobot->quota_bobot;?>/100</span>
+															<?= isset($bobot->quota_bobot) ? $bobot->quota_bobot : 0;?>/100</span>
 													</div>
 												</div>
 
@@ -168,11 +191,18 @@
 														<label class="form-label" for="formTaskKeterangan">Staff <small
 																class="text-danger">*</small></label>
 														<div class="tom-select-custom">
-															<input type="hidden" class="form-control form-control-sm"
-																name="staff_id" value="<?= $v->user_id;?>"
-																aria-describedby="input-bobot-task" readonly>
-															<input type="text" class="form-control form-control-sm" value="<?= $v->nama;?>" 
-																aria-describedby="input-bobot-task" readonly>
+															<select class="js-select form-select form-select-sm"
+																autocomplete="off" name="staff_id"
+																data-hs-tom-select-options='{"placeholder": "Pilih staff"}'
+																required>
+																<option value="<?= $v->user_id;?>"><?= $v->nama;?>
+																	<?php if(!empty($staff)):?>
+																	<?php foreach($staff as $keys => $value):?>
+																<option value="<?= $value->user_id;?>">
+																	<?= $value->nama;?></option>
+																<?php endforeach;?>
+																<?php endif;?>
+															</select>
 														</div>
 														<small class="text-secondary">Staff akan mendapatkan email
 															pemberitahuan</small>
@@ -182,7 +212,7 @@
 															<small class="text-danger">*</small></label>
 														<input type="date" name="deadline" id="formDeadline"
 															class="form-control form-control-sm"
-															value="<?= $v->deadline;?>" readonly>
+															value="<?= $v->deadline;?>" required>
 													</div>
 												</div>
 
@@ -191,15 +221,17 @@
 															class="text-secondary">(optional)</small></label>
 													<textarea type="text" name="keterangan"
 														class="form-control form-control-sm ckeditor"
-														placeholder="Keterangan" rows="3"
-														readonly><?= $v->keterangan;?></textarea>
+														placeholder="Keterangan"
+														rows="3"><?= $v->keterangan;?></textarea>
 												</div>
 												<!-- End Form -->
 												<!-- End From -->
 												<div class="modal-footer p-0 pt-3">
 													<button type="button" class="btn btn-sm btn-white"
-														data-bs-dismiss="modal">Tutup</button>
+														data-bs-dismiss="modal">Batal</button>
 													<button type="submit" class="btn btn-sm btn-primary">Simpan</button>
+													<a href="<?= site_url('api/proyek/hapusTask/'.$v->id);?>"
+														class="btn btn-sm btn-soft-danger">Hapus</a>
 												</div>
 											</form>
 										</div>
@@ -250,9 +282,20 @@
 												<div class="mb-3">
 													<label class="form-label" for="formTask">Bukti penyelesaian <small
 															class="text-danger">*</small></label>
-													<input type="file" name="file" id="formTask"
+													<!-- <input type="file" name="file" id="formTask"
 														class="form-control form-control-sm"
-														accept="application/pdf,.pdf" required>
+														accept="application/pdf,.pdf" required> -->
+														<div action="#" class="dropzone p-1">
+															<div class="fallback">
+															</div>
+															<div class="dz-message needsclick">
+																<div class="mb-2">
+																	<i class="display-4 text-muted mdi mdi-upload-network-outline"></i>
+																</div>
+
+																<h4>Drop file atau klik untuk mengunggah.</h4>
+															</div>
+														</div>
 													<small class="text-secondary">Upload bukti penyelesaian task, berupa
 														file pdf</small>
 												</div>
@@ -271,7 +314,7 @@
 												<div class="modal-footer p-0 pt-3">
 													<button type="button" class="btn btn-sm btn-white"
 														data-bs-dismiss="modal">Batal</button>
-													<button type="submit"
+													<button type="submit" onclick="inikirim()"
 														class="btn btn-sm btn-success">Selesaikan</button>
 												</div>
 											</form>
@@ -281,12 +324,214 @@
 							</div>
 							<!-- End Modal -->
 
+							<!-- Modal -->
+							<div id="verifikasi-task-<?= $v->id;?>" class="modal fade" tabindex="-1" role="dialog"
+								aria-labelledby="modalTambah" aria-hidden="true">
+								<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="modalTambah">verifikasi task -
+												<strong><?= $v->task;?></strong></h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal"
+												aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+											<form action="<?= site_url('api/proyek/verifikasiTask');?>" method="post"
+												class="js-validate needs-validation" enctype="multipart/form-data"
+												novalidate>
+												<input type="hidden" name="id" value="<?= $v->id;?>">
+												<input type="hidden" name="proyek_id" value="<?= $v->proyek_id;?>">
+												<div class="mb-3">
+													<?php foreach($v->bukti_task as $kkk => $vvv):?>
+													<a href="<?= base_url();?><?= $vvv->bukti;?>" target="_blank"
+														class="btn btn-outline-primary btn-xs text-left mb-2"><i
+															class="bi bi-file-earmark-pdf"></i> <?php $nama_file = explode("/", $vvv->bukti); echo substr(end($nama_file), 0, 50);?></a><br>
+													<?php endforeach;?>
+												</div>
+												<p>Verifikasi penyelesaian task ini, tambahkan catatan jika ada</p>
+												<div class="mb-3">
+													<label class="form-label" for="formTaskKeterangan">Catatan <small
+															class="text-secondary">(optional)</small></label>
+													<textarea type="text" name="catatan_diterima"
+														class="form-control form-control-sm ckeditor"
+														placeholder="Keterangan"
+														rows="3"><?= $v->catatan_diterima;?></textarea>
+												</div>
+												<!-- End Form -->
+												<!-- End From -->
+												<div class="modal-footer p-0 pt-3">
+													<button type="button" class="btn btn-sm btn-white"
+														data-bs-dismiss="modal">Batal</button>
+													<button type="submit"
+														class="btn btn-sm btn-success">verifikasi</button>
+												</div>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- End Modal -->
+
+							<!-- Modal -->
+							<div id="tolak-task-<?= $v->id;?>" class="modal fade" tabindex="-1" role="dialog"
+								aria-labelledby="modalTambah" aria-hidden="true">
+								<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="modalTambah">tolak task -
+												<strong><?= $v->task;?></strong></h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal"
+												aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+											<form action="<?= site_url('api/proyek/tolakTask');?>" method="post"
+												class="js-validate needs-validation" enctype="multipart/form-data"
+												novalidate>
+												<input type="hidden" name="id" value="<?= $v->id;?>">
+												<input type="hidden" name="proyek_id" value="<?= $v->proyek_id;?>">
+
+												<p>Tolak penyelesaian task ini, berikan alasan jika diperlukan</p>
+
+												<div class="mb-3">
+													<label class="form-label" for="formTaskKeterangan">Catatan <small
+															class="text-secondary">(optional)</small></label>
+													<textarea type="text" name="catatan_ditolak"
+														class="form-control form-control-sm ckeditor"
+														placeholder="Keterangan"
+														rows="3"><?= $v->catatan_ditolak;?></textarea>
+												</div>
+												<!-- End Form -->
+												<!-- End From -->
+												<div class="modal-footer p-0 pt-3">
+													<button type="button" class="btn btn-sm btn-white"
+														data-bs-dismiss="modal">Batal</button>
+													<button type="submit"
+														class="btn btn-sm btn-soft-danger">tolak</button>
+												</div>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- End Modal -->
+
+							<script>
+									// Dropzone.autoDiscover = false;
+
+									// var foto_upload = new Dropzone(".dropzone", {
+									// 	url: "<?= site_url('api/proyek/upload_bukti/'.$v->proyek_id.'/'.$v->id) ?>",
+									// 	maxFilesize: 20,
+									// 	method: "post",
+									// 	acceptedFiles: "application/pdf",
+									// 	paramName: "bukti",
+									// 	dictInvalidFileType: "Tipe file ini tidak dizinkan",
+									// 	addRemoveLinks: true,
+									// 	removedfile: function (file) {
+									// 		var fileName = file.name;
+
+									// 		$.ajax({
+									// 			type: 'POST',
+									// 			url: '<?= site_url('api/proyek/delete_bukti/'.$v->proyek_id.'/'.$v->id.'/') ?>' + fileName,
+									// 			data: {
+									// 				name: fileName,
+									// 				request: 'delete'
+									// 			},
+									// 			sucess: function (data) {
+									// 				console.log('success: ' + data);
+									// 			}
+									// 		});
+
+									// 		var _ref;
+									// 		return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0;
+									// 	}
+									// });
+
+									Dropzone.autoDiscover = false;
+
+									$('.dz-message').addClass('hidden');
+
+									var foto_upload = new Dropzone(".dropzone", {
+										// renameFile: function(file) {
+										//     var ext = (file.name.substr(file.name.length - 5)).split('.')[1];
+										//     let newName = 'poster_' + new Date().getTime() + '.' + ext;
+										//     return newName;
+
+										//     console.log(newName);
+										// },
+										autoProcessQueue: false,
+										url: "<?= site_url('api/proyek/upload_bukti/'.$v->proyek_id.'/'.$v->id) ?>",
+										maxFilesize: 2,
+										maxFiles: 30,
+										parallelUploads: 30,
+										method: "post",
+										acceptedFiles: "application/pdf",
+										paramName: "bukti",
+										dictInvalidFileType: "File type not allowed",
+										addRemoveLinks: true,
+										init: function() {
+											let myDropzone = this;
+
+											// If you only have access to the original image sizes on your server,
+											// and want to resize them in the browser:
+											// let mockFile = {
+											//     name: "Filename 2",
+											//     size: 12345
+											// };
+											// myDropzone.displayExistingFile(mockFile, "https://i.picsum.photos/id/959/600/600.jpg");
+
+											// If the thumbnail is already in the right size on your server:
+											let mockFile = null;
+											let callback = null; // Optional callback when it's done
+											let crossOrigin = null; // Added to the `img` tag for crossOrigin handling
+											let resizeThumbnail = false; // Tells Dropzone whether it should resize the image first
+
+											<?php if (!empty($v->bukti_task)) : ?>
+												<?php foreach ($v->bukti_task as $kkk => $vvv) : ?>
+													mockFile = {
+														name: "<?= $vvv->bukti; ?>",
+														size: 10*1024
+													};
+
+													myDropzone.displayExistingFile(mockFile, "<?= base_url(); ?>assets/images/pdf.png", callback, crossOrigin, resizeThumbnail);
+												<?php endforeach; ?>
+											<?php endif; ?>
+
+											// If you use the maxFiles option, make sure you adjust it to the
+											// correct amount:
+											let fileCountOnServer = 2; // The number of files already uploaded
+											myDropzone.options.maxFiles = myDropzone.options.maxFiles - fileCountOnServer;
+										},
+										removedfile: function(file) {
+											var fileName = file.name;
+
+											$.ajax({
+												type: 'POST',
+												url: '<?= site_url('api/proyek/delete_bukti/'.$v->proyek_id.'/'.$v->id) ?>',
+												data: {
+													filename: fileName,
+													request: 'delete'
+												},
+												success: function(data) {
+													console.log('success: ' + data);
+												}
+											});
+
+											var _ref;
+											return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0;
+										}
+									});
+
+									function inikirim() {
+										foto_upload.processQueue();
+									}
+							</script>
+
 							<?php endforeach;?>
 							<?php else:?>
 							<li class="list-group-item py-3 task-empty">
 								<div class="row justify-content-between">
 									<div class="col-sm-12 mb-2 mb-sm-0">
-										<span class="h5 fw-normal">Belum ada task di <?= $val->status;?></span>
+										<span class="h5 fw-normal">Belum ada task di <span class="text-primary"><?= $val->status;?></span></span>
 									</div>
 									<!-- End Col -->
 								</div>
@@ -364,16 +609,16 @@
 						<div class="col-4">
 							<div class="input-group input-group-sm">
 								<input type="number" class="form-control form-control-sm" name="bobot"
-									placeholder="Bobot task" min="0" max="<?= (100-$bobot->quota_bobot);?>" value="0"
+									placeholder="Bobot task" min="0" max="<?= (100-(isset($bobot->quota_bobot) ? $bobot->quota_bobot : 0));?>" value="0"
 									aria-label="Bobot" aria-describedby="input-bobot-task"
-									<?= (100-$bobot->quota_bobot) == 0 ? 'readonly' : '';?> required>
+									<?= (100-(isset($bobot->quota_bobot) ? $bobot->quota_bobot : 0)) == 0 ? 'readonly' : '';?> required>
 								<span class="input-group-text" id="input-bobot-task">%</span>
 							</div>
 						</div>
 						<div class="col-5">
-							<span class="badge bg-soft-info ms-2">bobot tersisa: <?= $bobot->quota_bobot;?>/100</span>
+							<span class="badge bg-soft-info ms-2">bobot tersisa: <?= isset($bobot->quota_bobot) ? $bobot->quota_bobot : 0;?>/100</span>
 						</div>
-						<?php if((100-$bobot->quota_bobot) == 0):?>
+						<?php if((100-(isset($bobot->quota_bobot) ? $bobot->quota_bobot : 0)) == 0):?>
 						<small class="text-danger">anda tidak dapat membuat task baru dengan bobot lebih dari 0, ketika
 							quota bobot mencapai batas maksimal. ini akan berpengaruh terhadap sistem penilaian
 							KPI</small>
@@ -398,7 +643,7 @@
 						<div class="col">
 							<label class="form-label" for="formDeadline">Deadline Task</label>
 							<input type="date" name="deadline" id="formDeadline" class="form-control form-control-sm"
-								placeholder="Deadline task" required>
+								 value="<?= date('Y-m-d', strtotime('+1 week'));?>" required>
 						</div>
 					</div>
 
@@ -440,7 +685,7 @@
 						<div class="col-8">
 							<label class="form-label" for="formJudul">Nama Proyek</label>
 							<input type="text" name="judul" id="formJudul" class="form-control form-control-sm"
-								value="<?= $proyek->judul;?>" required>
+								value="<?= $proyek->judul;?>" <?= $proyek->is_selesai == 1 ? 'readonly' : 'required'?>>
 						</div>
 						<div class="col-4">
 							<label class="form-label" for="formKode">Kode Proyek <small class="text-danger">*</small> <i
@@ -464,14 +709,17 @@
 							<label class="form-label" for="formPeriodeMulai">Periode Mulai</label>
 							<input type="date" name="periode_mulai" id="formPeriodeMulai"
 								class="form-control form-control-sm"
-								value="<?= date('Y-m-d', $proyek->periode_mulai);?>" required>
+								value="<?= date('Y-m-d', $proyek->periode_mulai);?>"
+								<?= $proyek->is_selesai == 1 ? 'readonly' : 'required'?>>
 						</div>
 						<div class="col-6">
 							<label class="form-label" for="formPeriodeSelesai">Periode Selesai</label>
 							<input type="date" name="periode_selesai" id="formPeriodeSelesai"
 								class="form-control form-control-sm"
-								value="<?= date('Y-m-d', $proyek->periode_selesai);?>" required>
+								value="<?= date('Y-m-d', $proyek->periode_selesai);?>"
+								<?= $proyek->is_selesai == 1 ? 'readonly' : 'required'?>>
 						</div>
+						<?php if($proyek->is_selesai == 0):?>
 						<div class="col-12 mt-3">
 							<div class="alert alert-soft-primary mb-0">
 								<small class="text-secondary">Periode mulai dan selesai digunakan sebagai acuan laporan
@@ -479,13 +727,19 @@
 									terjadi kendala saat proses pengerjaan berlangsung</small>
 							</div>
 						</div>
+						<?php endif;?>
 					</div>
 
 					<div class="mb-3">
 						<label for="formKeterangan" class="form-label">Keterangan <small
 								class="text-secondary">(optional)</small></label>
+						<?php if($proyek->is_selesai == 1):?>
+						<p><?= $proyek->keterangan;?></p>
+						<?php else:?>
 						<textarea name="keterangan" class="form-control form-control-sm ckeditor" id="formKeterangan"
-							rows="3" placeholder="Keterangan"><?= $proyek->keterangan;?></textarea>
+							rows="3" placeholder="Keterangan"
+							<?= $proyek->is_selesai == 1 ? 'readonly' : ''?>><?= $proyek->keterangan;?></textarea>
+						<?php endif;?>
 					</div>
 					<!-- End Form -->
 					<div class="modal-footer p-0 pt-3">
