@@ -6,7 +6,7 @@
                   <!-- Default Logo -->
                   <div class="docs-navbar-sidebar-container d-flex align-items-center justify-content-between">
                       <a class="navbar-brand" href="<?= site_url('dashboard'); ?>" aria-label="Space">
-                          <img class="navbar-brand-logo" src="<?= base_url(); ?>assets/images/logo.png" alt="Logo">
+                          <img class="navbar-brand-logo" src="<?= base_url(); ?><?= $web_logo;?>" alt="Logo">
                       </a>
                         <a class="btn btn-outline-secondary btn-sm" href="<?= site_url('keluar'); ?>">
                             <i class="bi-power me-1"></i> Keluar

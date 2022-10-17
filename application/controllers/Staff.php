@@ -129,6 +129,7 @@ class Staff extends CI_Controller
         
         $this->session->set_userdata(['proyek' => $proyek]);
 
+        $data['countDashboard'] = $this->M_staff->countDashboardStaff();
         $data['proyek'] = $this->M_proyek->getDetail($kode);
         $data['log_proyek'] = $this->M_proyek->getLogProyek($proyekDetail->id);
         $data['status'] = $this->M_proyek->getProyekStatus($kode);
@@ -144,6 +145,7 @@ class Staff extends CI_Controller
 
     public function pengaturan()
     {
+        $data['countDashboard'] = $this->M_staff->countDashboardStaff();
         $data['user'] = $this->M_auth->get_userByID($this->session->userdata('user_id'));
 
         if ($this->agent->is_mobile()) {

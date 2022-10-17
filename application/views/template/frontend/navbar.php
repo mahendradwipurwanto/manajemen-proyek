@@ -10,7 +10,7 @@
   		<nav class="js-mega-menu navbar-nav-wrap">
   			<!-- Default Logo -->
   			<a class="navbar-brand" href="<?= base_url();?>" aria-label="Front">
-  				<img class="navbar-brand-logo" src="<?= base_url(); ?>assets/images/logo.png" alt="Logo">
+  				<img class="navbar-brand-logo" src="<?= base_url(); ?><?= $web_logo;?>" alt="Logo">
   			</a>
   			<!-- End Default Logo -->
 

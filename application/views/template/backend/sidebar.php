@@ -31,10 +31,10 @@
   				<!-- Default Logo -->
   				<div class="d-flex align-items-center">
   					<a class="navbar-brand" href="<?= base_url(); ?>" aria-label="Space">
-  						<img class="navbar-brand-logo" src="<?= base_url(); ?>assets/images/logo.png" alt="Logo">
+  						<img class="navbar-brand-logo" src="<?= base_url(); ?><?= $web_logo;?>" alt="Logo">
   					</a>
   					<a class="navbar-brand-badge">
-  						<span class="badge bg-soft-primary text-primary ms-2">v1.0</span>
+  						<span class="badge bg-soft-primary text-primary ms-2">v1.5.9</span>
   					</a>
   				</div>
   				<!-- End Default Logo -->

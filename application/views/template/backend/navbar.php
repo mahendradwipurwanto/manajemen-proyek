@@ -7,10 +7,10 @@
   				<!-- Default Logo -->
   				<div class="docs-navbar-sidebar-container d-flex align-items-center mb-2 mb-lg-0">
   					<a class="navbar-brand" href="<?= base_url();?>" aria-label="Space">
-  						<img class="navbar-brand-logo" src="<?= base_url(); ?>assets/images/logo.png" alt="Logo">
+  						<img class="navbar-brand-logo" src="<?= base_url(); ?><?= $web_logo;?>" alt="Logo">
   					</a>
   					<a>
-  						<span class="badge bg-soft-primary text-primary">v1.0</span>
+  						<span class="badge bg-soft-primary text-primary">v1.5.9</span>
   					</a>
   				</div>
   				<!-- End Default Logo -->
