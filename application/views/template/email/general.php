@@ -516,6 +516,8 @@
 				<img src="<?= base_url(); ?><?= $web_logo;?>" style="width: 100px;" />
 			</div>
 			<p><?= $message;?></p>
+            <br>
+            <h3 style="font-weight: normal;">Kunjungi situs dengan menggunakan link: <a href="<?= site_url('masuk');?>"><?= site_url('masuk');?></a></h3>
 			<br>
 			<h4 class="v-text-align"
 				style="margin: 0px; line-height: 100%; text-align: center; word-wrap: break-word; font-weight: normal; font-family:Cabin,sans-serif; font-size: 10px;">
