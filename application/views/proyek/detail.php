@@ -279,7 +279,7 @@
 														</div>
 													</div>
 													<small class="text-secondary">Upload bukti penyelesaian task, berupa
-														file pdf</small>
+														file pdf. Maksimal 5Mb</small>
 												</div>
 												<input type="hidden" name="sudah_upload" value="1">
 												<?php else:?>
@@ -301,7 +301,7 @@
 															</div>
 														</div>
 													<small class="text-secondary">Upload bukti penyelesaian task, berupa
-														file pdf</small>
+														file pdf. Maksimal 5Mb</small>
 												</div>
 												<input type="hidden" name="sudah_upload" value="0">
 												<?php endif;?>

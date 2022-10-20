@@ -48,6 +48,7 @@
 									</div>
 									<button type="button"
 										class="js-file-attach-reset-img btn btn-white btn-sm">Hapus</button>
+									<small class="text-secondary">Maskimal upload file 5 mb</small>
 								</div>
 							</div>
 						</div>

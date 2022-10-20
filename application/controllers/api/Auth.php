@@ -340,7 +340,7 @@ class Auth extends CI_Controller
 
             // setting data untuk dikirim ke email
             $subject = "Permintaan reset password ";
-            $message = 'Hai, kami menerima permintaan reset password untuk email <b>' . $email . '</b>.<br> Harap click tombol dibawah ini untuk melanjutkan proses reset password! <br><hr><br><center><a href="' . base_url() . 'reset-password/' . $token . '" style="background-color: #377dff;border:none;color:#fff;padding:15px 32px;text-align:center;text-decoration:none;display:inline-block;font-size:16px;">Reset Password</a></center><br><br>atau click link dibawah ini: <br>' . base_url() . 'reset-password/' . $token . '<br><br><small class="text-muted">Link tersebut hanya akan valid selama 24 jam, jika link telah kadaluarsa, harap mengulang proses reset password</small>';
+            $message = 'Hai, kami menerima permintaan reset password untuk email <b>' . $email . '</b>.<br> Harap click tombol dibawah ini untuk melanjutkan proses reset password! <br><br><a href="' . base_url() . 'reset-password/' . $token . '" class="btn btn-soft-primary">Reset Password</a></center><br><br>atau click link dibawah ini: <br>' . base_url() . 'reset-password/' . $token . '<br><br><small class="text-muted">Link tersebut hanya akan valid selama 24 jam, jika link telah kadaluarsa, harap mengulang proses reset password</small>';
 
             // mengirim ke email
             if (sendMail($email, $subject, $message) == true) {
