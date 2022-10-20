@@ -114,4 +114,18 @@ class M_master extends CI_Model
         return true;
     }
 
+    function getReminderTask(){
+        $this->db->select('tb_proyek_task.*, tb_user.nama, tb_auth.email')
+        ->from('tb_proyek_task')
+        ->join('tb_proyek_status', 'tb_proyek_task.status_id = tb_proyek_status.id')
+        ->join('tb_user', 'tb_proyek_task.user_id = tb_user.user_id')
+        ->join('tb_auth', 'tb_proyek_task.user_id = tb_auth.user_id')
+        ->where(['tb_proyek_task.is_deleted' => 0, 'tb_proyek_status.is_selesai' => 0, 'tb_proyek_status.is_closed' => 0])
+        ;
+
+        $models = $this->db->get()->result();
+
+        return $models;
+    }
+
 }
