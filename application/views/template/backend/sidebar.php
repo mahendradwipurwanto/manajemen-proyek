@@ -83,7 +83,7 @@
   						</a>
   					</li>
   					<?php else:?>
-  					<li class="nav-item ">
+  					<li class="nav-item " id="tour-menu-proyek">
   						<a class="nav-link dropdown-toggle" href="#proyek-sidebar" role="button"
   							data-bs-toggle="collapse" aria-expanded="true" aria-controls="proyek-sidebar">Proyek</a>
 

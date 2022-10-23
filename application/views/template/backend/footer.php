@@ -53,6 +53,73 @@
 
 <!-- JS Plugins Init. -->
 <script>
+	function tourAdmin() {
+		introJs().setOptions({
+			disableInteraction: true,
+			steps: [{
+				intro: "Selamat Datang di web aplikasi Manajemen Proyek"
+			},{
+				element: document.querySelector('#tour-landing-button'),
+				intro: "Anda dapat langsung menuju halaman utama dengan menekan tombol ini"
+			}, {
+				element: document.querySelector('#tour-dashboard'),
+				intro: "Anda dapat melihat ringkasan mengenai web app pada laman ini"
+			}, {
+				element: document.querySelector('#tour-menu-kpi'),
+				intro: "Anda dapat melihat laporan KPI dari staff anda pada laman ini"
+			}, {
+				element: document.querySelector('#tour-menu-laporan'),
+				intro: "Anda dapat melihat laporan proyek dan task pada laman ini"
+			}, {
+				element: document.querySelector('#tour-menu-staff'),
+				intro: "Anda dapat mengelola data staff anda pada laman ini"
+			}, {
+				element: document.querySelector('#tour-menu-leader'),
+				intro: "Anda dapat melihat data staff yang menjadi leader pada laman ini"
+			}, {
+				element: document.querySelector('#tour-menu-proyek'),
+				intro: "Anda dapat mengelola data seluruh proyek dan task anda pada laman ini"
+			}, {
+				element: document.querySelector('#tour-menu-pengaturan'),
+				intro: "Anda dapat mengelola pengaturan seputar website anda pada laman ini"
+			}]
+		}).onbeforeexit(function () {
+			return confirm("Keluar dari intro?");
+		}).start();
+	}
+
+	function tourStaff() {
+		introJs().setOptions({
+			disableInteraction: true,
+			steps: [{
+				intro: "Selamat Datang di web aplikasi Manajemen Proyek"
+			},{
+				element: document.querySelector('#tour-landing-button'),
+				intro: "Anda dapat langsung menuju halaman utama dengan menekan tombol ini"
+			}, {
+				element: document.querySelector('#tour-dashboard'),
+				intro: "Anda dapat melihat ringkasan mengenai web app pada laman ini"
+			}, {
+				element: document.querySelector('#tour-menu-kpi'),
+				intro: "Anda dapat melihat laporan KPI dari staff anda pada laman ini"
+			}, {
+				element: document.querySelector('#tour-menu-laporan'),
+				intro: "Anda dapat melihat laporan proyek dan task pada laman ini"
+			}, {
+				element: document.querySelector('#tour-menu-staff'),
+				intro: "Anda dapat mengelola data staff anda pada laman ini"
+			}, {
+				element: document.querySelector('#tour-menu-proyek'),
+				intro: "Anda dapat mengelola data seluruh proyek dan task anda pada laman ini"
+			}, {
+				element: document.querySelector('#tour-pengaturan'),
+				intro: "Anda dapat mengelola pengaturan profil anda pada laman ini"
+			}]
+		}).onbeforeexit(function () {
+			return confirm("Keluar dari intro?");
+		}).start();
+	}
+
 	(function () {
 		// INITIALIZATION OF HEADER
 		// =======================================================

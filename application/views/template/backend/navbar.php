@@ -19,6 +19,19 @@
   					<div class="d-flex justify-content-between align-items-center px-lg-5 px-xl-10">
   						<!-- Navbar -->
   						<ul class="navbar-nav p-0">
+  							<?php if($this->session->userdata('role') == 0 || $this->session->userdata('role') == 1):?>
+  							<li class="nav-item">
+  								<a class="btn btn-ghost-secondary btn-sm" onclick="tourAdmin()">
+  									Pusat Bantuan <i class="bi-question-diamond-fill ms-1"></i>
+  								</a>
+  							</li>
+  							<?php else:?>
+  							<li class="nav-item">
+  								<a class="btn btn-ghost-secondary btn-sm" onclick="tourStaff()">
+  									Pusat Bantuan <i class="bi-question-diamond-fill ms-1"></i>
+  								</a>
+  							</li>
+  							<?php endif;?>
   							<li class="nav-item" id="tour-landing-button">
   								<a class="btn btn-ghost-secondary btn-sm" href="<?= base_url(); ?>" target="_blank">
   									Halaman utama <i class="bi-box-arrow-up-right ms-1"></i>

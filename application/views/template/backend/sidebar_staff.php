@@ -75,37 +75,37 @@
 
 						<!-- List -->
 						<ul class="nav nav-sm nav-tabs nav-vertical">
-							<li class="nav-item">
+							<li class="nav-item" id="tour-dashboard">
 								<a class="nav-link <?= ($this->uri->segment(2) == "dashboard" || !$this->uri->segment(2) ? "active" : "") ?>"
 									href="<?= site_url('staff/dashboard'); ?>">
 									<i class="bi bi-person-badge nav-icon"></i> Dashboard
 								</a>
 							</li>
-							<li class="nav-item">
+							<li class="nav-item" id="tour-menu-kpi">
 								<a class="nav-link <?= ($this->uri->segment(2) == "kpi" || $this->uri->segment(2) == "task" ? "active" : "") ?>"
 									href="<?= site_url('staff/kpi'); ?>">
 									<i class="bi bi-file-bar-graph nav-icon"></i> KPI
 								</a>
 							</li>
-							<li class="nav-item">
+							<li class="nav-item" id="tour-menu-laporan">
 								<a class="nav-link <?= ($this->uri->segment(2) == "laporan" || $this->uri->segment(2) == "task" ? "active" : "") ?>"
 									href="<?= site_url('staff/laporan'); ?>">
 									<i class="bi bi-file-bar-graph nav-icon"></i> Laporan
 								</a>
 							</li>
-							<li class="nav-item">
+							<li class="nav-item" id="tour-menu-staff">
 								<a class="nav-link <?= ($this->uri->segment(2) == "daftar-staff" || $this->uri->segment(2) == "task" ? "active" : "") ?>"
 									href="<?= site_url('staff/daftar-staff'); ?>">
 									<i class="bi bi-people-fill nav-icon"></i> Daftar Staff
 								</a>
 							</li>
-							<li class="nav-item">
+							<li class="nav-item" id="tour-menu-proyek">
 								<a class="nav-link <?= ($this->uri->segment(2) == "kelola-proyek" || $this->uri->segment(2) == "task" || $this->uri->segment(2) == "kelola" ? "active" : "") ?>"
 									href="<?= site_url('staff/kelola-proyek'); ?>">
 									<i class="bi bi-clipboard nav-icon"></i> Kelola Task
 								</a>
 							</li>
-							<li class="nav-item">
+							<li class="nav-item" id="tour-pengaturan">
 								<a class="nav-link <?= ($this->uri->segment(2) == "pengaturan" ? "active" : "") ?>"
 									href="<?= site_url('staff/pengaturan'); ?>">
 									<i class="bi bi-sliders nav-icon"></i> Pengaturan
