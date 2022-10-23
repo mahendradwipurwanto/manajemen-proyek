@@ -29,7 +29,7 @@
   		<div id="navbarVerticalNavMenu" class="collapse navbar-collapse">
   			<div class="navbar-brand-wrapper border-end" style="height: 75px;">
   				<!-- Default Logo -->
-  				<div class="d-flex align-items-center">
+  				<div class="d-flex align-items-center" style="margin-top: -4px;">
   					<a class="navbar-brand" href="<?= base_url(); ?>" aria-label="Space">
   						<img class="navbar-brand-logo" src="<?= base_url(); ?><?= $web_logo;?>" alt="Logo">
   					</a>
