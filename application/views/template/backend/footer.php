@@ -137,6 +137,17 @@
 				"responsive": true
 			});
 
+			$('#table2').DataTable({
+				"language": {
+					"emptyTable": '<div class="text-center p-4">' +
+						'<img class="mb-3" src="<?= base_url() ?>assets/svg/illustrations/sorry.svg" alt="Image Description" style="width: 7rem;">' +
+						'<p class="mb-0">Tidak ada data untuk ditampilkan</p>' +
+						'</div>'
+				},
+				"scrollX": true,
+				"responsive": true
+			});
+
 			$('#table-kpi').DataTable({
 				"language": {
 					"emptyTable": '<div class="text-center p-4">' +

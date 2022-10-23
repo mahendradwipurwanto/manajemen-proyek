@@ -1045,4 +1045,99 @@ class M_proyek extends CI_Model
         }
         return $models;
     }
+
+    function getLaporanProyek($periode = []){
+        $this->db->select('a.*, c.nama')
+        ->from('tb_proyek a')
+        ->join('tb_assign_leader b', 'a.id = b.proyek_id')
+        ->join('tb_user c', 'b.user_id = c.user_id')
+        ->where(['a.is_deleted' => 0])
+        ;
+
+        if(!empty($periode)){
+            if(strtotime($periode[0]) == strtotime($periode[1])){
+                $this->db->where(['a.periode_mulai' => strtotime($periode[0])]);
+            }else{
+                $this->db->where(['a.periode_mulai >=' => strtotime($periode[0]), 'a.periode_mulai <=' => strtotime($periode[1])]);
+            }
+        }
+
+        $models = $this->db->get()->result();
+        
+        foreach($models as $key => $val){
+            $val->over_deadline = false;
+            if($val->periode_selesai < time()){
+                $val->over_deadline = true;
+            }
+
+            $val->tasks = $this->getTasksLaporan($val->id)['status'] == true ? $this->getTasksLaporan($val->id)['data'] : null;
+            $val->tasks_selesai = 0;
+            if($val->tasks != null){
+                foreach($val->tasks as $k => $v){
+                    if($v->is_selesai == 1 || $v->is_closed == 1){
+                        $val->tasks_selesai += 1;
+                    }
+                }
+            }
+        }
+        
+        return $models;
+    }
+
+    function getTasksLaporan($proyek_id){
+        $this->db->select('a.*, b.nama, c.status, c.warna, c.is_selesai, c.is_closed')
+        ->from('tb_proyek_task a')
+        ->join('tb_user b', 'a.user_id = b.user_id')
+        ->join('tb_proyek_status c', 'a.status_id = c.id')
+        ->where(['a.proyek_id' => $proyek_id, 'a.is_deleted' => 0])
+        ;
+
+        if(!empty($periode)){
+            if(strtotime($periode[0]) == strtotime($periode[1])){
+                $this->db->where(['a.created_at' => strtotime($periode[0])]);
+            }else{
+                $this->db->where(['a.created_at >=' => strtotime($periode[0]), 'a.created_at <=' => strtotime($periode[1])]);
+            }
+        }
+
+        $models = $this->db->get()->result();
+        if(empty($models)){
+            return [
+                'status' => false,
+                'data' => null
+            ];
+        }
+        foreach($models as $key => $val){
+            $val->over_deadline = false;
+            if($val->deadline < time()){
+                $val->over_deadline = true;
+            }
+        }
+        
+        return [
+            'status' => true,
+            'data' => $models
+        ];
+    }
+
+    function getTasksLaporanAll($periode = []){
+        $this->db->select('a.*, b.nama, c.status, c.warna, c.is_selesai, c.is_closed, d.judul')
+        ->from('tb_proyek_task a')
+        ->join('tb_user b', 'a.user_id = b.user_id')
+        ->join('tb_proyek_status c', 'a.status_id = c.id')
+        ->join('tb_proyek d', 'a.proyek_id = d.id')
+        ->where(['a.is_deleted' => 0])
+        ;
+
+        $models = $this->db->get()->result();
+        
+        foreach($models as $key => $val){
+            $val->over_deadline = false;
+            if($val->deadline < time()){
+                $val->over_deadline = true;
+            }
+        }
+        
+        return $models;
+    }
 }

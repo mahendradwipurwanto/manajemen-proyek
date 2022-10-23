@@ -109,6 +109,24 @@ class Proyek extends CI_Controller
         }
     }
 
+    public function laporan()
+    {
+        $periode = [];
+        if($this->input->post('periode')){
+            $periode = explode(' - ', $this->input->post('periode'));
+            // ej($periode);
+        }
+
+        $data['proyek'] = $this->M_proyek->getLaporanProyek($periode);
+        $data['tasks'] = $this->M_proyek->getTasksLaporanAll($periode);
+        
+        if ($this->agent->is_mobile()) {
+            $this->templatemobile->view('proyek/laporan', $data);
+        }else{
+            $this->templateback->view('proyek/laporan', $data);
+        }
+    }
+
     public function master_status($kode = null)
     {
         $data['countStaff'] = $this->M_staff->countStaff();

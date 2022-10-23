@@ -49,7 +49,11 @@
   					</li>
   					<li class="nav-item" id="tour-menu-kpi">
   						<a class="nav-link <?= ($this->uri->segment(2) == "kpi" ? "active" : "") ?>"
-  							href="<?= site_url('proyek/kpi'); ?>">KPI / Laporan</a>
+  							href="<?= site_url('proyek/kpi'); ?>">KPI </a>
+  					</li>
+  					<li class="nav-item" id="tour-menu-laporan">
+  						<a class="nav-link <?= ($this->uri->segment(2) == "laporan" ? "active" : "") ?>"
+  							href="<?= site_url('proyek/laporan'); ?>">Laporan </a>
   					</li>
 
   					<li class="nav-item my-2 my-lg-5"></li>
@@ -73,7 +77,7 @@
   					</li>
   					<?php if(empty($proyek_semat)):?>
   					<li class="nav-item" id="tour-menu-proyek">
-  						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-proyek" || $this->uri->segment(1) == "proyek" && $this->uri->segment(2) != "kpi" ? "active" : "") ?>"
+  						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-proyek" || $this->uri->segment(1) == "proyek" && $this->uri->segment(2) != "kpi" && $this->uri->segment(2) != "laporan" ? "active" : "") ?>"
   							href="<?= site_url('admin/kelola-proyek'); ?>">Proyek
   							<span class="ms-auto badge bg-primary"></span>
   						</a>
@@ -114,7 +118,11 @@
   					</li>
   					<li class="nav-item" id="tour-menu-kpi">
   						<a class="nav-link <?= ($this->uri->segment(2) == "kpi" ? "active" : "") ?>"
-  							href="<?= site_url('leader/kpi'); ?>">KPI / Laporan</a>
+  							href="<?= site_url('leader/kpi'); ?>">KPI</a>
+  					</li>
+  					<li class="nav-item" id="tour-menu-laporan">
+  						<a class="nav-link <?= ($this->uri->segment(2) == "laporan" ? "active" : "") ?>"
+  							href="<?= site_url('leader/laporan'); ?>">Laporan</a>
   					</li>
 
   					<li class="nav-item my-2 my-lg-5"></li>
