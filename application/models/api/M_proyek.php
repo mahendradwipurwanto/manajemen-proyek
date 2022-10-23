@@ -1133,7 +1133,7 @@ class M_proyek extends CI_Model
         
         foreach($models as $key => $val){
             $val->over_deadline = false;
-            if($val->deadline < time()){
+            if($val->deadline < time() && ($val->is_selesai == 0 || $val->is_closed == 0)){
                 $val->over_deadline = true;
             }
         }
