@@ -56,7 +56,7 @@
 									<div class="flex-grow-1">
 										<a class="d-inline-block link-dark" href="#">
 											<h6 class="text-hover-primary mb-0"><?= $val->judul;?>
-												<?php if($val->over_deadline == true):?>
+												<?php if($val->over_deadline == true && $val->status == 1):?>
 												<span class="badge bg-soft-danger">over deadline</span>
 												<?php else:?>
 												<span class="badge bg-soft-info">pengerjaan</span>
@@ -121,7 +121,7 @@
 									<div class="flex-grow-1">
 										<a class="d-inline-block link-dark" href="#">
 											<h6 class="text-hover-primary mb-0"><?= $val->task;?>
-												<?php if($val->over_deadline == true):?>
+												<?php if($val->over_deadline == true && ($val->is_selesai == 0 || $val->is_closed == 0)):?>
 												<span class="badge bg-soft-danger">over deadline</span>
 												<?php else:?>
 												<span class="badge bg-soft-info">pengerjaan</span>
