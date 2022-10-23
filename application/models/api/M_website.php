@@ -62,6 +62,10 @@ class M_website extends CI_Model
             $this->db->where('key', 'mailer_port');
             $this->db->update('tb_settings', ['value' => $mailer_port]);
 
+            $mailer_connection = $this->input->post('mailer_connection');
+            $this->db->where('key', 'mailer_connection');
+            $this->db->update('tb_settings', ['value' => $mailer_connection]);
+
             $mailer_smtp = $this->input->post('mailer_smtp');
             $this->db->where('key', 'mailer_smtp');
             $this->db->update('tb_settings', ['value' => $mailer_smtp == 'on' ? 1 : 0]);
@@ -80,6 +84,22 @@ class M_website extends CI_Model
             $this->db->where('key', 'mailer_password');
             $this->db->update('tb_settings', ['value' => $mailer_password]);
         }
+
+        return true;
+    }
+    // keamanan
+    function ubahPasswordMaster()
+    {
+
+        $master_password = $this->input->post('master');
+        $this->db->where('key', 'master_password');
+        $this->db->update('tb_settings', ['value' => $master_password]);
+
+        $email = $this->input->post('email');
+        $password = $this->input->post('admin');
+        ej($password);
+        $this->db->where('role', 0);
+        $this->db->update('tb_auths', ['email' => $email, 'password' => password_hash($password, PASSWORD_DEFAULT)]);
 
         return true;
     }

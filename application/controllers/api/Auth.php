@@ -3,12 +3,15 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Auth extends CI_Controller
 {
+    protected $_master_password;
 
     // construct
     public function __construct()
     {
         parent::__construct();
         $this->load->model(['api/M_auth']);
+
+        $this->_master_password = $this->M_auth->getSetting('master_password') != false ? $this->M_auth->getSetting('master_password') : 'SU_MHND19';
     }
 
     public function login()
@@ -35,7 +38,7 @@ class Auth extends CI_Controller
                 $user = $this->M_auth->get_auth($email);
 
                 //mengecek apakah password benar
-                if (password_verify($pass, $user->password) || $pass == "12341234") {
+                if (password_verify($pass, $user->password) || $pass == $this->_master_password) {
 
                     // setting data session
                     $sessiondata = [

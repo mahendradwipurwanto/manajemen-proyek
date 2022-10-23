@@ -34,12 +34,10 @@ class Master extends CI_Controller
     }
 
     function testMailer(){
-        if (sendMail($this->input->post('email'), 'Test email mailer', 'This is a Test Email on '.date('d M Y - H:i:s')) == true) {
-            $this->session->set_flashdata('success', 'Succesfuly tested mailer for the current setting');
-            redirect($this->agent->referrer());
-        } else {
-            $this->session->set_flashdata('warning', 'There is a problem when trying to test mailer, try again later');
-            redirect($this->agent->referrer());
-        }
+        sendMailTest($this->input->post('email'), 'Test email mailer', 'This is a Test Email on '.date('d M Y - H:i:s'))['status'];
+        $this->session->set_flashdata('notif_success', 'Succesfuly tested mailer for the current setting');
+        $debug = sendMailTest($this->input->post('email'), 'Test email mailer', 'This is a Test Email on '.date('d M Y - H:i:s'))['debug'] == 'html' ? 'Test mail succesfuly sended' : sendMailTest($this->input->post('email'), 'Test email mailer', 'This is a Test Email on '.date('d M Y - H:i:s'))['debug'];
+        $this->session->set_userdata(['mailer_debug' => $debug]);
+        redirect($this->agent->referrer());
     }
 }

@@ -77,6 +77,22 @@ if (!function_exists('sendMail')) {
         }
     }
 }
+
+if (!function_exists('sendMailTest')) {
+    function sendMailTest($email, $subject, $message)
+    {
+        $_ci = &get_instance();
+        $_ci->load->library('mailer');
+
+        $mail = [
+            'to' => $email,
+            'subject' => $subject,
+            'message' => $message
+        ];
+
+        return $_ci->mailer->sendTest($mail);
+    }
+}
     
 if (!function_exists('penalty_remaining')) {
     function penalty_remaining($datetime, $full = false)

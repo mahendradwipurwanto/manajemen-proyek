@@ -32,4 +32,15 @@ class Website extends CI_Controller
             redirect($this->agent->referrer());
         }
     }
+
+    public function ubahPasswordMaster()
+    {
+        if ($this->M_website->ubahPasswordMaster() == true) {
+            $this->session->set_flashdata('notif_success', 'Berhasil mengubah informasi keamanan');
+            redirect(site_url('admin/pengaturan?p=keamanan'));
+        } else {
+            $this->session->set_flashdata('notif_warning', 'Terjadi kesalahaan, saat mengubah informasi keamanan');
+            redirect($this->agent->referrer());
+        }
+    }
 }

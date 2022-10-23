@@ -114,7 +114,6 @@ class Admin extends CI_Controller
     {
         
         $page = $this->input->get('p');
-
         switch ($page) {
             case 'general':
 
@@ -125,14 +124,15 @@ class Admin extends CI_Controller
                 }
                 break;
 
-            case 'credentials':
-                $data['super_account'] = $this->M_admin->get_superAccount();
-                $data['admin_account'] = $this->M_admin->get_adminAccount();
+            case 'keamanan':
+                $data['master_password'] = $this->M_admin->get_settingsValue('master_password');
+                $data['account'] = $this->M_admin->get_allAccount();
+                $data['admin'] = $this->M_admin->get_superAccount();
 
                 if ($this->agent->is_mobile()) {
-                    $this->templatemobile->view('admin/settings/credentials', $data);
+                    $this->templatemobile->view('admin/pengaturan/keamanan', $data);
                 }else{
-                    $this->templateback->view('admin/settings/credentials', $data);
+                    $this->templateback->view('admin/pengaturan/keamanan', $data);
                 }
                 break;
 
@@ -141,6 +141,7 @@ class Admin extends CI_Controller
                 $data['mailer_host'] = $this->M_admin->get_settingsValue('mailer_host');
                 $data['mailer_port'] = $this->M_admin->get_settingsValue('mailer_port');
                 $data['mailer_smtp'] = $this->M_admin->get_settingsValue('mailer_smtp');
+                $data['mailer_connection'] = $this->M_admin->get_settingsValue('mailer_connection');
                 $data['mailer_alias'] = $this->M_admin->get_settingsValue('mailer_alias');
                 $data['mailer_username'] = $this->M_admin->get_settingsValue('mailer_username');
                 $data['mailer_password'] = $this->M_admin->get_settingsValue('mailer_password');

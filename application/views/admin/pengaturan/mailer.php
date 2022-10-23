@@ -26,8 +26,9 @@
 							</div>
 						</div>
 						<div class="col-4">
-							<div class="form-check form-switch mb-4">
-								<input type="checkbox" class="form-check-input" id="formMailerSmtp" name="mailer_smtp" <?= $mailer_smtp == 1 ? 'checked' : '';?>>
+							<div class="form-check form-switch mb-1">
+								<input type="checkbox" class="form-check-input" id="formMailerSmtp" name="mailer_smtp"
+									<?= $mailer_smtp == 1 ? 'checked' : '';?>>
 								<label class="form-check-label" for="formMailerSmtp">Mailer SMTP</label>
 							</div>
 						</div>
@@ -37,6 +38,12 @@
 								class="text-danger">*</small></label>
 						<input type="text" id="inputMailerHost" class="form-control form-control-sm" name="mailer_host"
 							value="<?= $mailer_host;?>" required>
+					</div>
+					<div class="mb-3">
+						<label for="inputMailerConnection" class="form-label">Mailer Connection<small
+								class="text-danger">*</small></label>
+						<input type="text" id="inputMailerConnection" class="form-control form-control-sm"
+							name="mailer_connection" value="<?= $mailer_connection;?>" required>
 					</div>
 					<div class="mb-3">
 						<label for="inputMailerPort" class="form-label">Mailer Port<small
@@ -82,6 +89,9 @@
 				</div>
 				<button type="submit" class="btn btn-primary btn-sm float-end">Test Config</button>
 			</form>
+			<div class="code-toolbar mt-3">
+				<pre class="language-markup w-100 p-2"><?= $this->session->userdata('mailer_debug') !== null ? $this->session->userdata('mailer_debug') : 'Send test mail first';?></pre>
+			</div>
 		</div>
 	</div>
 </div>

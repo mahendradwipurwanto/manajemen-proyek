@@ -174,7 +174,7 @@
 					// do something if 'hasClass' is exist.
 					$('.loader').addClass('d-none');
 				}
-			}, 5000);
+			}, 2000);
 
 			$('input[name="periode"]').daterangepicker();
 		})
