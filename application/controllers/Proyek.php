@@ -46,11 +46,11 @@ class Proyek extends CI_Controller
             'kode' => $proyekDetail->kode,
             'judul' => $proyekDetail->judul,
             'keterangan' => $proyekDetail->keterangan,
+            'upload_type' => $proyekDetail->upload_type,
             'periode_mulai' => $proyekDetail->periode_mulai,
             'periode_selesai' => $proyekDetail->periode_selesai,
             'status' => $proyekDetail->status
         ];
-        
         $this->session->set_userdata(['proyek' => $proyek]);
 
         if($this->session->userdata('role') == 3){

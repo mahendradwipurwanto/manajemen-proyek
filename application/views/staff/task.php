@@ -169,7 +169,7 @@
 												</div>
 												<div class="mb-4 row align-items-center">
 													<label class="form-label col-3 mb-0" for="formTask">Bobot task
-														<small class="text-danger">*</small></label>
+														</label>
 													<div class="col-4">
 														<div class="input-group input-group-sm">
 															<input type="number" class="form-control form-control-sm"
@@ -209,7 +209,7 @@
 													</div>
 													<div class="col">
 														<label class="form-label" for="formDeadline">Deadline Task
-															<small class="text-danger">*</small></label>
+															</label>
 														<input type="date" name="deadline" id="formDeadline"
 															class="form-control form-control-sm"
 															value="<?= $v->deadline;?>" required>
@@ -265,17 +265,17 @@
 														<div class="col-4">
 															<a href="<?= base_url();?><?= $v->bukti;?>" target="_blank"
 																class="btn btn-outline-primary btn-sm text-left"><i
-																	class="bi bi-file-earmark-pdf"></i> Bukti
+																	class="bi bi-file-earmark-<?= $v->icon;?>"></i> Bukti
 																penyelesaian</a>
 														</div>
 														<div class="col-8">
 															<input type="file" name="file" id="formTask"
 																class="form-control form-control-sm"
-																accept="application/pdf,.pdf">
+																accept="<?= $proyek->upload_string?>">
 														</div>
 													</div>
 													<small class="text-secondary">Upload bukti penyelesaian task, berupa
-														file pdf. Maksimal 5Mb</small>
+														file <?= $proyek->upload_allowed?>. Maksimal 5Mb</small>
 												</div>
 												<input type="hidden" name="sudah_upload" value="1">
 												<?php else:?>
@@ -297,7 +297,7 @@
 															</div>
 														</div>
 													<small class="text-secondary">Upload bukti penyelesaian task, berupa
-														file pdf. Maksimal 5Mb</small>
+														file <?= $proyek->upload_allowed?>. Maksimal 5Mb</small>
 												</div>
 												<input type="hidden" name="sudah_upload" value="0">
 												<?php endif;?>
@@ -345,7 +345,7 @@
 													<?php foreach($v->bukti_task as $kkk => $vvv):?>
 													<a href="<?= base_url();?><?= $vvv->bukti;?>" target="_blank"
 														class="btn btn-outline-primary btn-xs text-left mb-2"><i
-															class="bi bi-file-earmark-pdf"></i> <?php $nama_file = explode("/", $vvv->bukti); echo substr(end($nama_file), 0, 50);?></a><br>
+															class="bi bi-file-earmark-<?= $vvv->icon;?>"></i> <?php $nama_file = explode("/", $vvv->bukti); echo substr(end($nama_file), 0, 50);?></a><br>
 													<?php endforeach;?>
 												</div>
 												<p>Verifikasi penyelesaian task ini, tambahkan catatan jika ada</p>
@@ -464,7 +464,7 @@
 										maxFiles: 30,
 										parallelUploads: 30,
 										method: "post",
-										acceptedFiles: "application/pdf",
+										acceptedFiles: "<?= $proyek->upload_string?>",
 										paramName: "bukti",
 										dictInvalidFileType: "File type not allowed",
 										addRemoveLinks: true,
@@ -598,7 +598,7 @@
 					class="js-validate needs-validation" novalidate>
 					<input type="hidden" name="proyek_id" value="<?= $proyek->id;?>">
 					<div class="mb-3">
-						<label class="form-label" for="formTask">Task <small class="text-danger">*</small></label>
+						<label class="form-label" for="formTask">Task </label>
 						<input type="text" name="task" id="formTask" class="form-control form-control-sm"
 							placeholder="Task" required>
 						<small class="text-secondary">Task baru akan otomatis masuk kedalam status To Do</small>
@@ -688,7 +688,7 @@
 								value="<?= $proyek->judul;?>" <?= $proyek->is_selesai == 1 ? 'readonly' : 'required'?>>
 						</div>
 						<div class="col-4">
-							<label class="form-label" for="formKode">Kode Proyek <small class="text-danger">*</small> <i
+							<label class="form-label" for="formKode">Kode Proyek  <i
 									class="bi bi-info-square-fill" data-bs-toggle="tooltip" data-bs-html="true"
 									title="Kode sebagai kunci/id proyek anda untuk mengenali pekerjaan dari proyek ini."></i></label>
 							<input type="text" name="kode" id="formKode" class="form-control form-control-sm alphanum"

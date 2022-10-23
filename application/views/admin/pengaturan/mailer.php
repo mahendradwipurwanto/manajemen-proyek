@@ -83,7 +83,7 @@
 			<form action="<?= site_url('api/master/testMailer');?>" method="post" class="js-validate needs-validation"
 				novalidate>
 				<div class="mb-3">
-					<label for="inputEmailTestingMailer">Testing email <small class="text-danger">*</small></label>
+					<label for="inputEmailTestingMailer">Testing email </label>
 					<input type="mail" class="form-control form-control-sm" name="email" placeholder="Input Email"
 						required>
 				</div>

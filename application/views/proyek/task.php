@@ -81,7 +81,7 @@
 										<?php foreach($bukti as $k => $v):?>
 										<a href="<?= base_url();?><?= $v->bukti;?>" target="_blank"
 											class="btn btn-outline-primary btn-xs text-left mb-2"><i
-												class="bi bi-file-earmark-pdf"></i> <?php $nama_file = explode("/", $v->bukti); echo substr(end($nama_file), 0, 30);?></a>
+												class="bi bi-file-earmark-<?= $v->icon;?>"></i> <?php $nama_file = explode("/", $v->bukti); echo substr(end($nama_file), 0, 30);?></a>
 										<?php endforeach;?>
 									</dd>
 								</dl>

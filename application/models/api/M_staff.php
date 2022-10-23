@@ -199,6 +199,17 @@ class M_staff extends CI_Model
 
         $arr = [];
         foreach($proyek as $key => $val):
+            $val->upload_type = json_decode($val->upload_type);
+
+            $val->upload_allowed = '';
+            $val->upload_string = '';
+            if(!empty($val->upload_type)){
+                foreach($val->upload_type as $k => $v){
+                    $val->upload_allowed .= $k.", ";
+                    $val->upload_string .= $v.", ";
+                }
+            }
+
             $arr[$key] = $val;
             $arr[$key]->progress = $this->getProgressProyek($val->id);
             $arr[$key]->is_leader = $this->cekIfLeaderProyek($val->user_id, $val->proyek_id)['status'] == true ? true : false;

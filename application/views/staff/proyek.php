@@ -298,7 +298,7 @@
 								placeholder="Judul Proyek" required>
 						</div>
 						<div class="col-4">
-							<label class="form-label" for="formKode">Kode Proyek <small class="text-danger">*</small> <i
+							<label class="form-label" for="formKode">Kode Proyek  <i
 									class="bi bi-info-square-fill" data-bs-toggle="tooltip" data-bs-html="true"
 									title="Kode sebagai kunci/id proyek anda untuk mengenali pekerjaan dari proyek ini."></i></label>
 							<input type="text" name="kode" id="formKode" class="form-control form-control-sm alphanum"

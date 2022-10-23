@@ -221,6 +221,17 @@ class M_proyek extends CI_Model
 
         $arr = [];
         foreach($proyek as $key => $val):
+            $val->upload_type = json_decode($val->upload_type);
+            
+            $val->upload_allowed = '';
+            $val->upload_string = '';
+            if(!empty($val->upload_type)){
+                foreach($val->upload_type as $k => $v){
+                    $val->upload_allowed .= $k.", ";
+                    $val->upload_string .= $v.", ";
+                }
+            }
+
             $arr[$key] = $val;
             $arr[$key]->progress = $this->getProgressProyek($val->id);
             $arr[$key]->leader = $this->getLeaderProyek($val->id, 1);
@@ -449,7 +460,20 @@ class M_proyek extends CI_Model
         $this->db->from('tb_proyek');
         $this->db->where(['kode' => $kode]);
         $this->db->order_by('created_at DESC');
-        return $this->db->get()->row();
+        $models = $this->db->get()->row();
+
+        $models->upload_type = json_decode($models->upload_type);
+        
+        $models->upload_allowed = '';
+        $models->upload_string = '';
+        if(!empty($models->upload_type)){
+            foreach($models->upload_type as $k => $v){
+                $models->upload_allowed .= $k.", ";
+                $models->upload_string .= $v.", ";
+            }
+        }
+
+        return $models;
     }
 
     function getProyekStatus($kode = null, $use = 0){
@@ -481,6 +505,7 @@ class M_proyek extends CI_Model
             'judul' => $this->input->post('judul'),
             'periode_mulai' => strtotime($this->input->post('periode_mulai')),
             'periode_selesai' => strtotime($this->input->post('periode_selesai')),
+            'upload_type' => $this->input->post('upload_type') != null ? json_encode($this->input->post('upload_type')) : json_encode('{"pdf": "application/pdf"}'),
             'keterangan' => $this->input->post('keterangan'),
             'created_at' => strtotime(date("Y-m-d")),
             'created_by' => $this->session->userdata('user_id')
@@ -505,6 +530,7 @@ class M_proyek extends CI_Model
             'judul' => $this->input->post('judul'),
             'periode_mulai' => strtotime($this->input->post('periode_mulai')),
             'periode_selesai' => strtotime($this->input->post('periode_selesai')),
+            'upload_type' => $this->input->post('upload_type') != null ? json_encode($this->input->post('upload_type')) : json_encode('{"pdf": "application/pdf"}'),
             'keterangan' => $this->input->post('keterangan'),
             'is_selesai' => $this->input->post('is_selesai') == 'on' ? 1 : 0,
             'modified_at' => strtotime(date("Y-m-d")),
@@ -998,6 +1024,25 @@ class M_proyek extends CI_Model
 
         $models = $this->db->get()->result();
 
+        foreach($models as $key => $val){
+            $val->icon = '';
+            $word = substr($val->bukti, -7);
+            if(strpos($word, '.pdf') !== false){
+                $val->icon = 'pdf';
+            }
+            if(strpos($word, '.docx') !== false){
+                $val->icon = 'word';
+            }
+            if(strpos($word, '.pptx') !== false){
+                $val->icon = 'ppt';
+            }
+            if(strpos($word, '.xlsx') !== false){
+                $val->icon = 'excel';
+            }
+            if(strpos($word, '.jpg') !== false || strpos($word, '.jpeg') !== false || strpos($word, '.png') !== false){
+                $val->icon = 'image';
+            }
+        }
         return $models;
     }
 }

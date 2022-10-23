@@ -116,8 +116,9 @@
 							<div class="project-box-footer">
 								<div class="participants">
 									<?php if(!empty($val->leader)):?>
-									<img src="<?= base_url();?><?= $val->leader[0]->profil;?>" alt="leader: <?= $val->leader[0]->nama;?>"
-										data-bs-toggle="tooltip" data-bs-html="true" title="leader: <?= $val->leader[0]->nama;?>" class="me-3">
+									<img src="<?= base_url();?><?= $val->leader[0]->profil;?>"
+										alt="leader: <?= $val->leader[0]->nama;?>" data-bs-toggle="tooltip"
+										data-bs-html="true" title="leader: <?= $val->leader[0]->nama;?>" class="me-3">
 									<?php endif;?>
 									<?php if(!empty($val->staff)):?>
 									<?php foreach($val->staff as $k => $v):?>
@@ -297,8 +298,8 @@
 								placeholder="Judul Proyek" required>
 						</div>
 						<div class="col-4">
-							<label class="form-label" for="formKode">Kode Proyek <small class="text-danger">*</small> <i
-									class="bi bi-info-square-fill" data-bs-toggle="tooltip" data-bs-html="true"
+							<label class="form-label" for="formKode">Kode Proyek <i class="bi bi-info-square-fill"
+									data-bs-toggle="tooltip" data-bs-html="true"
 									title="Kode sebagai kunci/id proyek anda untuk mengenali pekerjaan dari proyek ini."></i></label>
 							<input type="text" name="kode" id="formKode" class="form-control form-control-sm alphanum"
 								placeholder="Ex: PYK01"
@@ -363,6 +364,66 @@
 							</select>
 						</div>
 						<small class="text-secondary">Anda dapat menambahkan staff nanti</small>
+					</div>
+
+					<div class="mb-3">
+						<label for="formKeterangan" class="form-label">Tipe File yang diperbolehkan</label>
+						<div class="row">
+							<div class="col-4">
+								<!-- Checkbox -->
+								<div class="form-check mb-3">
+									<input type="checkbox" id="checkPdf" name="upload_type[pdf]" class="form-check-input"
+										value="application/pdf" checked>
+									<label class="form-check-label" for="checkPdf">pdf</label>
+								</div>
+								<!-- End Checkbox -->
+								<!-- Checkbox -->
+								<div class="form-check mb-3">
+									<input type="checkbox" id="checkDocx" name="upload_type[docx]" class="form-check-input"
+										value="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+									<label class="form-check-label" for="checkDocx">Docx (word file)</label>
+								</div>
+								<!-- End Checkbox -->
+								<!-- Checkbox -->
+								<div class="form-check mb-3">
+									<input type="checkbox" id="checkPptx" name="upload_type[pptx]" class="form-check-input"
+										value="application/vnd.openxmlformats-officedocument.presentationml.presentation">
+									<label class="form-check-label" for="checkPptx">Pptx (powerpoint file)</label>
+								</div>
+								<!-- End Checkbox -->
+							</div>
+							<div class="col-4">
+								<!-- Checkbox -->
+								<div class="form-check mb-3">
+									<input type="checkbox" id="checkXlsx" name="upload_type[xlsx]" class="form-check-input"
+										value="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+									<label class="form-check-label" for="checkXlsx">Xlsx (Excel file)</label>
+								</div>
+								<!-- End Checkbox -->
+								<!-- Checkbox -->
+								<div class="form-check mb-3">
+									<input type="checkbox" id="checkJpg" name="upload_type[jpg]" class="form-check-input" value="image/jpg">
+									<label class="form-check-label" for="checkJpg">jpg</label>
+								</div>
+								<!-- End Checkbox -->
+							</div>
+							<div class="col-4">
+								<!-- Checkbox -->
+								<div class="form-check mb-3">
+									<input type="checkbox" id="checkJpeg" name="upload_type[jpeg]" class="form-check-input" value="image/jpeg">
+									<label class="form-check-label" for="checkJpeg">jpeg</label>
+								</div>
+								<!-- End Checkbox -->
+								<!-- Checkbox -->
+								<div class="form-check mb-3">
+									<input type="checkbox" id="checkPng" name="upload_type[png]" class="form-check-input" value="image/png">
+									<label class="form-check-label" for="checkPng">png</label>
+								</div>
+								<!-- End Checkbox -->
+							</div>
+						</div>
+						<small class="text-secondary">Pilih tipe file yang diperbolehkan untuk staff mengunggah berkas
+							verifikasi task mereka. (harap pilih minimal 1)</small>
 					</div>
 
 					<div class="mb-3">
