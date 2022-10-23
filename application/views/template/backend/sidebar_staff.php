@@ -88,6 +88,12 @@
 								</a>
 							</li>
 							<li class="nav-item">
+								<a class="nav-link <?= ($this->uri->segment(2) == "laporan" || $this->uri->segment(2) == "task" ? "active" : "") ?>"
+									href="<?= site_url('staff/laporan'); ?>">
+									<i class="bi bi-file-bar-graph nav-icon"></i> Laporan
+								</a>
+							</li>
+							<li class="nav-item">
 								<a class="nav-link <?= ($this->uri->segment(2) == "daftar-staff" || $this->uri->segment(2) == "task" ? "active" : "") ?>"
 									href="<?= site_url('staff/daftar-staff'); ?>">
 									<i class="bi bi-people-fill nav-icon"></i> Daftar Staff

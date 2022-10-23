@@ -90,6 +90,26 @@ class Staff extends CI_Controller
         }
     }
 
+    public function laporan()
+    {
+        $data['user'] = $this->M_auth->get_userByID($this->session->userdata('user_id'));
+        $data['countDashboard'] = $this->M_staff->countDashboardStaff();
+        $periode = [];
+        if($this->input->post('periode')){
+            $periode = explode(' - ', $this->input->post('periode'));
+            // ej($periode);
+        }
+
+        $data['proyek'] = $this->M_proyek->getLaporanProyek($periode);
+        $data['tasks'] = $this->M_proyek->getTasksLaporanAll($periode);
+        
+        if ($this->agent->is_mobile()) {
+            $this->templatemobile->view('proyek/laporan', $data);
+        }else{
+            $this->templateback->view('proyek/laporan', $data);
+        }
+    }
+
     public function kelola_proyek()
     {
         $periode = [];
