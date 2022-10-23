@@ -10,7 +10,7 @@
   						<img class="navbar-brand-logo" src="<?= base_url(); ?><?= $web_logo;?>" alt="Logo">
   					</a>
   					<a>
-  						<span class="badge bg-soft-primary text-primary">v1.5.9</span>
+  						<span class="badge bg-soft-primary text-primary">v1.6.4</span>
   					</a>
   				</div>
   				<!-- End Default Logo -->
