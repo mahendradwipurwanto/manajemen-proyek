@@ -26,7 +26,7 @@
 </div>
 
 <div class="row">
-	<div class="col-md-12">
+	<div class="col-md-12 mb-4">
 		<div class="card">
 			<div class="card-header py-3">
 				<h4 class="card-header-title">Proyek</h4>

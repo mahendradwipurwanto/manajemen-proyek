@@ -288,7 +288,7 @@
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				<form action="<?= site_url('api/proyek/save');?>" method="post" class="js-validate needs-validation"
+				<form action="<?= site_url('api/proyek/save');?>" method="post" class="js-validate needs-validation" enctype="multipart/form-data"
 					novalidate>
 					<!-- Form -->
 					<div class="mb-3 row">
@@ -367,26 +367,34 @@
 					</div>
 
 					<div class="mb-3">
+						<label for="formKeterangan" class="form-label">Berkas pendukung (optional)</label>
+						<input type="file" class="form-control form-control-sm" name="file" accept=".pdf">
+						<small class="text-secondary">Upload file pdf. Maksimal 5Mb</small>
+					</div>
+
+					<div class="mb-3">
 						<label for="formKeterangan" class="form-label">Tipe File yang diperbolehkan</label>
 						<div class="row">
 							<div class="col-4">
 								<!-- Checkbox -->
 								<div class="form-check mb-3">
-									<input type="checkbox" id="checkPdf" name="upload_type[pdf]" class="form-check-input"
-										value="application/pdf" checked>
+									<input type="checkbox" id="checkPdf" name="upload_type[pdf]"
+										class="form-check-input" value="application/pdf" checked>
 									<label class="form-check-label" for="checkPdf">pdf</label>
 								</div>
 								<!-- End Checkbox -->
 								<!-- Checkbox -->
 								<div class="form-check mb-3">
-									<input type="checkbox" id="checkDocx" name="upload_type[docx]" class="form-check-input"
+									<input type="checkbox" id="checkDocx" name="upload_type[docx]"
+										class="form-check-input"
 										value="application/vnd.openxmlformats-officedocument.wordprocessingml.document">
 									<label class="form-check-label" for="checkDocx">Docx (word file)</label>
 								</div>
 								<!-- End Checkbox -->
 								<!-- Checkbox -->
 								<div class="form-check mb-3">
-									<input type="checkbox" id="checkPptx" name="upload_type[pptx]" class="form-check-input"
+									<input type="checkbox" id="checkPptx" name="upload_type[pptx]"
+										class="form-check-input"
 										value="application/vnd.openxmlformats-officedocument.presentationml.presentation">
 									<label class="form-check-label" for="checkPptx">Pptx (powerpoint file)</label>
 								</div>
@@ -395,14 +403,16 @@
 							<div class="col-4">
 								<!-- Checkbox -->
 								<div class="form-check mb-3">
-									<input type="checkbox" id="checkXlsx" name="upload_type[xlsx]" class="form-check-input"
+									<input type="checkbox" id="checkXlsx" name="upload_type[xlsx]"
+										class="form-check-input"
 										value="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
 									<label class="form-check-label" for="checkXlsx">Xlsx (Excel file)</label>
 								</div>
 								<!-- End Checkbox -->
 								<!-- Checkbox -->
 								<div class="form-check mb-3">
-									<input type="checkbox" id="checkJpg" name="upload_type[jpg]" class="form-check-input" value="image/jpg">
+									<input type="checkbox" id="checkJpg" name="upload_type[jpg]"
+										class="form-check-input" value="image/jpg">
 									<label class="form-check-label" for="checkJpg">jpg</label>
 								</div>
 								<!-- End Checkbox -->
@@ -410,13 +420,15 @@
 							<div class="col-4">
 								<!-- Checkbox -->
 								<div class="form-check mb-3">
-									<input type="checkbox" id="checkJpeg" name="upload_type[jpeg]" class="form-check-input" value="image/jpeg">
+									<input type="checkbox" id="checkJpeg" name="upload_type[jpeg]"
+										class="form-check-input" value="image/jpeg">
 									<label class="form-check-label" for="checkJpeg">jpeg</label>
 								</div>
 								<!-- End Checkbox -->
 								<!-- Checkbox -->
 								<div class="form-check mb-3">
-									<input type="checkbox" id="checkPng" name="upload_type[png]" class="form-check-input" value="image/png">
+									<input type="checkbox" id="checkPng" name="upload_type[png]"
+										class="form-check-input" value="image/png">
 									<label class="form-check-label" for="checkPng">png</label>
 								</div>
 								<!-- End Checkbox -->

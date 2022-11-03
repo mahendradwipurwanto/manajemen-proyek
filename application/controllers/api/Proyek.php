@@ -79,36 +79,89 @@ class Proyek extends CI_Controller
 
     public function save()
     {
-        if($this->input->post('leader') > 0){
-            if($this->M_proyek->cekKodeProyek($this->input->post('kode'))){
-                if ($this->M_proyek->save() == true) {
-                    $this->session->set_flashdata('notif_success', 'Berhasil menambahkan proyek baru');
-                    redirect($this->agent->referrer());
-                } else {
-                    $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba menambahkan proyek baru');
+        if(isset($_FILES['file'])){
+            $path = "berkas/proyek/";
+            $upload = $this->uploader->uploadFile($_FILES['file'], $path);
+
+            if($upload['status'] == true){
+                if($this->input->post('leader') > 0){
+                    if($this->M_proyek->cekKodeProyek($this->input->post('kode'))){
+                        if ($this->M_proyek->save($upload['filename']) == true) {
+                            $this->session->set_flashdata('notif_success', 'Berhasil menambahkan proyek baru');
+                            redirect($this->agent->referrer());
+                        } else {
+                            $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba menambahkan proyek baru');
+                            redirect($this->agent->referrer());
+                        }
+                    } else {
+                        $this->session->set_flashdata('notif_warning', 'Kode telah digunakan, harap ganti kode proyek anda !');
+                        redirect($this->agent->referrer());
+                    }
+                }else{
+                    $this->session->set_flashdata('notif_warning', 'Harap pilih leader proyek !');
                     redirect($this->agent->referrer());
                 }
-            } else {
-                $this->session->set_flashdata('notif_warning', 'Kode telah digunakan, harap ganti kode proyek anda !');
+            }else{
+                    $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mengunggah file pendukung proyek anda !');
+                    redirect($this->agent->referrer());
+
+            }
+
+        }else{
+            if($this->input->post('leader') > 0){
+                if($this->M_proyek->cekKodeProyek($this->input->post('kode'))){
+                    if ($this->M_proyek->save() == true) {
+                        $this->session->set_flashdata('notif_success', 'Berhasil menambahkan proyek baru');
+                        redirect($this->agent->referrer());
+                    } else {
+                        $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba menambahkan proyek baru');
+                        redirect($this->agent->referrer());
+                    }
+                } else {
+                    $this->session->set_flashdata('notif_warning', 'Kode telah digunakan, harap ganti kode proyek anda !');
+                    redirect($this->agent->referrer());
+                }
+            }else{
+                $this->session->set_flashdata('notif_warning', 'Harap pilih leader proyek !');
                 redirect($this->agent->referrer());
             }
-        }else{
-            $this->session->set_flashdata('notif_warning', 'Harap pilih leader proyek !');
-            redirect($this->agent->referrer());
         }
     }
 
     public function edit()
     {
-        if ($this->M_proyek->edit() == true) {
-            // log
-            $this->M_proyek->insert_log($this->session->userdata('proyek')['id'], 'Mengubah informasi proyek  <b>'.$this->session->userdata('proyek')['judul'].'</b>');
+        if(isset($_FILES['file'])){
+            $path = "berkas/proyek/";
+            $upload = $this->uploader->uploadFile($_FILES['file'], $path);
 
-            $this->session->set_flashdata('notif_success', 'Berhasil mengubah informasi proyek baru');
-            redirect($this->agent->referrer());
-        } else {
-            $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba mengubah informasi proyek baru');
-            redirect($this->agent->referrer());
+            if($upload['status'] == true){
+                if ($this->M_proyek->edit($upload['filename']) == true) {
+                    // log
+                    $this->M_proyek->insert_log($this->session->userdata('proyek')['id'], 'Mengubah informasi proyek  <b>'.$this->session->userdata('proyek')['judul'].'</b>');
+
+                    $this->session->set_flashdata('notif_success', 'Berhasil mengubah informasi proyek baru');
+                    redirect($this->agent->referrer());
+                } else {
+                    $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba mengubah informasi proyek baru');
+                    redirect($this->agent->referrer());
+                }
+            }else{
+                    $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mengunggah file pendukung proyek anda !');
+                    redirect($this->agent->referrer());
+
+            }
+
+        }else{
+            if ($this->M_proyek->edit() == true) {
+                // log
+                $this->M_proyek->insert_log($this->session->userdata('proyek')['id'], 'Mengubah informasi proyek  <b>'.$this->session->userdata('proyek')['judul'].'</b>');
+
+                $this->session->set_flashdata('notif_success', 'Berhasil mengubah informasi proyek baru');
+                redirect($this->agent->referrer());
+            } else {
+                $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba mengubah informasi proyek baru');
+                redirect($this->agent->referrer());
+            }
         }
     }
 

@@ -420,48 +420,11 @@
 							<!-- End Modal -->
 
 							<script>
-									// Dropzone.autoDiscover = false;
-
-									// var foto_upload = new Dropzone(".dropzone", {
-									// 	url: "<?= site_url('api/proyek/upload_bukti/'.$v->proyek_id.'/'.$v->id) ?>",
-									// 	maxFilesize: 20,
-									// 	method: "post",
-									// 	acceptedFiles: "application/pdf",
-									// 	paramName: "bukti",
-									// 	dictInvalidFileType: "Tipe file ini tidak dizinkan",
-									// 	addRemoveLinks: true,
-									// 	removedfile: function (file) {
-									// 		var fileName = file.name;
-
-									// 		$.ajax({
-									// 			type: 'POST',
-									// 			url: '<?= site_url('api/proyek/delete_bukti/'.$v->proyek_id.'/'.$v->id.'/') ?>' + fileName,
-									// 			data: {
-									// 				name: fileName,
-									// 				request: 'delete'
-									// 			},
-									// 			sucess: function (data) {
-									// 				console.log('success: ' + data);
-									// 			}
-									// 		});
-
-									// 		var _ref;
-									// 		return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0;
-									// 	}
-									// });
-
 									Dropzone.autoDiscover = false;
 
 									$('.dz-message').addClass('hidden');
 
 									var foto_upload = new Dropzone(".dropzone", {
-										// renameFile: function(file) {
-										//     var ext = (file.name.substr(file.name.length - 5)).split('.')[1];
-										//     let newName = 'poster_' + new Date().getTime() + '.' + ext;
-										//     return newName;
-
-										//     console.log(newName);
-										// },
 										autoProcessQueue: false,
 										url: "<?= site_url('api/proyek/upload_bukti/'.$v->proyek_id.'/'.$v->id) ?>",
 										maxFilesize: 2,
@@ -474,16 +437,6 @@
 										addRemoveLinks: true,
 										init: function() {
 											let myDropzone = this;
-
-											// If you only have access to the original image sizes on your server,
-											// and want to resize them in the browser:
-											// let mockFile = {
-											//     name: "Filename 2",
-											//     size: 12345
-											// };
-											// myDropzone.displayExistingFile(mockFile, "https://i.picsum.photos/id/959/600/600.jpg");
-
-											// If the thumbnail is already in the right size on your server:
 											let mockFile = null;
 											let callback = null; // Optional callback when it's done
 											let crossOrigin = null; // Added to the `img` tag for crossOrigin handling
@@ -499,9 +452,6 @@
 													myDropzone.displayExistingFile(mockFile, "<?= base_url(); ?>assets/images/pdf.png", callback, crossOrigin, resizeThumbnail);
 												<?php endforeach; ?>
 											<?php endif; ?>
-
-											// If you use the maxFiles option, make sure you adjust it to the
-											// correct amount:
 											let fileCountOnServer = 2; // The number of files already uploaded
 											myDropzone.options.maxFiles = myDropzone.options.maxFiles - fileCountOnServer;
 										},
@@ -552,6 +502,14 @@
 		</div>
 	</div>
 	<div class="col-md-3">
+		<div class="card">
+			<div class="card-header py-3">
+				<h4 class="card-title mb-0">File pendukung</h4>
+			</div>
+			<div class="card-body p-3">
+				<a href="<?= base_url();?><?= $proyek->file_pendukung;?>" class="btn btn-outline-primary btn-sm" target="_blank"><i class="bi bi-file-pdf"></i> file pendukung proyek</a>
+			</div>
+		</div>
 		<div class="card">
 			<div class="card-header py-3">
 				<h4 class="card-title mb-0">Aktifitas terbaru</h4>
@@ -681,7 +639,7 @@
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				<form action="<?= site_url('api/proyek/edit');?>" method="post" class="js-validate needs-validation"
+				<form action="<?= site_url('api/proyek/edit');?>" method="post" class="js-validate needs-validation" enctype="multipart/form-data"
 					novalidate>
 					<input type="hidden" name="id" value="<?= $proyek->id;?>">
 					<!-- Form -->
@@ -732,6 +690,12 @@
 							</div>
 						</div>
 						<?php endif;?>
+					</div>
+
+					<div class="mb-3">
+						<label for="formKeterangan" class="form-label">Berkas pendukung (optional)</label>
+						<input type="file" class="form-control form-control-sm" name="file" accept=".pdf">
+						<small class="text-secondary">Upload file pdf. Maksimal 5Mb</small>
 					</div>
 
 					<div class="mb-3">

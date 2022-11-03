@@ -499,17 +499,32 @@ class M_proyek extends CI_Model
         }
     }
 
-    function save(){
-        $data = [
-            'kode' => strtolower($this->input->post('kode')),
-            'judul' => $this->input->post('judul'),
-            'periode_mulai' => strtotime($this->input->post('periode_mulai')),
-            'periode_selesai' => strtotime($this->input->post('periode_selesai')),
-            'upload_type' => $this->input->post('upload_type') != null ? json_encode($this->input->post('upload_type')) : json_encode('{"pdf": "application/pdf"}'),
-            'keterangan' => $this->input->post('keterangan'),
-            'created_at' => strtotime(date("Y-m-d")),
-            'created_by' => $this->session->userdata('user_id')
-        ];
+    function save($file_pendukung = null){
+
+        if($file_pendukung == null){
+            $data = [
+                'kode' => strtolower($this->input->post('kode')),
+                'judul' => $this->input->post('judul'),
+                'periode_mulai' => strtotime($this->input->post('periode_mulai')),
+                'periode_selesai' => strtotime($this->input->post('periode_selesai')),
+                'upload_type' => $this->input->post('upload_type') != null ? json_encode($this->input->post('upload_type')) : json_encode('{"pdf": "application/pdf"}'),
+                'keterangan' => $this->input->post('keterangan'),
+                'created_at' => strtotime(date("Y-m-d")),
+                'created_by' => $this->session->userdata('user_id')
+            ];
+        }else{
+            $data = [
+                'kode' => strtolower($this->input->post('kode')),
+                'judul' => $this->input->post('judul'),
+                'file_pendukung' => $file_pendukung,
+                'periode_mulai' => strtotime($this->input->post('periode_mulai')),
+                'periode_selesai' => strtotime($this->input->post('periode_selesai')),
+                'upload_type' => $this->input->post('upload_type') != null ? json_encode($this->input->post('upload_type')) : json_encode('{"pdf": "application/pdf"}'),
+                'keterangan' => $this->input->post('keterangan'),
+                'created_at' => strtotime(date("Y-m-d")),
+                'created_by' => $this->session->userdata('user_id')
+            ];
+        }
 
         $this->db->insert('tb_proyek', $data);
         $cek = ($this->db->affected_rows() != 1) ? false : true;
@@ -525,17 +540,31 @@ class M_proyek extends CI_Model
         }
     }
 
-    function edit(){
-        $data = [
-            'judul' => $this->input->post('judul'),
-            'periode_mulai' => strtotime($this->input->post('periode_mulai')),
-            'periode_selesai' => strtotime($this->input->post('periode_selesai')),
-            'upload_type' => $this->input->post('upload_type') != null ? json_encode($this->input->post('upload_type')) : json_encode('{"pdf": "application/pdf"}'),
-            'keterangan' => $this->input->post('keterangan'),
-            'is_selesai' => $this->input->post('is_selesai') == 'on' ? 1 : 0,
-            'modified_at' => strtotime(date("Y-m-d")),
-            'modified_by' => $this->session->userdata('user_id')
-        ];
+    function edit($file_pendukung = null){
+
+        if($file_pendukung == null){
+            $data = [
+                'judul' => $this->input->post('judul'),
+                'periode_mulai' => strtotime($this->input->post('periode_mulai')),
+                'periode_selesai' => strtotime($this->input->post('periode_selesai')),
+                'upload_type' => $this->input->post('upload_type') != null ? json_encode($this->input->post('upload_type')) : json_encode('{"pdf": "application/pdf"}'),
+                'keterangan' => $this->input->post('keterangan'),
+                'is_selesai' => $this->input->post('is_selesai') == 'on' ? 1 : 0,
+                'modified_at' => strtotime(date("Y-m-d")),
+                'modified_by' => $this->session->userdata('user_id')
+            ];
+        }else{
+            $data = [
+                'judul' => $this->input->post('judul'),
+                'periode_mulai' => strtotime($this->input->post('periode_mulai')),
+                'periode_selesai' => strtotime($this->input->post('periode_selesai')),
+                'upload_type' => $this->input->post('upload_type') != null ? json_encode($this->input->post('upload_type')) : json_encode('{"pdf": "application/pdf"}'),
+                'keterangan' => $this->input->post('keterangan'),
+                'is_selesai' => $this->input->post('is_selesai') == 'on' ? 1 : 0,
+                'modified_at' => strtotime(date("Y-m-d")),
+                'modified_by' => $this->session->userdata('user_id')
+            ];
+        }
 
         $this->db->where('id', $this->input->post('id'));
         $this->db->update('tb_proyek', $data);
