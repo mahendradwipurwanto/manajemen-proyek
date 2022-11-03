@@ -29,7 +29,10 @@ class Cronjob extends CI_Controller
                 $message = "Hai, {$val->nama} kamu memiliki task <b>{$val->task}</b> yang mendekati deadline dalam 7 hari lagi pada {$deadline}. Harap segera selesaikan taskmu sebelum waktu deadline untuk mendapatkan nilai";
 
                 $data[$val->nama]['staff'] = $val->nama; 
-                $data[$val->nama]['task'][] = $val->task;
+                $data[$val->nama]['staff'] = $val->email; 
+                $data[$val->nama]['tasks'][$key]['task'] = $val->task;
+                $data[$val->nama]['tasks'][$key]['deadline_type'] = "H-7";
+                $data[$val->nama]['tasks'][$key]['deadline_on'] = $deadline;
                 sendMail($val->email, $subject, $message);
             }
 
@@ -38,7 +41,10 @@ class Cronjob extends CI_Controller
                 $message = "Hai, {$val->nama} kamu memiliki task <b>{$val->task}</b> yang mendekati deadline dalam 3 hari lagi pada {$deadline}. Harap segera selesaikan taskmu sebelum waktu deadline untuk mendapatkan nilai";
 
                 $data[$val->nama]['staff'] = $val->nama; 
-                $data[$val->nama]['task'][] = $val->task;
+                $data[$val->nama]['staff'] = $val->email; 
+                $data[$val->nama]['tasks'][$key]['task'] = $val->task;
+                $data[$val->nama]['tasks'][$key]['deadline_type'] = "H-3";
+                $data[$val->nama]['tasks'][$key]['deadline_on'] = $deadline;
                 sendMail($val->email, $subject, $message);
             }
 
@@ -47,7 +53,10 @@ class Cronjob extends CI_Controller
                 $message = "Hai, {$val->nama} kamu memiliki task <b>{$val->task}</b> yang mendekati deadline besok pada {$deadline}. Harap segera selesaikan taskmu sebelum waktu deadline untuk mendapatkan nilai";
 
                 $data[$val->nama]['staff'] = $val->nama; 
-                $data[$val->nama]['task'][] = $val->task;
+                $data[$val->nama]['staff'] = $val->email; 
+                $data[$val->nama]['tasks'][$key]['task'] = $val->task;
+                $data[$val->nama]['tasks'][$key]['deadline_type'] = "H-1";
+                $data[$val->nama]['tasks'][$key]['deadline_on'] = $deadline;
                 sendMail($val->email, $subject, $message);
             }
             if(time() > $val->deadline){
@@ -55,7 +64,10 @@ class Cronjob extends CI_Controller
                 $message = "Hai, {$val->nama} kamu memiliki task {$val->task} yang sudah melewati deadline pada {$deadline}. Harap segera selesaikan taskmu sebelum waktu deadline untuk mendapatkan nilai";
 
                 $data[$val->nama]['staff'] = $val->nama; 
-                $data[$val->nama]['task'][] = $val->task;
+                $data[$val->nama]['staff'] = $val->email; 
+                $data[$val->nama]['tasks'][$key]['task'] = $val->task;
+                $data[$val->nama]['tasks'][$key]['deadline_type'] = "over deadline";
+                $data[$val->nama]['tasks'][$key]['deadline_on'] = $deadline;
                 sendMail($val->email, $subject, $message);
             }
         }
