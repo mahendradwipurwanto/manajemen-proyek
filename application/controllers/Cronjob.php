@@ -22,7 +22,7 @@ class Cronjob extends CI_Controller
         $data = [];
         // fetch data
         foreach($task as $key => $val){
-            $deadline = date("d F Y");
+            $deadline = date("d F Y", $val->deadline);
             // perhitungan deadline dari hari ini
             if (date("Y/m/d", $val->deadline) == date("Y/m/d", strtotime("+7 days", time()))) {
                 $subject = "Pengingat Deadline";
@@ -52,7 +52,7 @@ class Cronjob extends CI_Controller
             }
             if(time() > $val->deadline){
                 $subject = "Pengingat Deadline";
-                $message = "Hai, {$val->nama} kamu memiliki task {$val->tagihan} yang sudah melewati deadline pada {$deadline}. Harap segera selesaikan taskmu sebelum waktu deadline untuk mendapatkan nilai";
+                $message = "Hai, {$val->nama} kamu memiliki task {$val->task} yang sudah melewati deadline pada {$deadline}. Harap segera selesaikan taskmu sebelum waktu deadline untuk mendapatkan nilai";
 
                 $data[$val->nama]['staff'] = $val->nama; 
                 $data[$val->nama]['task'][] = $val->task;
