@@ -99,9 +99,19 @@ class Proyek extends CI_Controller
             $periode = explode(' - ', $this->input->post('periode'));
             // ej($periode);
         }
+        $proyek = null;
+        $data['nama_proyek']= "Semua Proyek";
+        if($this->input->get('proyek')){
+            $proyek = $this->input->get('proyek') == 0 ? null : $this->input->get('proyek');
+            
+            if($proyek > 0){
+                $data['nama_proyek']     = $this->M_proyek->getProyekById($proyek)->judul;
+            }
+        }
 
-        $data['kpi'] = $this->M_proyek->getDataKPI($periode);
-        
+        $data['proyek']     = $this->M_proyek->getAllProyek();
+        $data['kpi']        = $this->M_proyek->getDataKPI($periode, $proyek);
+        $data['chart_kpi']  = $this->M_proyek->getChartKPI($periode, $proyek);
         if ($this->agent->is_mobile()) {
             $this->templatemobile->view('proyek/kpi', $data);
         }else{

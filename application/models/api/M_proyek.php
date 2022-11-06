@@ -21,6 +21,14 @@ class M_proyek extends CI_Model
         $this->db->insert('log_proyek', $data);
         $cek = ($this->db->affected_rows() != 1) ? false : true;
     }
+    
+    function getProyekById($proyek_id = null){
+        return $this->db->get_where('tb_proyek', ['id' => $proyek_id])->row();
+    }
+    
+    function getAllProyek(){
+        return $this->db->get_where('tb_proyek', ['is_deleted' => 0])->result();
+    }
 
     function getLogProyek($proyek_id = 0){
         $this->db->select('a.*, b.nama, c.judul');
@@ -48,12 +56,26 @@ class M_proyek extends CI_Model
         return $models;
     }
 
-    function getDataKPI($periode = []){
+    function getChartKPI($periode = [], $proyek_id = null){
+        $data = $this->getDataKPI($periode, $proyek_id);
+
+        if(!empty($data)){
+            $arr = [];
+            foreach($data as $key => $val){
+                $arr['kategori'][] = "'{$val->nama}'";
+                $arr['data'][] = $val->persentase;
+            }
+        }
+
+        return $arr;
+    }
+
+    function getDataKPI($periode = [], $proyek_id = null){
         // get data staff
         $this->db->select('b.*, d.jabatan, c.proyek_id')
         ->from('tb_auth a')
         ->join('tb_user b', 'a.user_id = b.user_id')
-        ->join('tb_assign_staff c', 'a.user_id = c.user_id', 'left')
+        ->join('tb_assign_staff c', 'a.user_id = c.user_id')
         ->join('tb_jabatan d', 'b.jabatan_id = d.id', 'left')
         ->join('tb_assign_leader e', 'a.user_id = e.user_id', 'left')
         ->where(['a.role' => 3, 'a.status' => 1, 'a.is_deleted' => 0, 'c.status' => 1])
@@ -68,6 +90,10 @@ class M_proyek extends CI_Model
             }
         }
 
+        if(!is_null($proyek_id)){
+            $this->db->where(['c.proyek_id' => $proyek_id]);
+        }
+
         $staff = $this->db->get()->result();
         
         $arrKpi = [];
@@ -77,15 +103,39 @@ class M_proyek extends CI_Model
                 $arrKpi[$key]->proyek = $this->getProyekStaff($val->proyek_id);
                 $arrKpi[$key]->totalProyek = count($this->getProyekStaff($val->proyek_id));
 
-                $arrKpi[$key]->task = $this->getTaskStaffKpi($val->user_id);
-                $arrKpi[$key]->totalTask = count($this->getTaskStaffKpi($val->user_id, 0));
-                $arrKpi[$key]->taskSelesai = count($this->getTaskStaffKpi($val->user_id, 1));
-                $arrKpi[$key]->taskSelesaiData = $this->getTaskStaffKpi($val->user_id, 1);
-                $arrKpi[$key]->taskProses = count($this->getTaskStaffKpi($val->user_id, 2));
-                $arrKpi[$key]->taskProsesData = $this->getTaskStaffKpi($val->user_id, 2);
+                $arrKpi[$key]->task = $this->getTaskStaffKpi($proyek_id, $val->user_id);
+                $arrKpi[$key]->totalTask = count($this->getTaskStaffKpi($proyek_id, $val->user_id, 0));
+                $arrKpi[$key]->taskSelesai = count($this->getTaskStaffKpi($proyek_id, $val->user_id, 1));
+                $arrKpi[$key]->taskSelesaiData = $this->getTaskStaffKpi($proyek_id, $val->user_id, 1);
+                $arrKpi[$key]->taskProses = count($this->getTaskStaffKpi($proyek_id, $val->user_id, 2));
+                $arrKpi[$key]->taskProsesData = $this->getTaskStaffKpi($proyek_id, $val->user_id, 2);
 
-                $arrKpi[$key]->nilai = $arrKpi[$key]->totalTask > 0 && $arrKpi[$key]->taskSelesai > 0 ? number_format((float)($arrKpi[$key]->taskSelesai/$arrKpi[$key]->totalTask)*10, 1, '.', '') : 0;
-                $arrKpi[$key]->persentase = $arrKpi[$key]->totalTask > 0 && $arrKpi[$key]->taskSelesai > 0 ? number_format((float)(($arrKpi[$key]->taskSelesai/$arrKpi[$key]->totalTask)*100), 2, '.', '') : 0;
+                // hitung total bobot
+                $total_bobot = 0;
+                foreach ($this->getTaskStaffKpi($proyek_id, $val->user_id) as $k => $v) {
+                    $total_bobot += $v->bobot;
+                }
+                // hitung nilai
+                $nilai = 0;
+                $presentase = 0;
+                $rumus = [];
+                foreach ($this->getTaskStaffKpi($proyek_id, $val->user_id) as $k => $v) {
+                    if($v->is_selesai == 1 || $v->is_closed == 1){
+                        $nilai += (($v->bobot/$total_bobot)*(($total_bobot*3)/4));
+                        $presentase += round(($v->bobot/$total_bobot)*100);
+                        $index_kpi = ($total_bobot*3)/4;
+
+                        $rumus['nilai'][] = "{$v->bobot}/{$total_bobot}*100= {$nilai}";
+                        $rumus['presentase'][] = "{$v->bobot}/{$total_bobot}*{$index_kpi}= {$presentase}%";
+                    }
+                }
+                $arrKpi[$key]->nilai = $nilai;
+                $arrKpi[$key]->persentase = $presentase;
+                $arrKpi[$key]->total_bobot = $total_bobot;
+                $arrKpi[$key]->rumus = $rumus;
+
+                // $arrKpi[$key]->nilai = $arrKpi[$key]->totalTask > 0 && $arrKpi[$key]->taskSelesai > 0 ? number_format((float)($arrKpi[$key]->taskSelesai/$arrKpi[$key]->totalTask)*10, 1, '.', '') : 0;
+                // $arrKpi[$key]->persentase = $arrKpi[$key]->totalTask > 0 && $arrKpi[$key]->taskSelesai > 0 ? number_format((float)(($arrKpi[$key]->taskSelesai/$arrKpi[$key]->totalTask)*100), 2, '.', '') : 0;
             }else{
                 $arrKpi[$key]->proyek = [];
                 $arrKpi[$key]->totalProyek = 0;
@@ -116,7 +166,7 @@ class M_proyek extends CI_Model
 
             $arrKpi[$key]->color_badge = $color;
         }
-
+        
         $tempData = array_column($arrKpi, 'persentase');
         array_multisort($tempData, SORT_DESC, $arrKpi);
         // ej($arrKpi);
@@ -132,16 +182,23 @@ class M_proyek extends CI_Model
         return $this->db->get()->result();
     }
 
-    function getTaskStaffKpi($user_id, $is_selesai = 0){
+    function getTaskStaffKpi($proyek_id = null, $user_id = null, $is_selesai = 0){
         $this->db->select('*')
-        ->from('tb_proyek_task')
-        ->where(['user_id' => $user_id, 'is_deleted' => 0])
+        ->from('tb_proyek_task a')
+        ->join('tb_user b', 'a.user_id = b.user_id')
+        ->where(['a.user_id' => $user_id, 'a.is_deleted' => 0])
         ;
+
+        if(!is_null($proyek_id)){
+            $this->db->where(['proyek_id' => $proyek_id]);
+        }
 
         if($is_selesai == 1){
             $this->db->where(['is_closed' => 1]);
+            $this->db->or_where(['is_selesai' => 1]);
         }elseif($is_selesai == 2){
             $this->db->where(['is_closed' => 0]);
+            $this->db->where(['is_selesai' => 0]);
         }
 
         return $this->db->get()->result();

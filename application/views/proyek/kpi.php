@@ -2,35 +2,38 @@
 <div class="docs-page-header">
 	<div class="row align-items-center">
 		<div class="col-sm">
-			<h1 class="docs-page-header-title d-flex justify-content-between">KPI
-				<form action="<?= site_url('proyek/kpi');?>" method="post" class="d-flex">
-					<div class="input-group input-group-sm">
-						<span class="input-group-text" id="basic-addon2"><i class="bi bi-calendar-week"></i></span>
-						<input type="text" class="form-control form-control-sm" name="periode"
-							placeholder="Periode proyek" aria-describedby="basic-addon2" required>
+			<h1 class="docs-page-header-title d-flex justify-content-between">KPI - <?= $nama_proyek;?>
+				<form action="<?= site_url('proyek/kpi');?>" method="get" class="d-flex">
+					<!-- Select -->
+					<div class="tom-select-custom tom-select-custom-sm">
+						<select class="js-select form-select form-select-sm" name="proyek" autocomplete="off"
+							data-hs-tom-select-options='{"placeholder": "Pilih proyek"}'>
+							<option value="0" selected>Semua Proyek</option>
+							<?php if(!empty($proyek)):?>
+							<?php foreach($proyek as $key => $val):?>
+							<option value="<?= $val->id;?>"><?= $val->judul;?></option>
+							<?php endforeach;?>
+							<?php endif;?>
+						</select>
 					</div>
+					<!-- End Select -->
 					<button type="submit" class="btn btn-primary btn-sm ms-3">Tampilkan</button>
-					<?php if($this->input->post('periode')):?>
-					<a href="<?= current_url();?>" class="btn btn-sm btn-outline-secondary ms-2">Reset</a>
-					<?php endif;?>
+					<a href="<?= site_url('cetak/kpi/'.$this->input->get('proyek'));?>"
+						class="btn btn-warning btn-sm ms-3" target="_blank"><i class="bi bi-printer"></i> Cetak</a>
 				</form>
 			</h1>
-			<p class="docs-page-header-text">Pantau kinerja staff pada semua proyek
-				<?php if($this->input->post('periode')):?>
-				<span class="text-body  pb-3 me-3"> - periode <span
-						class="text-primary"><?= $this->input->post('periode');?></span></span>
-				<?php endif;?>
-			</p>
+			<p class="docs-page-header-text">Pantau kinerja staff pada semua proyek</p>
 		</div>
 	</div>
 </div>
 
-<div class="row">
+<div class="row mb-4">
 	<div class="col-md-12">
 		<div class="alert bg-soft-primary py-1">
-			<small>KPI (Key Index Performance) pada sistem ini, mengacu pada perhitungan total bobot dari task yang
-				telah diselesaikan karyawan pada setiap proyek yang terdapat kontribusi mereka. Bukan dari komponen
-				penilaian yang ditentukan oleh leader masing-masing seperti KPI pada umumnya.</small>
+			<small>KPI (Key Index Performance) pada sistem ini, mengacu pada perhitungan bobot setiap task terhadap
+				total bobot yang dimiliki setiap task pada suatu proyek. Dan acuan minimal index KPI untuk nilai didapat
+				dari 3/4 total bobot task staff. Setiap staf dapat memiliki nilai maksimal yang berbeda tergantung dari
+				total bobot yang merekam miliki.</small>
 		</div>
 		<div class="card">
 			<!-- Table -->
@@ -259,3 +262,84 @@
 		</div>
 	</div>
 </div>
+
+<div class="row">
+	<div class="col-md-4">
+		<div class="card">
+			<!-- Table -->
+			<div class="card-body p-4">
+				<table
+					class="table table-borderless table-thead-bordered table-nowrap table-align-middle card-table dataTables-nosearch w-100"
+					id="table-chart-kpi">
+					<thead class="thead-light">
+						<tr>
+							<th>Staff</th>
+							<th>Presentase</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<?php if(!empty($kpi)):?>
+						<?php $no=1;foreach($kpi as $key => $val):?>
+						<tr>
+							<td>
+								<b><?= $val->nama;?></b><br>
+								<small><i class="bi bi-briefcase me-2"></i>
+									<?= isset($val->jabatan) ? $val->jabatan : '-';?></small>
+							</td>
+							<td class="text-center">
+								<span class="badge bg-soft-<?= $val->color_badge;?>"><?= $val->persentase;?>%</span>
+							</td>
+						</tr>
+						<?php endforeach;?>
+						<?php endif;?>
+					</tbody>
+				</table>
+			</div>
+			<!-- End Table -->
+		</div>
+	</div>
+	<div class="col-md-8">
+		<div class="card">
+			<div class="card-body">
+				<div id="chart-kpi"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script>
+	var dataKpi = [ <?= implode(',', $chart_kpi['data']) ?> ];
+	var categoriesKpi = [ <?= implode(',', $chart_kpi['kategori']) ?> ];
+
+	var optionsChartKpi = {
+		series: [{
+			data: dataKpi
+		}],
+		chart: {
+			type: 'bar',
+			height: 430
+		},
+		plotOptions: {
+			bar: {
+				horizontal: true,
+			}
+		},
+		dataLabels: {
+			enabled: true,
+			offsetX: -6,
+			style: {
+				fontSize: '12px',
+				colors: ['#fff']
+			}
+		},
+		xaxis: {
+			categories: categoriesKpi,
+		}
+	};
+
+	var chartKPI = new ApexCharts(document.querySelector("#chart-kpi"), optionsChartKpi);
+	chartKPI.render();
+
+</script>

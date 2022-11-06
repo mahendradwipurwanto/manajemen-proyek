@@ -10,6 +10,9 @@ $route['lupa-password'] = 'authentication/lupa_password';
 $route['reset-password/(:any)'] = 'authentication/reset_password/$1';
 $route['verifikasi-email'] = 'authentication/verifikasi_email';
 
+// cetak
+$route['cetak/kpi/(:any)'] = 'cetak/kpi/$1';
+
 $route['default_controller'] = 'home';
 $route['404_override'] = 'home/e_404';
 $route['translate_uri_dashes'] = true;
