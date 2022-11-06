@@ -165,7 +165,6 @@
 
 	var chartPieChartProyekMain = new ApexCharts(document.querySelector("#chartPieChartProyekMain"), optionsPieChartProyekMain);
 	chartPieChartProyekMain.render();
-
 	// task proyek pie chart
 	var optionsPieChartProyekTask = {
 		series: [<?= implode(',', $tasks->data) ?>],

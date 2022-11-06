@@ -75,34 +75,63 @@ class Staff extends CI_Controller
     {
         $data['user'] = $this->M_auth->get_userByID($this->session->userdata('user_id'));
         $data['countDashboard'] = $this->M_staff->countDashboardStaff();
+
         $periode = [];
-        if($this->input->post('periode')){
+        if ($this->input->post('periode')) {
             $periode = explode(' - ', $this->input->post('periode'));
             // ej($periode);
         }
+        $proyek = null;
+        $data['nama_proyek']= "Semua Proyek";
+        if ($this->input->get('proyek')) {
+            $proyek = $this->input->get('proyek') == 0 ? null : $this->input->get('proyek');
 
-        $data['kpi'] = $this->M_proyek->getDataKPI($periode);
-        
+            if ($proyek > 0) {
+                $data['nama_proyek']     = $this->M_proyek->getProyekById($proyek)->judul;
+            }
+        }
+
+        $data['proyek']     = $this->M_proyek->getAllProyek();
+        $data['kpi']        = $this->M_proyek->getDataKPI($periode, $proyek);
+        $data['chart_kpi']  = $this->M_proyek->getChartKPI($periode, $proyek);
         if ($this->agent->is_mobile()) {
             $this->templatemobile->view('proyek/kpi', $data);
-        }else{
+        } else {
             $this->templateback->view('proyek/kpi', $data);
         }
+
     }
 
     public function laporan()
     {
         $data['user'] = $this->M_auth->get_userByID($this->session->userdata('user_id'));
         $data['countDashboard'] = $this->M_staff->countDashboardStaff();
+
         $periode = [];
         if($this->input->post('periode')){
             $periode = explode(' - ', $this->input->post('periode'));
             // ej($periode);
         }
 
-        $data['proyek'] = $this->M_proyek->getLaporanProyek($periode);
-        $data['tasks'] = $this->M_proyek->getTasksLaporanAll($periode);
-        
+        $proyek = null;
+        $data['nama_proyek']= "Harap pilih proyek";
+        if($this->input->get('proyek')){
+            $proyek = $this->input->get('proyek') == 0 ? null : $this->input->get('proyek');
+            
+            if($proyek > 0){
+                $data['nama_proyek']     = $this->M_proyek->getProyekById($proyek)->judul;
+            }
+        }
+
+        $data['proyek']     = $this->M_proyek->getAllProyek();
+        $data['proyekdata'] = $this->M_proyek->getLaporanStatusProyek($proyek);
+        $data['tasks'] = $this->M_proyek->getLaporanStatusTaskProyek($proyek);
+        $data['staff_target'] = $this->M_proyek->getStaffTargetTask($proyek);
+        $data['staff_main'] = $this->M_proyek->getLaporanTaskStaff($proyek);
+        $data['tabel_target'] = $this->M_proyek->getStaffTargetTaskTabel($proyek);
+        $data['tabel_main'] = $this->M_proyek->getLaporanTaskStaffTabel($proyek);
+        $data['proyek_status'] = $this->M_proyek->getProyekStatusLaporan($proyek);
+        // ej($data['tasks']);
         if ($this->agent->is_mobile()) {
             $this->templatemobile->view('proyek/laporan', $data);
         }else{

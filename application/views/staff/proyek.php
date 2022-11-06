@@ -91,16 +91,22 @@
 						}
 					?>
 					<div class="project-box-wrapper mt-3">
-						<div class="project-box bg-soft-<?= $color;?>">
+						<div class="project-box card shadow-sm">
 							<div class="project-box-header">
-								<span>Dibuat pada, <?= date("d F Y", $val->created_at);?></span>
+								<span>Dibuat pada, <?= date("d F Y", $val->created_at);?>
+									<?php if($val->periode_selesai > time()):?>
+									<div class="badge bg-danger text-white small fw-normal">over deadline</div>
+									<?php endif;?>
+								</span>
 								<?php if($this->session->userdata('role') == 2):?>
 								<span class="cursor" data-bs-toggle="tooltip" data-bs-html="true"
 									title="Sematkan proyek" onclick="sematkan(<?=$val->id;?>, <?=$val->semat;?>)"><i
 										class="bi <?= $val->semat == 1 ? 'bi-flag-fill text-danger' : 'bi-flag';?>"></i></span>
 								<?php endif;?>
 								<?php if($this->session->userdata('role') == 3):?>
-								<span class="badge bg-primary small text-white" data-bs-toggle="tooltip" data-bs-html="true" title="Kamu adalah seorang <?= $val->is_leader == true ? 'leader' : 'staff';?> pada proyek ini"><?= $val->is_leader == true ? 'leader' : 'staff';?></span>
+								<span class="badge bg-primary small text-white" data-bs-toggle="tooltip"
+									data-bs-html="true"
+									title="Kamu adalah seorang <?= $val->is_leader == true ? 'leader' : 'staff';?> pada proyek ini"><?= $val->is_leader == true ? 'leader' : 'staff';?></span>
 								<?php endif;?>
 							</div>
 							<div class="project-box-content-header">
@@ -109,16 +115,16 @@
 							<div class="box-progress-wrapper">
 								<p class="box-progress-header">Progress</p>
 								<div class="box-progress-bar">
-									<span class="box-progress bg-<?= $color;?>"
-										style="width: <?= $val->progress;?>%;"></span>
+									<span class="box-progress bg-primary" style="width: <?= $val->progress;?>%;"></span>
 								</div>
 								<p class="box-progress-percentage"><?= $val->progress;?>%</p>
 							</div>
 							<div class="project-box-footer">
 								<div class="participants">
 									<?php if(!empty($val->leader)):?>
-									<img src="<?= base_url();?><?= $val->leader[0]->profil;?>" alt="leader: <?= $val->leader[0]->nama;?>"
-										data-bs-toggle="tooltip" data-bs-html="true" title="leader: <?= $val->leader[0]->nama;?>" class="me-3">
+									<img src="<?= base_url();?><?= $val->leader[0]->profil;?>"
+										alt="leader: <?= $val->leader[0]->nama;?>" data-bs-toggle="tooltip"
+										data-bs-html="true" title="leader: <?= $val->leader[0]->nama;?>" class="me-3">
 									<?php endif;?>
 									<?php if(!empty($val->staff)):?>
 									<?php foreach($val->staff as $k => $v):?>
@@ -126,7 +132,7 @@
 										data-bs-toggle="tooltip" data-bs-html="true" title="staff: <?= $v->nama;?>">
 									<?php endforeach;?>
 									<?php endif;?>
-									<button class="add-participant text-soft-<?= $color;?>" data-bs-toggle="modal"
+									<button class="add-participant text-soft-primary" data-bs-toggle="modal"
 										data-bs-target="#tambah-staff">
 										<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
 											viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
@@ -136,7 +142,7 @@
 									</button>
 								</div>
 								<a href="<?= site_url('proyek/kelola/'.$val->kode);?>"
-									class="days-left text-soft-<?= $color;?>">
+									class="days-left text-soft-primary">
 									kelola proyek
 								</a>
 							</div>
@@ -222,7 +228,7 @@
 						}
 					?>
 					<div class="project-box-wrapper">
-						<div class="project-box bg-soft-<?= $color;?>">
+						<div class="project-box card shadow-sm">
 							<div class="project-box-header">
 								<span>Dibuat pada, <?= date("d F Y", $val->created_at);?></span>
 							</div>
@@ -232,7 +238,7 @@
 							<div class="box-progress-wrapper">
 								<p class="box-progress-header">Progress</p>
 								<div class="box-progress-bar">
-									<span class="box-progress text-soft-<?= $color;?>"
+									<span class="box-progress text-soft-primary"
 										style="width: <?= $val->progress;?>%;"></span>
 								</div>
 								<p class="box-progress-percentage"><?= $val->progress;?>%</p>
@@ -245,7 +251,7 @@
 										data-bs-toggle="tooltip" data-bs-html="true" title="<?= $v->nama;?>">
 									<?php endforeach;?>
 									<?php endif;?>
-									<button class="add-participant text-soft-<?= $color;?>" data-bs-toggle="modal"
+									<button class="add-participant text-soft-primary" data-bs-toggle="modal"
 										data-bs-target="#tambah-staff">
 										<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
 											viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
@@ -255,7 +261,7 @@
 									</button>
 								</div>
 								<a href="<?= site_url('proyek/kelola/'.$val->kode);?>"
-									class="days-left text-soft-<?= $color;?>">
+									class="days-left text-soft-primary">
 									kelola proyek
 								</a>
 							</div>
@@ -298,8 +304,8 @@
 								placeholder="Judul Proyek" required>
 						</div>
 						<div class="col-4">
-							<label class="form-label" for="formKode">Kode Proyek  <i
-									class="bi bi-info-square-fill" data-bs-toggle="tooltip" data-bs-html="true"
+							<label class="form-label" for="formKode">Kode Proyek <i class="bi bi-info-square-fill"
+									data-bs-toggle="tooltip" data-bs-html="true"
 									title="Kode sebagai kunci/id proyek anda untuk mengenali pekerjaan dari proyek ini."></i></label>
 							<input type="text" name="kode" id="formKode" class="form-control form-control-sm alphanum"
 								placeholder="Ex: PYK01"

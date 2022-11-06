@@ -18,8 +18,10 @@
 					</div>
 					<!-- End Select -->
 					<button type="submit" class="btn btn-primary btn-sm ms-3">Tampilkan</button>
+					<?php if($this->input->get('proyek')):?>
 					<a href="<?= site_url('cetak/laporan/'.$this->input->get('proyek'));?>"
 						class="btn btn-warning btn-sm ms-3" target="_blank"><i class="bi bi-printer"></i> Cetak</a>
+					<?php endif;?>
 				</form>
 			</h1>
 			<p class="docs-page-header-text">Pantau progres dari semua proyek
@@ -176,7 +178,9 @@
 
 	var chartPieChartProyekMain = new ApexCharts(document.querySelector("#chartPieChartProyekMain"), optionsPieChartProyekMain);
 	chartPieChartProyekMain.render();
-
+</script>
+<?php if($this->input->get('proyek')):?>
+<script>
 	// task proyek pie chart
 	var optionsPieChartProyekTask = {
 		series: [<?= implode(',', $tasks->data) ?>],
@@ -299,3 +303,4 @@
 	chartTargetMain.render();
 
 </script>
+<?php endif;?>
