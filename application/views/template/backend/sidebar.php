@@ -103,10 +103,6 @@
   					<li class="nav-item">
   						<span class="nav-subtitle">Pengaturan</span>
   					</li>
-  					<li class="nav-item" id="tour-menu-cms">
-  						<a class="nav-link <?= ($this->uri->segment(1) == "cms" ? "active" : "") ?>"
-  							href="<?= site_url('cms/dashboard'); ?>">CMS Website</a>
-  					</li>
   					<li class="nav-item" id="tour-menu-pengaturan">
   						<a class="nav-link <?= ($this->uri->segment(2) == "pengaturan" ? "active" : "") ?>"
   							href="<?= site_url('admin/pengaturan'); ?>">Pengaturan</a>

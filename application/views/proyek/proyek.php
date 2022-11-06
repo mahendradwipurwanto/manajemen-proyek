@@ -93,9 +93,13 @@
 						}
 					?>
 					<div class="project-box-wrapper mt-3">
-						<div class="project-box bg-soft-<?= $color;?>">
+						<div class="project-box card shadow-sm">
 							<div class="project-box-header">
-								<span>Dibuat pada, <?= date("d F Y", $val->created_at);?></span>
+								<span>Dibuat pada, <?= date("d F Y", $val->created_at);?>
+									<?php if($val->periode_selesai > time()):?>
+									<div class="badge bg-danger text-white small fw-normal">over deadline</div>
+									<?php endif;?>
+								</span>
 								<?php if($this->session->userdata('role') == 2):?>
 								<span class="cursor" data-bs-toggle="tooltip" data-bs-html="true"
 									title="Sematkan proyek" onclick="sematkan(<?=$val->id;?>, <?=$val->semat;?>)"><i
@@ -108,8 +112,7 @@
 							<div class="box-progress-wrapper">
 								<p class="box-progress-header">Progress</p>
 								<div class="box-progress-bar">
-									<span class="box-progress bg-<?= $color;?>"
-										style="width: <?= $val->progress;?>%;"></span>
+									<span class="box-progress bg-primary" style="width: <?= $val->progress;?>%;"></span>
 								</div>
 								<p class="box-progress-percentage"><?= $val->progress;?>%</p>
 							</div>
@@ -126,7 +129,7 @@
 										data-bs-toggle="tooltip" data-bs-html="true" title="staff: <?= $v->nama;?>">
 									<?php endforeach;?>
 									<?php endif;?>
-									<button class="add-participant text-soft-<?= $color;?>" data-bs-toggle="modal"
+									<button class="add-participant text-soft-primary" data-bs-toggle="modal"
 										data-bs-target="#tambah-staff">
 										<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
 											viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
@@ -136,7 +139,7 @@
 									</button>
 								</div>
 								<a href="<?= site_url('proyek/kelola/'.$val->kode);?>"
-									class="days-left text-soft-<?= $color;?>">
+									class="days-left text-soft-primary">
 									kelola proyek
 								</a>
 							</div>
@@ -222,7 +225,7 @@
 						}
 					?>
 					<div class="project-box-wrapper">
-						<div class="project-box bg-soft-<?= $color;?>">
+						<div class="project-box card shadow-sm">
 							<div class="project-box-header">
 								<span>Dibuat pada, <?= date("d F Y", $val->created_at);?></span>
 							</div>
@@ -232,7 +235,7 @@
 							<div class="box-progress-wrapper">
 								<p class="box-progress-header">Progress</p>
 								<div class="box-progress-bar">
-									<span class="box-progress text-soft-<?= $color;?>"
+									<span class="box-progress text-soft-primary"
 										style="width: <?= $val->progress;?>%;"></span>
 								</div>
 								<p class="box-progress-percentage"><?= $val->progress;?>%</p>
@@ -245,7 +248,7 @@
 										data-bs-toggle="tooltip" data-bs-html="true" title="<?= $v->nama;?>">
 									<?php endforeach;?>
 									<?php endif;?>
-									<button class="add-participant text-soft-<?= $color;?>" data-bs-toggle="modal"
+									<button class="add-participant text-soft-primary" data-bs-toggle="modal"
 										data-bs-target="#tambah-staff">
 										<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
 											viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
@@ -255,7 +258,7 @@
 									</button>
 								</div>
 								<a href="<?= site_url('proyek/kelola/'.$val->kode);?>"
-									class="days-left text-soft-<?= $color;?>">
+									class="days-left text-soft-primary">
 									kelola proyek
 								</a>
 							</div>
@@ -288,8 +291,8 @@
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				<form action="<?= site_url('api/proyek/save');?>" method="post" class="js-validate needs-validation" enctype="multipart/form-data"
-					novalidate>
+				<form action="<?= site_url('api/proyek/save');?>" method="post" class="js-validate needs-validation"
+					enctype="multipart/form-data" novalidate>
 					<!-- Form -->
 					<div class="mb-3 row">
 						<div class="col-8">

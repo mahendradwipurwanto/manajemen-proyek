@@ -1,29 +1,18 @@
+<style>
+	@media print {
+		body {
+			zoom: 50%;
+		}
+	}
+
+</style>
+
 <!-- Page Header -->
-<div class="docs-page-header mt-5">
+<div class="docs-page-header">
 	<div class="row align-items-center">
 		<div class="col-sm">
-			<h1 class="docs-page-header-title d-flex justify-content-between">Laporan Proyek - <?= $nama_proyek;?>
-				<form action="<?= site_url('proyek/laporan');?>" method="get" class="d-flex">
-					<!-- Select -->
-					<div class="tom-select-custom tom-select-custom-sm">
-						<select class="js-select form-select form-select-sm" name="proyek" autocomplete="off"
-							data-hs-tom-select-options='{"placeholder": "Pilih proyek"}'>
-							<option value="0" selected><?= $nama_proyek;?></option>
-							<?php if(!empty($proyek)):?>
-							<?php foreach($proyek as $key => $val):?>
-							<option value="<?= $val->id;?>"><?= $val->judul;?></option>
-							<?php endforeach;?>
-							<?php endif;?>
-						</select>
-					</div>
-					<!-- End Select -->
-					<button type="submit" class="btn btn-primary btn-sm ms-3">Tampilkan</button>
-					<a href="<?= site_url('cetak/laporan/'.$this->input->get('proyek'));?>"
-						class="btn btn-warning btn-sm ms-3" target="_blank"><i class="bi bi-printer"></i> Cetak</a>
-				</form>
+			<h1 class="docs-page-header-title d-flex justify-content-between">Cetak Laporan - <?= $nama_proyek;?>
 			</h1>
-			<p class="docs-page-header-text">Pantau progres dari semua proyek
-			</p>
 		</div>
 	</div>
 </div>
@@ -297,5 +286,11 @@
 
 	var chartTargetMain = new ApexCharts(document.querySelector("#chartTargetMain"), optionsChartTargetMain);
 	chartTargetMain.render();
+
+	$(document).ready(function () {
+		setTimeout(function () {
+			window.print();
+		}, 2000);
+	})
 
 </script>

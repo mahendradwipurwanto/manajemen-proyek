@@ -12,6 +12,7 @@ $route['verifikasi-email'] = 'authentication/verifikasi_email';
 
 // cetak
 $route['cetak/kpi/(:any)'] = 'cetak/kpi/$1';
+$route['cetak/laporan/(:any)'] = 'cetak/laporan/$1';
 
 $route['default_controller'] = 'home';
 $route['404_override'] = 'home/e_404';

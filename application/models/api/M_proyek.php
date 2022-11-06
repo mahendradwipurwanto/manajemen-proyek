@@ -1132,6 +1132,242 @@ class M_proyek extends CI_Model
         return $models;
     }
 
+    function getLaporanStatusProyek(){
+        $this->db->select('*')
+        ->from('tb_proyek')
+        ->where(['is_deleted' => 0 ])
+        ;
+
+        $models = $this->db->get()->result();
+
+        $arr = (object) [];
+        
+        $arr->on_deadline = 0;
+        $arr->over_deadline = 0;
+        foreach ($models as $key => $val) {
+            if($val->periode_selesai < time()){
+                $arr->on_deadline += 1;
+            }
+            
+            if($val->periode_selesai > time()){
+                $arr->over_deadline += 1;
+            }
+        }
+
+        $arr->data = [$arr->on_deadline, $arr->over_deadline];
+        $arr->categories = ["'On Deadline'", "'Over Deadline'"];
+
+        return $arr;
+    }
+
+    function getLaporanStatusTaskProyek($proyek_id = null){
+        $this->db->select('*')
+        ->from('tb_proyek_status')
+        ->where(['is_deleted' => 0, 'proyek_id' => $proyek_id])
+        ;
+
+        $models = $this->db->get()->result();
+
+        $arr = (object) [];
+        $arr->categories = [];
+        $arr->data = [];
+        if(!empty($models)){
+            foreach($models as $key => $val){
+                $arr->categories[] = "'{$val->status}'";
+                $arr->data[] = count($this->getDataChartTaskProyek($val->id));
+            }
+        }
+
+        return $arr;
+    }
+
+    function getDataChartTaskProyek($status_id = null){
+        return $this->db->get_where('tb_proyek_task', ['status_id' => $status_id])->result();
+    }
+
+    function getStaffTargetTask($proyek_id = null){
+        $this->db->select('a.nama, b.*')
+        ->from('tb_user a')
+        ->join('tb_assign_staff b', 'a.user_id = b.user_id')
+        ->where(['b.is_deleted' => 0, 'proyek_id' => $proyek_id])
+        ;
+
+        $models = $this->db->get()->result();
+
+        $arr = (object) [];
+        $arr->categories = [];
+        $arr->dateOnDeadline = [];
+        $arr->dateOverDeadline = [];
+        if(!empty($models)){
+            foreach($models as $key => $val){
+                $arr->categories[] = "'{$val->nama}'";
+                $arr->dateOnDeadline[] = $this->getTaskTargetStaff($val->user_id, 1, $proyek_id);
+                $arr->dateOverDeadline[] = $this->getTaskTargetStaff($val->user_id, 0, $proyek_id);
+            }
+        }
+
+        return $arr;
+    }
+
+    function getStaffTargetTaskTabel($proyek_id = null){
+        $this->db->select('a.nama, b.*')
+        ->from('tb_user a')
+        ->join('tb_assign_staff b', 'a.user_id = b.user_id')
+        ->where(['b.is_deleted' => 0, 'proyek_id' => $proyek_id])
+        ;
+
+        $models = $this->db->get()->result();
+
+        $arr = [];
+        if(!empty($models)){
+            foreach($models as $key => $val){
+                $arr[$key]['nama'] = $val->nama;
+                $arr[$key]['dateOnDeadline'] = $this->getTaskTargetStaff($val->user_id, 1, $proyek_id);
+                $arr[$key]['dateOverDeadline'] = $this->getTaskTargetStaff($val->user_id, 0, $proyek_id);
+            }
+        }
+
+        return $arr;
+    }
+
+    function getTaskTargetStaff($user_id = null, $on_deadline = 1, $proyek_id = null){
+        $this->db->select('*')
+        ->from('tb_proyek_task')
+        ->where(['is_deleted' => 0, 'user_id' => $user_id, 'proyek_id' => $proyek_id, 'is_selesai' => 0, 'is_closed' => 0])
+        ;
+
+        $models = $this->db->get()->result();
+
+        $total = 0;
+        foreach($models as $key => $val){
+            if($on_deadline == 1){
+                if($val->deadline > time()){
+                    $total += 1;
+                }
+            }else{
+                if($val->deadline < time()){
+                    $total += 1;
+                }
+            }
+        }
+
+        return $total;
+    }
+
+    function getLaporanTaskStaff($proyek_id){
+        $this->db->select('a.nama, b.*')
+        ->from('tb_user a')
+        ->join('tb_assign_staff b', 'a.user_id = b.user_id')
+        ->where(['b.is_deleted' => 0, 'proyek_id' => $proyek_id])
+        ;
+
+        $models = $this->db->get()->result();
+
+        $arr = [];
+        if(!empty($models)){
+            foreach($models as $key => $val){
+                $arr['categories'][] = "'{$val->nama}'";
+                $arr['series'] = $this->getSeriesLaporanTaskStaff($proyek_id);
+            }
+        }
+
+        return $arr;
+    }
+
+    function getLaporanTaskStaffTabel($proyek_id){
+        $this->db->select('a.nama, b.*')
+        ->from('tb_user a')
+        ->join('tb_assign_staff b', 'a.user_id = b.user_id')
+        ->where(['b.is_deleted' => 0, 'proyek_id' => $proyek_id])
+        ;
+
+        $models = $this->db->get()->result();
+
+        $arr = [];
+        if(!empty($models)){
+            foreach($models as $key => $val){
+                $arr[$key]['nama'] = $val->nama;
+                $arr[$key]['status'] = $this->getSeriesLaporanTaskStaffTabel($proyek_id, $val->user_id);
+            }
+        }
+
+        return $arr;
+    }
+
+    function getSeriesLaporanTaskStaffTabel($proyek_id = null, $user_id = null){
+        $this->db->select('*')
+        ->from('tb_proyek_status')
+        ->where(['is_deleted' => 0, 'proyek_id' => $proyek_id])
+        ;
+        
+        $models = $this->db->get()->result();
+
+        $arr = [];
+        foreach($models as $key => $val){
+            $arr[$key]['nama'] = $val->status;
+            $arr[$key]['total'] = $this->getTotalTaskUserStatus($val->id, $user_id);
+        }
+
+        return $arr;
+    }
+
+    function getTotalTaskUserStatus($status_id = null, $user_id = null){
+        return $this->db->get_where('tb_proyek_task', ['is_deleted' => 0, 'status_id' => $status_id, 'user_id' => $user_id])->num_rows();
+
+    }
+
+    function getSeriesLaporanTaskStaff($proyek_id = null){
+        $this->db->select('*')
+        ->from('tb_proyek_status')
+        ->where(['is_deleted' => 0, 'proyek_id' => $proyek_id])
+        ;
+
+        $models = $this->db->get()->result();
+
+        $arr = [];
+        if (!empty($models)) {
+            foreach ($models as $key => $val) {
+                $arr[$val->id]['name'] = $val->status;
+
+                $this->db->select('a.nama, b.*')
+                ->from('tb_user a')
+                ->join('tb_assign_staff b', 'a.user_id = b.user_id')
+                ->where(['b.is_deleted' => 0, 'proyek_id' => $proyek_id])
+                ;
+
+                $staff = $this->db->get()->result();
+
+                foreach($staff as $k => $v){
+                    $total = $this->getTaskTargetStaffStatus($val->id, $v->user_id);
+                    $arr[$val->id]['data'][] = $total == null ? 0 : $total;
+                }
+            }
+        }
+
+        return array_values($arr);
+
+    }
+
+    function getProyekStatusLaporan($proyek_id = null){
+        return $this->db->get_where('tb_proyek_status', ['is_deleted' => 0, 'proyek_id' => $proyek_id])->result();
+    }
+
+    function getTaskTargetStaffStatus($status_id = null, $user_id = null){
+        $this->db->select('COUNT(*) as total')
+        ->from('tb_proyek_task a')
+        ->where(['a.is_deleted' => 0, 'a.status_id' => $status_id, 'user_id' => $user_id])
+        ;
+
+        $models = $this->db->get()->result();
+
+        $arr = 0;
+        foreach($models as $key => $val){
+            $arr = (int) $val->total;
+        }
+
+        return ($arr);
+    }
+
     function getLaporanProyek($periode = []){
         $this->db->select('a.*, c.nama')
         ->from('tb_proyek a')
