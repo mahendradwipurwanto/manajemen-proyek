@@ -116,8 +116,8 @@
 			</div>
 			<div class="card-body p-3">
 				<table
-					class="table table-borderless table-hover table-thead-bordered table-nowrap table-align-middle card-table dataTables-nosearch w-100"
-					id="table-chart-status-pengerjaan">
+					class="table table-borderless table-hover table-thead-bordered table-nowrap table-align-middle card-table dataTables-button w-100"
+					id="table-chart-status-pengerjaan" style="width:100%">
 					<thead class="thead-light">
 						<tr>
 							<th>Staff</th>
@@ -302,5 +302,6 @@
 	var chartTargetMain = new ApexCharts(document.querySelector("#chartTargetMain"), optionsChartTargetMain);
 	chartTargetMain.render();
 
+	// add class
 </script>
 <?php endif;?>

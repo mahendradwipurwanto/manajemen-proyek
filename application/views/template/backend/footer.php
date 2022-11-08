@@ -259,6 +259,43 @@
 	})()
 
 	$(document).ready(function () {
+		$('table.dataTables-button').each(function () {
+			$('#' + $(this).attr('id')).DataTable({
+				"language": {
+					"emptyTable": '<div class="text-center p-4">' +
+						'<img class="mb-3" src="../assets/svg/illustrations/sorry.svg" alt="Image Description" style="width: 7rem;">' +
+						'<p class="mb-0">No data to display</p>' +
+						'</div>'
+				},
+				"scrollX": true,
+				"responsive": true,
+				"searching": false,
+				"dom": 'Bfrtip',
+				"buttons": [{
+					extend: 'pdf',
+					text: 'PDF',
+					className: 'btn btn-danger',
+					title: `Status pengerjaan task setiap staff ${new Date().toLocaleDateString()}`,
+					customize: function (doc) {
+						doc.defaultStyle.fontSize = 12;
+						doc.defaultStyle.alignment = 'center';
+						doc.styles.tableHeader.fontSize = 14;
+						doc.content[1].table.widths = ['40%', '15%', '15%',
+							'15%', '15%'
+						];
+					}
+				}, {
+					"extend": 'excelHtml5',
+					"customize": function (xlsx) {
+						var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+						// jQuery selector to add a border
+						$('row c[r*="10"]', sheet).attr('s', '25');
+						$('row c[r*="10"]', sheet).attr('width', 50);
+					}
+				}]
+			});
+		});
 		$('table.dataTables-nosearch').each(function () {
 			$('#' + $(this).attr('id')).DataTable({
 				"language": {
@@ -284,6 +321,9 @@
 				"responsive": true
 			});
 		});
+		$('.buttons-pdf').addClass('btn btn-primary btn-xs');
+		$('.buttons-print').addClass('btn btn-warning btn-xs');
+		$('.buttons-excel').addClass('btn btn-success btn-xs');
 	});
 
 </script>

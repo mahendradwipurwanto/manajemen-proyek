@@ -26,7 +26,12 @@
 
 	<!-- CSS Implementing Plugins -->
 	<link rel="stylesheet" href="<?= base_url(); ?>assets/vendor/bootstrap-icons/font/bootstrap-icons.css">
-	<link rel="stylesheet" href="//cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+
+	<!-- datatables -->
+	<link rel="stylesheet" href="//cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
+	<!-- <link rel="stylesheet" href="//cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css"> -->
+	<link rel="stylesheet" href="//https://cdn.datatables.net/buttons/2.2.3/css/buttons.bootstrap5.min.css">
+
 	<link rel="stylesheet" href="<?= base_url(); ?>assets/vendor/swiper/swiper-bundle.min.css">
 	<link rel="stylesheet" href="<?= base_url(); ?>assets/vendor/aos/dist/aos.css">
 	<link rel="stylesheet" href="<?= base_url(); ?>assets/vendor/tom-select/dist/css/tom-select.bootstrap5.css">
@@ -54,7 +59,15 @@
 
 	<!-- datatables -->
 	<script type="text/javascript" src="//cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-	<script type="text/javascript" src="//cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+	<script type="text/javascript" src="//cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+	<script type="text/javascript" src="//cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+	<script type="text/javascript" src="//dn.datatables.net/buttons/2.2.3/js/buttons.bootstrap5.min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+	<script type="text/javascript" src="//cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
+	<script type="text/javascript" src="//cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
+	<script type="text/javascript" src="//cdn.datatables.net/buttons/2.2.3/js/buttons.colVis.min.js"></script>
 	<!-- sweetalert2 -->
 	<script type="text/javascript" src="<?= base_url(); ?>assets/plugin/sweetalert2/sweetalert2.min.js"></script>
 	<!-- tinyMCE -->
@@ -72,6 +85,8 @@
 	<!-- daterange picker -->
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+	
 
 	<!-- apex -->
 	<script type="text/javascript" src="<?= base_url();?>assets/js/apexchart.js"></script>
