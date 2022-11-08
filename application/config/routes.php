@@ -16,6 +16,7 @@ $route['cetak/laporan/(:any)'] = 'cetak/laporan/$1';
 
 // ekspor
 $route['excel/ekspor-kpi/(:any)'] = 'proyek/ekspor_kpi/$1';
+$route['excel/ekspor-kpi'] = 'proyek/ekspor_kpi';
 
 $route['default_controller'] = 'home';
 $route['404_override'] = 'home/e_404';
