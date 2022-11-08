@@ -12,10 +12,20 @@ class Excel
         log_message('Debug', 'PHPSpreadSheet class is loaded.');
         $this->_ci = &get_instance();
         $this->_ci->load->database();
+        $this->_ci->load->model('api/M_proyek');
     }
 
-    public function export()
+    public function exporKPI($proyek_id = null)
     {
+        $data['nama_proyek']= "Semua Proyek";
+        $proyek_id = $proyek_id == 0 ? null : $proyek_id;
+
+        if(!is_null($proyek_id)){
+            $data['nama_proyek']     = $this->M_proyek->getProyekById($proyek_id)->judul;
+        }
+
+        $data['kpi']        = $this->M_proyek->getDataKPI([], $proyek_id);
+        ej($data);
         $semua_pengguna = [];
 
         $spreadsheet = new Spreadsheet;

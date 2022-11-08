@@ -14,6 +14,9 @@ $route['verifikasi-email'] = 'authentication/verifikasi_email';
 $route['cetak/kpi/(:any)'] = 'cetak/kpi/$1';
 $route['cetak/laporan/(:any)'] = 'cetak/laporan/$1';
 
+// ekspor
+$route['excel/ekspor-kpi/(:any)'] = 'proyek/ekspor_kpi/$1';
+
 $route['default_controller'] = 'home';
 $route['404_override'] = 'home/e_404';
 $route['translate_uri_dashes'] = true;

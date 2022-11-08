@@ -2,6 +2,9 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 class Proyek extends CI_Controller
 {
     // construct
@@ -22,6 +25,8 @@ class Proyek extends CI_Controller
         }
 
         $this->load->model(['api/M_auth', 'api/M_leader', 'api/M_staff', 'api/M_master', 'api/M_proyek']);
+
+        $this->load->library('excel');
 
         if($this->session->userdata('role') == 3){
             if ($this->M_auth->cekIfLeader($this->session->userdata('user_id'))['status'] == true) {
@@ -90,6 +95,146 @@ class Proyek extends CI_Controller
                 $this->templateback->view('proyek/detail', $data);
             }
         }
+    }
+
+    public function ekspor_kpi($proyek_id = null)
+    {
+        $nama_proyek = "Semua Proyek";
+        $proyek_id = $proyek_id == 0 ? null : $proyek_id;
+
+        if(!is_null($proyek_id)){
+            $nama_proyek      = $this->M_proyek->getProyekById($proyek_id)->judul;
+        }
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        // Buat sebuah variabel untuk menampung pengaturan style dari header tabel
+        $style_col = [
+            'font' => ['bold' => true, 'color' => array('rgb' => 'ffffff')], // Set font nya jadi bold
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, // Set text jadi ditengah secara horizontal (center)
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER // Set text jadi di tengah secara vertical (middle)
+            ],
+            'borders' => [
+                'top' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN], // Set border top dengan garis tipis
+                'right' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN],  // Set border right dengan garis tipis
+                'bottom' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN], // Set border bottom dengan garis tipis
+                'left' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN] // Set border left dengan garis tipis
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => array('argb' => 'ff377dff')
+            ]
+        ];
+        // Buat sebuah variabel untuk menampung pengaturan style dari isi tabel
+        $style_row = [
+            'alignment' => [
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER // Set text jadi di tengah secara vertical (middle)
+            ],
+            'borders' => [
+                'top' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN], // Set border top dengan garis tipis
+                'right' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN],  // Set border right dengan garis tipis
+                'bottom' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN], // Set border bottom dengan garis tipis
+                'left' => ['borderStyle'  => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN] // Set border left dengan garis tipis
+            ]
+        ];
+
+        // Panggil function view yang ada di SiswaModel untuk menampilkan semua data siswanya
+        $kpi = $this->M_proyek->getDataKPI([], $proyek_id);
+
+        $sheet->setCellValue('A1', "Laporan KPI Proyek - ".$nama_proyek); // Set kolom A1
+        $sheet->mergeCells('A1:O1'); // Set Merge Cell pada kolom A1 sampai E1
+        $sheet->getStyle('A1')->getFont()->setBold(true); // Set bold kolom A1
+        // Buat header tabel nya pada baris ke 3
+        $sheet->setCellValue('A3', "Peringkat"); // Set kolom A3 dengan tulisan "NO"
+        $sheet->setCellValue('B3', "Staff"); // Set kolom E3
+        $sheet->setCellValue('C3', "Proyek"); // Set kolom E3
+        $sheet->setCellValue('G3', "Nilai"); // Set kolom B3
+        $sheet->setCellValue('H3', "Presentase"); // Set kolom C3
+
+        $sheet->setCellValue('C4', "Total Proyek"); // Set kolom C3
+        $sheet->setCellValue('D4', "Total Task"); // Set kolom C3
+        $sheet->setCellValue('E4', "Ditolak/Proses"); // Set kolom C3
+        $sheet->setCellValue('F4', "Selesai"); // Set kolom C3
+
+        $sheet->mergeCells('A3:A4');
+        $sheet->mergeCells('B3:B4');
+        $sheet->mergeCells('C3:F3');
+        $sheet->mergeCells('G3:G4');
+        $sheet->mergeCells('H3:H4');
+
+        // Apply style header yang telah kita buat tadi ke masing-masing kolom header
+        $sheet->getStyle('A3:A4')->applyFromArray($style_col);
+        $sheet->getStyle('B3:B4')->applyFromArray($style_col);
+        $sheet->getStyle('C3')->applyFromArray($style_col);
+        $sheet->getStyle('D3')->applyFromArray($style_col);
+        $sheet->getStyle('E3')->applyFromArray($style_col);
+        $sheet->getStyle('F3')->applyFromArray($style_col);
+        $sheet->getStyle('G3:G4')->applyFromArray($style_col);
+        $sheet->getStyle('H3:H4')->applyFromArray($style_col);
+        
+        $sheet->getStyle('C4')->applyFromArray($style_col);
+        $sheet->getStyle('D4')->applyFromArray($style_col);
+        $sheet->getStyle('E4')->applyFromArray($style_col);
+        $sheet->getStyle('F4')->applyFromArray($style_col);
+
+
+        if(!empty($kpi)){
+            $no = 1; // Untuk penomoran tabel, di awal set dengan 1
+            $numrow = 5; // Set baris pertama untuk isi tabel adalah baris ke 4
+            foreach ($kpi as $data) { // Lakukan looping pada variabel siswa
+                $sheet->setCellValue('A'.$numrow, $no);
+                $sheet->setCellValue('B'.$numrow, $data->nama);
+                $sheet->setCellValue('C'.$numrow, $data->totalProyek);
+                $sheet->setCellValue('D'.$numrow, $data->totalTask);
+                $sheet->setCellValue('E'.$numrow, $data->taskProses);
+                $sheet->setCellValue('F'.$numrow, $data->taskSelesai);
+                $sheet->setCellValue('G'.$numrow, $data->nilai);
+                $sheet->setCellValue('H'.$numrow, $data->persentase."%");
+
+            
+                // Apply style row yang telah kita buat tadi ke masing-masing baris (isi tabel)
+                $sheet->getStyle('A'.$numrow)->applyFromArray($style_row);
+                $sheet->getStyle('B'.$numrow)->applyFromArray($style_row);
+                $sheet->getStyle('C'.$numrow)->applyFromArray($style_row);
+                $sheet->getStyle('D'.$numrow)->applyFromArray($style_row);
+                $sheet->getStyle('E'.$numrow)->applyFromArray($style_row);
+                $sheet->getStyle('F'.$numrow)->applyFromArray($style_row);
+                $sheet->getStyle('G'.$numrow)->applyFromArray($style_row);
+                $sheet->getStyle('H'.$numrow)->applyFromArray($style_row);
+
+            
+                $no++; // Tambah 1 setiap kali looping
+                $numrow++; // Tambah 1 setiap kali looping
+            }
+        }else{
+            $sheet->setCellValue('A5', "belum ada data"); // Set kolom A1
+            $sheet->mergeCells('A4:H4'); // Set Merge Cell pada kolom A1 sampai E1
+            $sheet->getStyle('A5')->getFont()->setBold(true); // Set bold kolom A1
+        }
+            // Set width kolom
+        $sheet->getColumnDimension('A')->setAutoSize(true); // Set width kolom A
+        $sheet->getColumnDimension('B')->setAutoSize(true); // Set width kolom B
+        $sheet->getColumnDimension('C')->setAutoSize(true); // Set width kolom C
+        $sheet->getColumnDimension('D')->setAutoSize(true); // Set width kolom D
+        $sheet->getColumnDimension('E')->setAutoSize(true); // Set width kolom E
+        $sheet->getColumnDimension('F')->setAutoSize(true); // Set width kolom E
+        $sheet->getColumnDimension('G')->setAutoSize(true); // Set width kolom E
+        $sheet->getColumnDimension('H')->setAutoSize(true); // Set width kolom E
+    
+        // Set height semua kolom menjadi auto (mengikuti height isi dari kolommnya, jadi otomatis)
+        $sheet->getDefaultRowDimension()->setRowHeight(-1);
+        // Set orientasi kertas jadi LANDSCAPE
+        $sheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+        // Set judul file excel nya
+        $title = "Data-KPI-".date("dMY").".xlsx";
+        $sheet->setTitle($title);
+        // Proses file excel
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="'.$title.'"'); // Set nama file excel nya
+        header('Cache-Control: max-age=0');
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
     }
 
     public function kpi()

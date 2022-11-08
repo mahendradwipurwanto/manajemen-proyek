@@ -20,6 +20,8 @@
 					<button type="submit" class="btn btn-primary btn-sm ms-3">Tampilkan</button>
 					<a href="<?= site_url('cetak/kpi/'.$this->input->get('proyek'));?>"
 						class="btn btn-warning btn-sm ms-3" target="_blank"><i class="bi bi-printer"></i> Cetak</a>
+					<a href="<?= site_url('excel/ekspor-kpi/'.$this->input->get('proyek'));?>"
+						class="btn btn-success btn-sm ms-3" target="_blank"><i class="bi bi-file-spreadsheet"></i> Ekspor</a>
 				</form>
 			</h1>
 			<p class="docs-page-header-text">Pantau kinerja staff pada semua proyek</p>
@@ -42,7 +44,7 @@
 					id="table-kpi">
 					<thead class="thead-light">
 						<tr>
-							<th rowspan="2" width="5%">No</th>
+							<th rowspan="2" width="5%">Peringkat</th>
 							<th rowspan="2">Staff</th>
 							<th colspan="4" class="text-center">Proyek</th>
 							<th rowspan="2">Nilai</th>
@@ -60,7 +62,7 @@
 						<?php if(!empty($kpi)):?>
 						<?php $no=1;foreach($kpi as $key => $val):?>
 						<tr>
-							<td><?= $no++;?>.</td>
+							<td class="text-center"><?= $no++;?>.</td>
 							<td>
 								<b><?= $val->nama;?></b><br>
 								<small><i class="bi bi-briefcase me-2"></i>
