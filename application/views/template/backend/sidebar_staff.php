@@ -81,7 +81,7 @@
 									<i class="bi bi-person-badge nav-icon"></i> Dashboard
 								</a>
 							</li>
-							<li class="nav-item" id="tour-menu-kpi">
+							<li class="nav-item d-none" id="tour-menu-kpi">
 								<a class="nav-link <?= ($this->uri->segment(2) == "kpi" || $this->uri->segment(2) == "task" ? "active" : "") ?>"
 									href="<?= site_url('staff/kpi'); ?>">
 									<i class="bi bi-file-bar-graph nav-icon"></i> KPI
@@ -93,7 +93,7 @@
 									<i class="bi bi-file-bar-graph nav-icon"></i> Laporan
 								</a>
 							</li>
-							<li class="nav-item" id="tour-menu-staff">
+							<li class="nav-item d-none" id="tour-menu-staff">
 								<a class="nav-link <?= ($this->uri->segment(2) == "daftar-staff" || $this->uri->segment(2) == "task" ? "active" : "") ?>"
 									href="<?= site_url('staff/daftar-staff'); ?>">
 									<i class="bi bi-people-fill nav-icon"></i> Daftar Staff

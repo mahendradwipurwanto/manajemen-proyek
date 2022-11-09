@@ -53,4 +53,40 @@
 			</div>
 		</div>
 	</div>
+	<div class="col-md-12">
+		<div class="card">
+			<div class="card-header py-3">
+				<h4 class="card-title mb-0">Aktifitas terbaru</h4>
+			</div>
+			<div class="card-body p-3">
+				<ul class="list-group list-group-lg w-100" style="max-height: 500px; overflow: auto;">
+					<?php if(!empty($log_proyek)):?>
+					<?php foreach($log_proyek as $key => $val):?>
+					<li class="list-group-item py-3">
+						<div class="row justify-content-between">
+							<div class="col-sm-12 mb-2 mb-sm-0">
+								<span class="h5 fw-normal"><b><?= $val->nama;?></b> <?= $val->message;?></span>
+								<br>
+								<span class="text-secondary small float-end"><?= $val->created_at;?></span>
+							</div>
+							<!-- End Col -->
+						</div>
+						<!-- End Row -->
+					</li>
+					<?php endforeach;?>
+					<?php else:?>
+					<li class="list-group-item py-3">
+						<div class="row justify-content-between">
+							<div class="col-sm-12 mb-2 mb-sm-0 text-center">
+								<span class="h5 fw-normal">belum ada aktivitas terbaru</span>
+							</div>
+							<!-- End Col -->
+						</div>
+						<!-- End Row -->
+					</li>
+					<?php endif;?>
+				</ul>
+			</div>
+		</div>
+	</div>
 </div>

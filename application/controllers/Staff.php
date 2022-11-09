@@ -45,6 +45,7 @@ class Staff extends CI_Controller
         $data['countDashboard'] = $this->M_staff->countDashboardStaff();
         $data['countLeader'] = $this->M_leader->countLeader();
         $data['proyek'] = $this->M_proyek->getAll();
+        $data['log_proyek'] = $this->M_proyek->getLogProyekStaff();
 
         if ($this->agent->is_mobile()) {
             $this->templatemobile->view('staff/dashboard', $data);
@@ -123,19 +124,19 @@ class Staff extends CI_Controller
             }
         }
 
-        $data['proyek']     = $this->M_proyek->getAllProyek();
-        $data['proyekdata'] = $this->M_proyek->getLaporanStatusProyek($proyek);
-        $data['tasks'] = $this->M_proyek->getLaporanStatusTaskProyek($proyek);
-        $data['staff_target'] = $this->M_proyek->getStaffTargetTask($proyek);
-        $data['staff_main'] = $this->M_proyek->getLaporanTaskStaff($proyek);
-        $data['tabel_target'] = $this->M_proyek->getStaffTargetTaskTabel($proyek);
-        $data['tabel_main'] = $this->M_proyek->getLaporanTaskStaffTabel($proyek);
+        $data['proyek']     = $this->M_proyek->getAllProyekStaff();
+        $data['proyekdata'] = $this->M_proyek->getLaporanStatusProyekStaff($proyek);
+        $data['tasks'] = $this->M_proyek->getLaporanStatusTaskProyekStaff($proyek);
+        $data['staff_target'] = $this->M_proyek->getStaffTargetTaskStaff($proyek);
+        $data['staff_main'] = $this->M_proyek->getLaporanTaskStaffStaff($proyek);
+        $data['tabel_target'] = $this->M_proyek->getStaffTargetTaskTabelStaff($proyek);
+        $data['tabel_main'] = $this->M_proyek->getLaporanTaskStaffTabelStaff($proyek);
         $data['proyek_status'] = $this->M_proyek->getProyekStatusLaporan($proyek);
         // ej($data['tasks']);
         if ($this->agent->is_mobile()) {
-            $this->templatemobile->view('proyek/laporan', $data);
+            $this->templatemobile->view('staff/laporan', $data);
         }else{
-            $this->templateback->view('proyek/laporan', $data);
+            $this->templateback->view('staff/laporan', $data);
         }
     }
 
