@@ -12,6 +12,9 @@
 					class="btn btn-xs btn-soft-info float-end me-2">Kelola Staff</a>
 				<button type="button" class="btn btn-xs btn-soft-secondary float-end me-2" data-bs-toggle="modal"
 					href="#edit-proyek">informasi proyek</button>
+				<?php if($proyek->is_selesai == 0):?>
+				<button type="button" class="btn btn-xs btn-soft-warning float-end me-2" data-bs-toggle="modal" href="#tutup-proyek">tutup proyek</button>
+				<?php endif;?>
 				<?php if($this->session->userdata('role') == 2):?>
 				<a href="<?= site_url('leader/kelola-proyek');?>"
 					class="btn btn-xs btn-light float-end me-3">kembali</a>
@@ -775,6 +778,33 @@
 						<button type="submit" class="btn btn-sm btn-primary">Ubah Proyek</button>
 						<a href="<?= site_url('api/proyek/hapus/'.$proyek->id);?>"
 							class="btn btn-sm btn-soft-danger">Hapus Proyek</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- End Modal -->
+
+
+
+<!-- Modal -->
+<div id="tutup-proyek" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalTambah" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered " role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modalTambah">Ubah Informasi Proyek</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form action="<?= site_url('api/proyek/tutup');?>" method="post" class="js-validate needs-validation" enctype="multipart/form-data"
+					novalidate>
+					<input type="hidden" name="id" value="<?= $proyek->id;?>">
+					<p>Apakah anda yakin ingin menutup proyek ini?</p>
+					<!-- End Form -->
+					<div class="modal-footer p-0 pt-3">
+						<button type="button" class="btn btn-sm btn-white" data-bs-dismiss="modal">Batal</button>
+						<button type="submit" class="btn btn-sm btn-warning">Tutup Proyek</button>
 					</div>
 				</form>
 			</div>

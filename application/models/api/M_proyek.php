@@ -294,10 +294,10 @@ class M_proyek extends CI_Model
         return $this->db->get()->row();
     }
 
-    function getAllStatus($status = 1, $periode = []){
+    function getAllStatus($status = 0, $periode = []){
         $this->db->select('*');
         $this->db->from('tb_proyek');
-        $this->db->where(['status' => $status, 'is_deleted' => 0]);
+        $this->db->where(['is_selesai' => $status, 'is_deleted' => 0]);
         // if($this->session->userdata('role') == 2 || $this->session->userdata('role') == 3){
         //     $this->db->where('created_by', $this->session->userdata('user_id'));
         // }
@@ -683,6 +683,18 @@ class M_proyek extends CI_Model
         ];
 
         $this->db->where('id', $proyek_id);
+        $this->db->update('tb_proyek', $data);
+        return ($this->db->affected_rows() != 1) ? false : true;
+    }
+
+    function tutup(){
+        $data = [
+            'is_selesai' => 1,
+            'modified_at' => strtotime(date("Y-m-d")),
+            'modified_by' => $this->session->userdata('user_id')
+        ];
+
+        $this->db->where('id', $this->input->post('id'));
         $this->db->update('tb_proyek', $data);
         return ($this->db->affected_rows() != 1) ? false : true;
     }

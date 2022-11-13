@@ -184,6 +184,25 @@ class Proyek extends CI_Controller
         }
     }
 
+    public function tutup()
+    {
+        if ($this->M_proyek->tutup() == true) {
+            
+            // log
+            $this->M_proyek->insert_log($this->session->userdata('proyek')['id'], 'menutup proyek  <b>'.$this->session->userdata('proyek')['judul'].'</b>');
+
+            $this->session->set_flashdata('notif_success', 'Berhasil menutup proyek baru');
+            if($this->session->userdata('role') == 0 || $this->session->userdata('role') == 1){
+                redirect(site_url('admin/kelola-proyek'));
+            }else{
+                redirect(site_url('leader/kelola-proyek'));
+            }
+        } else {
+            $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba menutup proyek');
+            redirect($this->agent->referrer());
+        }
+    }
+
     public function assignStaff()
     {
         $this->cekSessionProyek();

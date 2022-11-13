@@ -227,7 +227,11 @@
 					<div class="project-box-wrapper">
 						<div class="project-box card shadow-sm">
 							<div class="project-box-header">
-								<span>Dibuat pada, <?= date("d F Y", $val->created_at);?></span>
+								<span>Dibuat pada, <?= date("d F Y", $val->created_at);?>
+									<?php if($val->periode_selesai > time()):?>
+									<div class="badge bg-success text-white small fw-normal">selesai</div>
+									<?php endif;?>
+								</span>
 							</div>
 							<div class="project-box-content-header">
 								<p class="box-content-header"><?= $val->judul;?></p>
@@ -235,7 +239,7 @@
 							<div class="box-progress-wrapper">
 								<p class="box-progress-header">Progress</p>
 								<div class="box-progress-bar">
-									<span class="box-progress text-soft-primary"
+									<span class="box-progress bg-primary"
 										style="width: <?= $val->progress;?>%;"></span>
 								</div>
 								<p class="box-progress-percentage"><?= $val->progress;?>%</p>
