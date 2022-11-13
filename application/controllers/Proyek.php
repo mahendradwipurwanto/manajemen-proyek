@@ -240,8 +240,8 @@ class Proyek extends CI_Controller
     public function kpi()
     {
         $periode = [];
-        if($this->input->post('periode')){
-            $periode = explode(' - ', $this->input->post('periode'));
+        if($this->input->get('periode')){
+            $periode = explode(' - ', $this->input->get('periode'));
             // ej($periode);
         }
         $proyek = null;
@@ -267,8 +267,8 @@ class Proyek extends CI_Controller
     public function laporan()
     {
         $periode = [];
-        if($this->input->post('periode')){
-            $periode = explode(' - ', $this->input->post('periode'));
+        if($this->input->get('periode')){
+            $periode = explode(' - ', $this->input->get('periode'));
             // ej($periode);
         }
 
@@ -283,13 +283,13 @@ class Proyek extends CI_Controller
         }
 
         $data['proyek']     = $this->M_proyek->getAllProyek();
-        $data['proyekdata'] = $this->M_proyek->getLaporanStatusProyek($proyek);
-        $data['tasks'] = $this->M_proyek->getLaporanStatusTaskProyek($proyek);
-        $data['staff_target'] = $this->M_proyek->getStaffTargetTask($proyek);
-        $data['staff_main'] = $this->M_proyek->getLaporanTaskStaff($proyek);
-        $data['tabel_target'] = $this->M_proyek->getStaffTargetTaskTabel($proyek);
-        $data['tabel_main'] = $this->M_proyek->getLaporanTaskStaffTabel($proyek);
-        $data['proyek_status'] = $this->M_proyek->getProyekStatusLaporan($proyek);
+        $data['proyekdata'] = $this->M_proyek->getLaporanStatusProyek($proyek, $periode);
+        $data['tasks'] = $this->M_proyek->getLaporanStatusTaskProyek($proyek, $periode);
+        $data['staff_target'] = $this->M_proyek->getStaffTargetTask($proyek, $periode);
+        $data['staff_main'] = $this->M_proyek->getLaporanTaskStaff($proyek, $periode);
+        $data['tabel_target'] = $this->M_proyek->getStaffTargetTaskTabel($proyek, $periode);
+        $data['tabel_main'] = $this->M_proyek->getLaporanTaskStaffTabel($proyek, $periode);
+        $data['proyek_status'] = $this->M_proyek->getProyekStatusLaporan($proyek, $periode);
         // ej($data['tasks']);
         if ($this->agent->is_mobile()) {
             $this->templatemobile->view('proyek/laporan', $data);

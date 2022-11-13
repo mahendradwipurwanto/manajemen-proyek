@@ -2,33 +2,56 @@
 <div class="docs-page-header mt-5">
 	<div class="row align-items-center">
 		<div class="col-sm">
-			<h1 class="docs-page-header-title d-flex justify-content-between">Laporan Proyek - <?= $nama_proyek;?>
-				<form action="<?= site_url('proyek/laporan');?>" method="get" class="d-flex">
-					<!-- Select -->
-					<div class="tom-select-custom tom-select-custom-sm">
-						<select class="js-select form-select form-select-sm" name="proyek" autocomplete="off"
-							data-hs-tom-select-options='{"placeholder": "Pilih proyek"}'>
-							<option value="0" selected><?= $nama_proyek;?></option>
-							<?php if(!empty($proyek)):?>
-							<?php foreach($proyek as $key => $val):?>
-							<option value="<?= $val->id;?>"><?= $val->judul;?></option>
-							<?php endforeach;?>
-							<?php endif;?>
-						</select>
-					</div>
-					<!-- End Select -->
-					<button type="submit" class="btn btn-primary btn-sm ms-3">Tampilkan</button>
-					<?php if($this->input->get('proyek')):?>
-					<a href="<?= site_url('cetak/laporan/'.$this->input->get('proyek'));?>"
-						class="btn btn-warning btn-sm ms-3" target="_blank"><i class="bi bi-printer"></i> Cetak</a>
-					<?php endif;?>
-				</form>
+			<h1 class="docs-page-header-title">Laporan Proyek - <?= $nama_proyek;?>
+				<?php if($this->input->get('periode')):?>
+				<span class="text-body pb-3 me-3"> - periode <span
+						class="text-primary"><?= $this->input->get('periode');?></span></span>
+				<?php endif;?>
 			</h1>
 			<p class="docs-page-header-text">Pantau progres dari semua proyek
 			</p>
 		</div>
 	</div>
 </div>
+<form action="<?= site_url('proyek/laporan');?>" method="get">
+	<div class="row mb-4 d-flex align-items-center">
+		<div class="col-1">
+			Filter: 
+		</div>
+		<div class="col-3">
+			<div class="input-group input-group-sm">
+				<span class="input-group-text" id="basic-addon2"><i class="bi bi-calendar-week"></i></span>
+				<input type="text" class="form-control form-control-sm" name="periode" placeholder="Periode proyek"
+					aria-describedby="basic-addon2" required>
+			</div>
+		</div>
+		<div class="col-3">
+			<!-- Select -->
+			<div class="tom-select-custom tom-select-custom-sm">
+				<select class="js-select form-select form-select-sm" name="proyek" autocomplete="off"
+					data-hs-tom-select-options='{"placeholder": "Pilih proyek"}'>
+					<option value="0" selected>Semua Proyek</option>
+					<?php if(!empty($proyek)):?>
+					<?php foreach($proyek as $key => $val):?>
+					<option value="<?= $val->id;?>"><?= $val->judul;?></option>
+					<?php endforeach;?>
+					<?php endif;?>
+				</select>
+			</div>
+			<!-- End Select -->
+		</div>
+		<div class="col-5 d-flex justify-content-end">
+			<button type="submit" class="btn btn-primary btn-sm ms-3">Tampilkan</button>
+			<?php if($this->input->get('periode')):?>
+			<a href="<?= current_url();?>" class="btn btn-sm btn-outline-secondary ms-2">Reset</a>
+			<?php endif;?>
+			<a href="<?= site_url('cetak/kpi/'.$this->input->get('proyek'));?>" class="btn btn-warning btn-sm ms-3"
+				target="_blank"><i class="bi bi-printer"></i> Cetak</a>
+			<a href="<?= site_url('excel/ekspor-kpi/'.$this->input->get('proyek'));?>"
+				class="btn btn-success btn-sm ms-3" target="_blank"><i class="bi bi-file-spreadsheet"></i> Ekspor</a>
+		</div>
+	</div>
+</form>
 
 <div class="row">
 	<div class="col-6 mb-4">

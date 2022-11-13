@@ -95,8 +95,8 @@ class M_proyek extends CI_Model
     function getChartKPI($periode = [], $proyek_id = null){
         $data = $this->getDataKPI($periode, $proyek_id);
 
+        $arr = [];
         if(!empty($data)){
-            $arr = [];
             foreach($data as $key => $val){
                 $arr['kategori'][] = "'{$val->nama}'";
                 $arr['data'][] = $val->persentase;
@@ -1168,11 +1168,19 @@ class M_proyek extends CI_Model
         return $models;
     }
 
-    function getLaporanStatusProyek(){
+    function getLaporanStatusProyek($periode = []){
         $this->db->select('*')
         ->from('tb_proyek')
         ->where(['is_deleted' => 0 ])
         ;
+
+        if(!empty($periode)){
+            if(strtotime($periode[0]) == strtotime($periode[1])){
+                $this->db->where(['periode_mulai' => strtotime($periode[0])]);
+            }else{
+                $this->db->where(['periode_mulai >=' => strtotime($periode[0]), 'periode_mulai <=' => strtotime($periode[1])]);
+            }
+        }
 
         $models = $this->db->get()->result();
 
