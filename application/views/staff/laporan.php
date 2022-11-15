@@ -29,7 +29,12 @@
 		</div>
 	</div>
 </div>
-
+<?php if($nama_proyek == "Harap pilih proyek"):?>
+<div class="card card-body text-center d-flex align-items-center">
+	<img src="<?= base_url();?>assets/svg/illustrations/sorry.svg" alt="" class="mb-3" style="width: 15rem;">
+	<p>Harap pilih proyek</p>
+</div>
+<?php else:?>
 <div class="row">
 	<div class="col-6 mb-4">
 		<div class="card">
@@ -152,7 +157,7 @@
 		</div>
 	</div>
 </div>
-
+<?php endif;?>
 
 <script>
 	// main proyek pie chart
