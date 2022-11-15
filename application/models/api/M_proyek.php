@@ -1213,8 +1213,8 @@ class M_proyek extends CI_Model
         ->from('tb_proyek')
         ->where(['is_deleted' => 0 ])
         ;
-
-        if(!empty($periode)){
+        
+        if(!empty($periode) && is_array($periode)){
             if(strtotime($periode[0]) == strtotime($periode[1])){
                 $this->db->where(['periode_mulai' => strtotime($periode[0])]);
             }else{
@@ -1223,7 +1223,7 @@ class M_proyek extends CI_Model
         }
 
         $models = $this->db->get()->result();
-
+        
         $arr = (object) [];
         
         $arr->on_deadline = 0;
@@ -1273,7 +1273,7 @@ class M_proyek extends CI_Model
         return $arr;
     }
 
-    function getLaporanStatusTaskProyek($proyek_id = null){
+    function getLaporanStatusTaskProyek($proyek_id = null, $periode = []){
         $this->db->select('*')
         ->from('tb_proyek_status')
         ->where(['is_deleted' => 0, 'proyek_id' => $proyek_id])
@@ -1287,14 +1287,14 @@ class M_proyek extends CI_Model
         if(!empty($models)){
             foreach($models as $key => $val){
                 $arr->categories[] = "'{$val->status}'";
-                $arr->data[] = count($this->getDataChartTaskProyek($val->id));
+                $arr->data[] = count($this->getDataChartTaskProyek($val->id, $periode));
             }
         }
 
         return $arr;
     }
 
-    function getLaporanStatusTaskProyekStaff($proyek_id = null){
+    function getLaporanStatusTaskProyekStaff($proyek_id = null, $periode = []){
         $this->db->select('*')
         ->from('tb_proyek_status')
         ->where(['is_deleted' => 0, 'proyek_id' => $proyek_id])
@@ -1308,22 +1308,53 @@ class M_proyek extends CI_Model
         if(!empty($models)){
             foreach($models as $key => $val){
                 $arr->categories[] = "'{$val->status}'";
-                $arr->data[] = count($this->getDataChartTaskProyekStaff($val->id));
+                $arr->data[] = count($this->getDataChartTaskProyekStaff($val->id, $periode));
             }
         }
 
         return $arr;
     }
 
-    function getDataChartTaskProyekStaff($status_id = null){
-        return $this->db->get_where('tb_proyek_task', ['status_id' => $status_id, 'user_id' => $this->session->userdata('user_id')])->result();
+    function getDataChartTaskProyekStaff($status_id = null, $periode = []){
+        $this->db->select('*')
+        ->from('tb_proyek_task')
+        ->where(['is_deleted' => 0 ])
+        ->where(['status_id' => $status_id ])
+        ->where(['user_id' => $this->session->userdata('user_id') ])
+        ;
+        
+        if(!empty($periode) && is_array($periode)){
+            if(strtotime($periode[0]) == strtotime($periode[1])){
+                $this->db->where(['created_at' => strtotime($periode[0])]);
+            }else{
+                $this->db->where(['created_at >=' => strtotime($periode[0]), 'created_at <=' => strtotime($periode[1])]);
+            }
+        }
+
+        return $this->db->get()->result();
+        // return $this->db->get_where('tb_proyek_task', ['status_id' => $status_id, 'user_id' => $this->session->userdata('user_id')])->result();
     }
 
-    function getDataChartTaskProyek($status_id = null){
-        return $this->db->get_where('tb_proyek_task', ['status_id' => $status_id])->result();
+    function getDataChartTaskProyek($status_id = null, $periode = []){
+        $this->db->select('*')
+        ->from('tb_proyek_task')
+        ->where(['is_deleted' => 0 ])
+        ->where(['status_id' => $status_id ])
+        ;
+        
+        if(!empty($periode) && is_array($periode)){
+            if(strtotime($periode[0]) == strtotime($periode[1])){
+                $this->db->where(['created_at' => strtotime($periode[0])]);
+            }else{
+                $this->db->where(['created_at >=' => strtotime($periode[0]), 'created_at <=' => strtotime($periode[1])]);
+            }
+        }
+
+        return $this->db->get()->result();
+        // return $this->db->get_where('tb_proyek_task', ['status_id' => $status_id])->result();
     }
 
-    function getStaffTargetTaskStaff($proyek_id = null){
+    function getStaffTargetTaskStaff($proyek_id = null, $periode = []){
         $this->db->select('a.nama, b.*')
         ->from('tb_user a')
         ->join('tb_assign_staff b', 'a.user_id = b.user_id')
@@ -1339,15 +1370,15 @@ class M_proyek extends CI_Model
         if(!empty($models)){
             foreach($models as $key => $val){
                 $arr->categories[] = "'{$val->nama}'";
-                $arr->dateOnDeadline[] = $this->getTaskTargetStaff($val->user_id, 1, $proyek_id);
-                $arr->dateOverDeadline[] = $this->getTaskTargetStaff($val->user_id, 0, $proyek_id);
+                $arr->dateOnDeadline[] = $this->getTaskTargetStaff($val->user_id, 1, $proyek_id, $periode);
+                $arr->dateOverDeadline[] = $this->getTaskTargetStaff($val->user_id, 0, $proyek_id, $periode);
             }
         }
 
         return $arr;
     }
 
-    function getStaffTargetTask($proyek_id = null){
+    function getStaffTargetTask($proyek_id = null, $periode = []){
         $this->db->select('a.nama, b.*')
         ->from('tb_user a')
         ->join('tb_assign_staff b', 'a.user_id = b.user_id')
@@ -1363,15 +1394,15 @@ class M_proyek extends CI_Model
         if(!empty($models)){
             foreach($models as $key => $val){
                 $arr->categories[] = "'{$val->nama}'";
-                $arr->dateOnDeadline[] = $this->getTaskTargetStaff($val->user_id, 1, $proyek_id);
-                $arr->dateOverDeadline[] = $this->getTaskTargetStaff($val->user_id, 0, $proyek_id);
+                $arr->dateOnDeadline[] = $this->getTaskTargetStaff($val->user_id, 1, $proyek_id, $periode);
+                $arr->dateOverDeadline[] = $this->getTaskTargetStaff($val->user_id, 0, $proyek_id, $periode);
             }
         }
 
         return $arr;
     }
 
-    function getStaffTargetTaskTabelStaff($proyek_id = null){
+    function getStaffTargetTaskTabelStaff($proyek_id = null, $periode = []){
         $this->db->select('a.nama, b.*')
         ->from('tb_user a')
         ->join('tb_assign_staff b', 'a.user_id = b.user_id')
@@ -1384,15 +1415,15 @@ class M_proyek extends CI_Model
         if(!empty($models)){
             foreach($models as $key => $val){
                 $arr[$key]['nama'] = $val->nama;
-                $arr[$key]['dateOnDeadline'] = $this->getTaskTargetStaff($val->user_id, 1, $proyek_id);
-                $arr[$key]['dateOverDeadline'] = $this->getTaskTargetStaff($val->user_id, 0, $proyek_id);
+                $arr[$key]['dateOnDeadline'] = $this->getTaskTargetStaff($val->user_id, 1, $proyek_id, $periode);
+                $arr[$key]['dateOverDeadline'] = $this->getTaskTargetStaff($val->user_id, 0, $proyek_id, $periode);
             }
         }
 
         return $arr;
     }
 
-    function getStaffTargetTaskTabel($proyek_id = null){
+    function getStaffTargetTaskTabel($proyek_id = null, $periode = []){
         $this->db->select('a.nama, b.*')
         ->from('tb_user a')
         ->join('tb_assign_staff b', 'a.user_id = b.user_id')
@@ -1405,19 +1436,27 @@ class M_proyek extends CI_Model
         if(!empty($models)){
             foreach($models as $key => $val){
                 $arr[$key]['nama'] = $val->nama;
-                $arr[$key]['dateOnDeadline'] = $this->getTaskTargetStaff($val->user_id, 1, $proyek_id);
-                $arr[$key]['dateOverDeadline'] = $this->getTaskTargetStaff($val->user_id, 0, $proyek_id);
+                $arr[$key]['dateOnDeadline'] = $this->getTaskTargetStaff($val->user_id, 1, $proyek_id, $periode);
+                $arr[$key]['dateOverDeadline'] = $this->getTaskTargetStaff($val->user_id, 0, $proyek_id, $periode);
             }
         }
 
         return $arr;
     }
 
-    function getTaskTargetStaff($user_id = null, $on_deadline = 1, $proyek_id = null){
+    function getTaskTargetStaff($user_id = null, $on_deadline = 1, $proyek_id = null, $periode = []){
         $this->db->select('*')
         ->from('tb_proyek_task')
         ->where(['is_deleted' => 0, 'user_id' => $user_id, 'proyek_id' => $proyek_id, 'is_selesai' => 0, 'is_closed' => 0])
         ;
+        
+        if(!empty($periode) && is_array($periode)){
+            if(strtotime($periode[0]) == strtotime($periode[1])){
+                $this->db->where(['created_at' => strtotime($periode[0])]);
+            }else{
+                $this->db->where(['created_at >=' => strtotime($periode[0]), 'created_at <=' => strtotime($periode[1])]);
+            }
+        }
 
         $models = $this->db->get()->result();
 
@@ -1437,7 +1476,7 @@ class M_proyek extends CI_Model
         return $total;
     }
 
-    function getLaporanTaskStaffStaff($proyek_id){
+    function getLaporanTaskStaffStaff($proyek_id, $periode = []){
         $this->db->select('a.nama, b.*')
         ->from('tb_user a')
         ->join('tb_assign_staff b', 'a.user_id = b.user_id')
@@ -1450,14 +1489,14 @@ class M_proyek extends CI_Model
         if(!empty($models)){
             foreach($models as $key => $val){
                 $arr['categories'][] = "'{$val->nama}'";
-                $arr['series'] = $this->getSeriesLaporanTaskStaffStaff($proyek_id);
+                $arr['series'] = $this->getSeriesLaporanTaskStaffStaff($proyek_id, $periode);
             }
         }
 
         return $arr;
     }
 
-    function getLaporanTaskStaff($proyek_id){
+    function getLaporanTaskStaff($proyek_id, $periode = []){
         $this->db->select('a.nama, b.*')
         ->from('tb_user a')
         ->join('tb_assign_staff b', 'a.user_id = b.user_id')
@@ -1470,14 +1509,14 @@ class M_proyek extends CI_Model
         if(!empty($models)){
             foreach($models as $key => $val){
                 $arr['categories'][] = "'{$val->nama}'";
-                $arr['series'] = $this->getSeriesLaporanTaskStaff($proyek_id);
+                $arr['series'] = $this->getSeriesLaporanTaskStaff($proyek_id, $periode);
             }
         }
 
         return $arr;
     }
 
-    function getLaporanTaskStaffTabel($proyek_id){
+    function getLaporanTaskStaffTabel($proyek_id, $periode = []){
         $this->db->select('a.nama, b.*')
         ->from('tb_user a')
         ->join('tb_assign_staff b', 'a.user_id = b.user_id')
@@ -1490,14 +1529,14 @@ class M_proyek extends CI_Model
         if(!empty($models)){
             foreach($models as $key => $val){
                 $arr[$key]['nama'] = $val->nama;
-                $arr[$key]['status'] = $this->getSeriesLaporanTaskStaffTabel($proyek_id, $val->user_id);
+                $arr[$key]['status'] = $this->getSeriesLaporanTaskStaffTabel($proyek_id, $val->user_id, $periode);
             }
         }
 
         return $arr;
     }
 
-    function getLaporanTaskStaffTabelStaff($proyek_id){
+    function getLaporanTaskStaffTabelStaff($proyek_id, $periode = []){
         $this->db->select('a.nama, b.*')
         ->from('tb_user a')
         ->join('tb_assign_staff b', 'a.user_id = b.user_id')
@@ -1510,14 +1549,14 @@ class M_proyek extends CI_Model
         if(!empty($models)){
             foreach($models as $key => $val){
                 $arr[$key]['nama'] = $val->nama;
-                $arr[$key]['status'] = $this->getSeriesLaporanTaskStaffTabel($proyek_id, $val->user_id);
+                $arr[$key]['status'] = $this->getSeriesLaporanTaskStaffTabel($proyek_id, $val->user_id, $periode);
             }
         }
 
         return $arr;
     }
 
-    function getSeriesLaporanTaskStaffTabel($proyek_id = null, $user_id = null){
+    function getSeriesLaporanTaskStaffTabel($proyek_id = null, $user_id = null, $periode = []){
         $this->db->select('*')
         ->from('tb_proyek_status')
         ->where(['is_deleted' => 0, 'proyek_id' => $proyek_id])
@@ -1528,18 +1567,31 @@ class M_proyek extends CI_Model
         $arr = [];
         foreach($models as $key => $val){
             $arr[$key]['nama'] = $val->status;
-            $arr[$key]['total'] = $this->getTotalTaskUserStatus($val->id, $user_id);
+            $arr[$key]['total'] = $this->getTotalTaskUserStatus($val->id, $user_id, $periode);
         }
 
         return $arr;
     }
 
-    function getTotalTaskUserStatus($status_id = null, $user_id = null){
-        return $this->db->get_where('tb_proyek_task', ['is_deleted' => 0, 'status_id' => $status_id, 'user_id' => $user_id])->num_rows();
+    function getTotalTaskUserStatus($status_id = null, $user_id = null, $periode = []){
+        $this->db->select('*')
+        ->from('tb_proyek_task')
+        ->where(['is_deleted' => 0, 'status_id' => $status_id, 'user_id' => $user_id])
+        ;
+        
+        if(!empty($periode) && is_array($periode)){
+            if(strtotime($periode[0]) == strtotime($periode[1])){
+                $this->db->where(['created_at' => strtotime($periode[0])]);
+            }else{
+                $this->db->where(['created_at >=' => strtotime($periode[0]), 'created_at <=' => strtotime($periode[1])]);
+            }
+        }
+
+        return $this->db->get()->num_rows();
 
     }
 
-    function getSeriesLaporanTaskStaffStaff($proyek_id = null){
+    function getSeriesLaporanTaskStaffStaff($proyek_id = null, $periode = []){
         $this->db->select('*')
         ->from('tb_proyek_status')
         ->where(['is_deleted' => 0, 'proyek_id' => $proyek_id])
@@ -1561,7 +1613,7 @@ class M_proyek extends CI_Model
                 $staff = $this->db->get()->result();
 
                 foreach($staff as $k => $v){
-                    $total = $this->getTaskTargetStaffStatus($val->id, $v->user_id);
+                    $total = $this->getTaskTargetStaffStatus($val->id, $v->user_id, $periode);
                     $arr[$val->id]['data'][] = $total == null ? 0 : $total;
                 }
             }
@@ -1571,11 +1623,19 @@ class M_proyek extends CI_Model
 
     }
 
-    function getSeriesLaporanTaskStaff($proyek_id = null){
+    function getSeriesLaporanTaskStaff($proyek_id = null, $periode = []){
         $this->db->select('*')
         ->from('tb_proyek_status')
         ->where(['is_deleted' => 0, 'proyek_id' => $proyek_id])
         ;
+        
+        if(!empty($periode) && is_array($periode)){
+            if(strtotime($periode[0]) == strtotime($periode[1])){
+                $this->db->where(['created_at' => strtotime($periode[0])]);
+            }else{
+                $this->db->where(['created_at >=' => strtotime($periode[0]), 'created_at <=' => strtotime($periode[1])]);
+            }
+        }
 
         $models = $this->db->get()->result();
 
@@ -1593,7 +1653,7 @@ class M_proyek extends CI_Model
                 $staff = $this->db->get()->result();
 
                 foreach($staff as $k => $v){
-                    $total = $this->getTaskTargetStaffStatus($val->id, $v->user_id);
+                    $total = $this->getTaskTargetStaffStatus($val->id, $v->user_id, $periode);
                     $arr[$val->id]['data'][] = $total == null ? 0 : $total;
                 }
             }
@@ -1607,11 +1667,19 @@ class M_proyek extends CI_Model
         return $this->db->get_where('tb_proyek_status', ['is_deleted' => 0, 'proyek_id' => $proyek_id])->result();
     }
 
-    function getTaskTargetStaffStatus($status_id = null, $user_id = null){
+    function getTaskTargetStaffStatus($status_id = null, $user_id = null, $periode = []){
         $this->db->select('COUNT(*) as total')
         ->from('tb_proyek_task a')
         ->where(['a.is_deleted' => 0, 'a.status_id' => $status_id, 'user_id' => $user_id])
         ;
+        
+        if(!empty($periode) && is_array($periode)){
+            if(strtotime($periode[0]) == strtotime($periode[1])){
+                $this->db->where(['a.created_at' => strtotime($periode[0])]);
+            }else{
+                $this->db->where(['a.created_at >=' => strtotime($periode[0]), 'a.created_at <=' => strtotime($periode[1])]);
+            }
+        }
 
         $models = $this->db->get()->result();
 
@@ -1705,6 +1773,14 @@ class M_proyek extends CI_Model
         ->join('tb_proyek d', 'a.proyek_id = d.id')
         ->where(['a.is_deleted' => 0])
         ;
+        
+        if(!empty($periode) && is_array($periode)){
+            if(strtotime($periode[0]) == strtotime($periode[1])){
+                $this->db->where(['a.created_at' => strtotime($periode[0])]);
+            }else{
+                $this->db->where(['a.created_at >=' => strtotime($periode[0]), 'a.created_at <=' => strtotime($periode[1])]);
+            }
+        }
 
         $models = $this->db->get()->result();
         

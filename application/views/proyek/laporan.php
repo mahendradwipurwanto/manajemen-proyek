@@ -22,7 +22,7 @@
 			<div class="input-group input-group-sm">
 				<span class="input-group-text" id="basic-addon2"><i class="bi bi-calendar-week"></i></span>
 				<input type="text" class="form-control form-control-sm" name="periode" placeholder="Periode proyek"
-					aria-describedby="basic-addon2" required>
+					aria-describedby="basic-addon2" value="">
 			</div>
 		</div>
 		<div class="col-3">
@@ -30,7 +30,11 @@
 			<div class="tom-select-custom tom-select-custom-sm">
 				<select class="js-select form-select form-select-sm" name="proyek" autocomplete="off"
 					data-hs-tom-select-options='{"placeholder": "Pilih proyek"}'>
-					<option value="0" selected>Semua Proyek</option>
+					<?php if($nama_proyek == "Harap pilih proyek"):?>
+						<option value="0" selected>Semua Proyek</option>
+					<?php else:?>
+						<option value="<?= $proyek_id;?>"><?= $nama_proyek;?></option>
+					<?php endif;?>
 					<?php if(!empty($proyek)):?>
 					<?php foreach($proyek as $key => $val):?>
 					<option value="<?= $val->id;?>"><?= $val->judul;?></option>
@@ -47,12 +51,15 @@
 			<?php endif;?>
 			<a href="<?= site_url('cetak/kpi/'.$this->input->get('proyek'));?>" class="btn btn-warning btn-sm ms-3"
 				target="_blank"><i class="bi bi-printer"></i> Cetak</a>
-			<a href="<?= site_url('excel/ekspor-kpi/'.$this->input->get('proyek'));?>"
-				class="btn btn-success btn-sm ms-3" target="_blank"><i class="bi bi-file-spreadsheet"></i> Ekspor</a>
 		</div>
 	</div>
 </form>
-
+<?php if($nama_proyek == "Harap pilih proyek"):?>
+<div class="card card-body text-center d-flex align-items-center">
+	<img src="<?= base_url();?>assets/svg/illustrations/sorry.svg" alt="" class="mb-3" style="width: 15rem;">
+	<p>Harap pilih proyek</p>
+</div>
+<?php else:?>
 <div class="row">
 	<div class="col-6 mb-4">
 		<div class="card">
@@ -175,6 +182,7 @@
 		</div>
 	</div>
 </div>
+<?php endif;?>
 
 
 <script>

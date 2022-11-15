@@ -17,7 +17,7 @@
 		<div class="col-1">
 			Filter: 
 		</div>
-		<div class="col-3">
+		<div class="col-3 d-none">
 			<div class="input-group input-group-sm">
 				<span class="input-group-text" id="basic-addon2"><i class="bi bi-calendar-week"></i></span>
 				<input type="text" class="form-control form-control-sm" name="periode" placeholder="Periode proyek"
@@ -39,7 +39,7 @@
 			</div>
 			<!-- End Select -->
 		</div>
-		<div class="col-5 d-flex justify-content-end">
+		<div class="col-8 d-flex justify-content-end">
 			<button type="submit" class="btn btn-primary btn-sm ms-3">Tampilkan</button>
 			<?php if($this->input->get('periode')):?>
 			<a href="<?= current_url();?>" class="btn btn-sm btn-outline-secondary ms-2">Reset</a>

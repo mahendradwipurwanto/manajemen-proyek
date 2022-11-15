@@ -254,7 +254,11 @@
 				}
 			}, 2000);
 
-			$('input[name="periode"]').daterangepicker();
+			$('input[name="periode"]').daterangepicker({
+				autoUpdateInput: false
+			}).on("apply.daterangepicker", function (e, picker) {
+				picker.element.val(picker.startDate.format(picker.locale.format)+' - '+picker.endDate.format(picker.locale.format));
+			});
 		})
 	})()
 
