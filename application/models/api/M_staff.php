@@ -449,4 +449,10 @@ class M_staff extends CI_Model
             ];
         }
     }
+
+    function readNotif($id){
+        $this->db->where('id', $id);
+        $this->db->update('log_proyek', ['is_read' => 1]);
+        return ($this->db->affected_rows() != 1) ? false : true;
+    }
 }

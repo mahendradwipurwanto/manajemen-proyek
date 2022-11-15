@@ -85,6 +85,7 @@ class M_proyek extends CI_Model
         }
 
         $this->db->order_by('a.created_at DESC');
+        $this->db->limit(25);
         $models = $this->db->get()->result();
 
         foreach($models as $key => $val){
@@ -105,13 +106,14 @@ class M_proyek extends CI_Model
         $this->db->from('log_proyek a');
         $this->db->join('tb_user b', 'a.user_id = b.user_id');
         $this->db->join('tb_proyek c', 'a.proyek_id = c.id');
-        $this->db->where(['a.is_deleted' => 0, 'a.user_id' => $this->session->userdata('user_id'), 'a.is_notif' => 0]);
-
+        $this->db->where(['a.is_deleted' => 0, 'a.is_notif' => 0]);
+        
         if ($proyek_id > 0) {
             $this->db->where('a.proyek_id', $proyek_id);
         }
 
         $this->db->order_by('a.created_at DESC');
+        $this->db->limit(25);
         $models = $this->db->get()->result();
 
         foreach ($models as $key => $val) {
@@ -139,6 +141,7 @@ class M_proyek extends CI_Model
         }
 
         $this->db->order_by('a.created_at DESC');
+        $this->db->limit(25);
         $models = $this->db->get()->result();
 
         foreach ($models as $key => $val) {

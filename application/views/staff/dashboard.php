@@ -55,27 +55,31 @@
 	</div>
 	<div class="col-md-8 col-sm-12 mb-4">
 		<div class="card">
-			<div class="card-header py-3">
-				<h4 class="card-title mb-0">Notifikasi</h4>
+			<div class="card-header p-3">
+				<h4 class="card-title mb-0 d-flex justify-content-between">Notifikasi
+					<span class="text-secondary small fload-end">klik notifikasi untuk membaca</span>
+				</h4>
 			</div>
 			<div class="card-body p-3">
 				<ul class="list-group list-group-lg w-100" style="max-height: 500px; overflow: auto;">
 					<?php if(!empty($notifikasi)):?>
 					<?php foreach($notifikasi as $key => $val):?>
 					<li class="list-group-item py-3">
-						<div class="row justify-content-between">
-							<div class="col-sm-12 mb-2 mb-sm-0">
-								<span class="h5 fw-normal"><b><?= $val->nama;?></b> <?= $val->message;?>
-									<?php if($val->is_read == 0):?>
-									<span class="badge bg-soft-danger float-end">baru</span>
-									<?php endif;?>
-								</span>
-								<br>
-								<span class="text-secondary small float-end"><?= $val->created_at;?></span>
+						<a href="<?= site_url('api/staff/read/'.$val->id);?>">
+							<div class="row justify-content-between">
+								<div class="col-sm-12 mb-2 mb-sm-0">
+									<span class="h5 fw-normal"><b><?= $val->nama;?></b> <?= $val->message;?>
+										<?php if($val->is_read == 0):?>
+										<span class="badge bg-soft-danger float-end">baru</span>
+										<?php endif;?>
+									</span>
+									<br>
+									<span class="text-secondary small float-end"><?= $val->created_at;?></span>
+								</div>
+								<!-- End Col -->
 							</div>
-							<!-- End Col -->
-						</div>
-						<!-- End Row -->
+							<!-- End Row -->
+						</a>
 					</li>
 					<?php endforeach;?>
 					<?php else:?>

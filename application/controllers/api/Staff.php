@@ -98,4 +98,15 @@ class Staff extends CI_Controller
             redirect($this->agent->referrer());
         }
     }
+
+    function read($id = null){
+        if($this->M_staff->readNotif($id) == true){
+            $this->session->set_flashdata('notif_success', 'Berhasil membaca notifikasi');
+            redirect($this->agent->referrer());
+
+        }else{
+            $this->session->set_flashdata('notif_success', 'Notifikasi telah dibaca');
+            redirect($this->agent->referrer());
+        }
+    }
 }
