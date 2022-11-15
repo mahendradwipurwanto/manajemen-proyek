@@ -21,6 +21,20 @@ class M_proyek extends CI_Model
         $this->db->insert('log_proyek', $data);
         $cek = ($this->db->affected_rows() != 1) ? false : true;
     }
+
+    function insert_logNotif($proyek_id, $message = null){
+        $data = [
+            'proyek_id' => $proyek_id,
+            'user_id' => $this->session->userdata('user_id'),
+            'message' => $message == null ? 'Mengelola proyek' : $message,
+            'is_notif' => 1,
+            'created_at' => time(),
+            'created_by' => $this->session->userdata('user_id')
+        ];
+        
+        $this->db->insert('log_proyek', $data);
+        $cek = ($this->db->affected_rows() != 1) ? false : true;
+    }
     
     function getProyekById($proyek_id = null){
         return $this->db->get_where('tb_proyek', ['id' => $proyek_id])->row();
@@ -91,13 +105,13 @@ class M_proyek extends CI_Model
         return $models;
     }
 
-    function getLNotifikasiStaff($proyek_id = 0)
+    function getNotifikasiStaff($proyek_id = 0)
     {
         $this->db->select('a.*, b.nama, c.judul');
         $this->db->from('log_proyek a');
-        $this->db->join('tb_user b', 'a.user_id = b.user_id');
+        $this->db->join('tb_user b', 'a.staff_id = b.user_id');
         $this->db->join('tb_proyek c', 'a.proyek_id = c.id');
-        $this->db->where(['a.is_deleted' => 0, 'a.user_id' => $this->session->userdata('user_id'), 'a.is_notif' => 1]);
+        $this->db->where(['a.is_deleted' => 0, 'a.staff_id' => $this->session->userdata('user_id'), 'a.is_notif' => 1]);
 
         if ($proyek_id > 0) {
             $this->db->where('a.proyek_id', $proyek_id);

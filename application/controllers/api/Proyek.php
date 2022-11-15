@@ -302,6 +302,7 @@ class Proyek extends CI_Controller
             if ($this->M_proyek->tambah_task() == true) {
                 // log
                 $this->M_proyek->insert_log($this->session->userdata('proyek')['id'], 'Menambahkan Task baru kedalam proyek  <b>'.$this->session->userdata('proyek')['judul'].'</b>');
+                $this->M_proyek->insert_logNotif($this->session->userdata('proyek')['id'], 'Kamu telah menerima task baru pada proyek  <b>'.$this->session->userdata('proyek')['judul'].'</b>', $this->input->post('staff_id'));
 
                 $this->session->set_flashdata('notif_success', 'Berhasil menambahkan task baru');
                 redirect($this->agent->referrer());
@@ -354,6 +355,7 @@ class Proyek extends CI_Controller
         if ($this->M_proyek->selesaikan_task() == true) {
             // log
             $this->M_proyek->insert_log($this->session->userdata('proyek')['id'], 'Menyelesaikan Task pada proyek  <b>'.$this->session->userdata('proyek')['judul'].'</b>');
+            $this->M_proyek->insert_logNotif($this->session->userdata('proyek')['id'], 'Kamu telah menyelesaikan task pada proyek  <b>'.$this->session->userdata('proyek')['judul'].'</b>', $this->session->userdata('user_id'));
 
             $this->session->set_flashdata('notif_success', 'Berhasil menyelesaikan task');
             redirect($this->agent->referrer());

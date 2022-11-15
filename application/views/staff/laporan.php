@@ -24,7 +24,7 @@
 					<?php endif;?>
 				</form>
 			</h1>
-			<p class="docs-page-header-text">Pantau progres dari semua proyek
+			<p class="docs-page-header-text">Pantau progres dari semua proyek yang anda kerjakan
 			</p>
 		</div>
 	</div>
@@ -34,7 +34,7 @@
 	<div class="col-6 mb-4">
 		<div class="card">
 			<div class="card-header p-3 text-center">
-				<h4 class="card-header-title">Status deadline semua proyek</h4>
+				<h4 class="card-header-title">Status deadline semua proyek anda</h4>
 			</div>
 			<div class="card-body p-3">
 				<div id="chartPieChartProyekMain"></div>
@@ -44,7 +44,7 @@
 	<div class="col-6 mb-4">
 		<div class="card">
 			<div class="card-header p-3 text-center">
-				<h4 class="card-header-title">Status pengerjaan task</h4>
+				<h4 class="card-header-title">Status pengerjaan task anda</h4>
 			</div>
 			<div class="card-body p-3">
 				<div id="chartPieChartProyekTask"></div>
@@ -54,7 +54,7 @@
 	<div class="col-4 mb-4">
 		<div class="card">
 			<div class="card-header p-3">
-				<h4 class="card-header-title">Target deadline pengerjaan staff</h4>
+				<h4 class="card-header-title">Target deadline pengerjaan anda</h4>
 			</div>
 			<div class="card-body p-3">
 				<table
@@ -92,7 +92,7 @@
 	<div class="col-8 mb-4">
 		<div class="card">
 			<div class="card-header p-3">
-				<h4 class="card-header-title">Target deadline pengerjaan staff (grafik)</h4>
+				<h4 class="card-header-title">Target deadline pengerjaan anda (grafik)</h4>
 			</div>
 			<div class="card-body p-3">
 				<div id="chartTarget"></div>
@@ -102,7 +102,7 @@
 	<div class="col-12 mb-4">
 		<div class="card">
 			<div class="card-header p-3 text-center">
-				<h4 class="card-header-title">Status pengerjaan task setiap staff (grafik)</h4>
+				<h4 class="card-header-title">Status pengerjaan task anda (grafik)</h4>
 			</div>
 			<div class="card-body p-3">
 				<div id="chartTargetMain"></div>
@@ -112,7 +112,7 @@
 	<div class="col-12 mb-4">
 		<div class="card">
 			<div class="card-header p-3 text-center">
-				<h4 class="card-header-title">Status pengerjaan task setiap staff</h4>
+				<h4 class="card-header-title">Status pengerjaan task anda</h4>
 			</div>
 			<div class="card-body p-3">
 				<table
