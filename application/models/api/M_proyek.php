@@ -91,6 +91,34 @@ class M_proyek extends CI_Model
         return $models;
     }
 
+    function getLNotifikasiStaff($proyek_id = 0)
+    {
+        $this->db->select('a.*, b.nama, c.judul');
+        $this->db->from('log_proyek a');
+        $this->db->join('tb_user b', 'a.user_id = b.user_id');
+        $this->db->join('tb_proyek c', 'a.proyek_id = c.id');
+        $this->db->where(['a.is_deleted' => 0, 'a.user_id' => $this->session->userdata('user_id'), 'a.is_notif' => 1]);
+
+        if ($proyek_id > 0) {
+            $this->db->where('a.proyek_id', $proyek_id);
+        }
+
+        $this->db->order_by('a.created_at DESC');
+        $models = $this->db->get()->result();
+
+        foreach ($models as $key => $val) {
+            $nama = explode(" ", $val->nama);
+            $val->nama = $nama[0];
+            if (!strpos($val->message, $val->judul)) {
+                $val->message .= " <b>{$val->judul}</b>";
+            }
+            $val->created_at = time_ago(date('Y-m-d H:i:s', $val->created_at));
+        }
+
+        return $models;
+    }
+
+
 
     function getChartKPI($periode = [], $proyek_id = null){
         $data = $this->getDataKPI($periode, $proyek_id);

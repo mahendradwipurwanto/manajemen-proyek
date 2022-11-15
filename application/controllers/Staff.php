@@ -46,6 +46,7 @@ class Staff extends CI_Controller
         $data['countLeader'] = $this->M_leader->countLeader();
         $data['proyek'] = $this->M_proyek->getAll();
         $data['log_proyek'] = $this->M_proyek->getLogProyekStaff();
+        $data['notifikasi'] = $this->M_proyek->getNotifikasiStaff();
 
         if ($this->agent->is_mobile()) {
             $this->templatemobile->view('staff/dashboard', $data);

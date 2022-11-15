@@ -60,8 +60,8 @@
 			</div>
 			<div class="card-body p-3">
 				<ul class="list-group list-group-lg w-100" style="max-height: 500px; overflow: auto;">
-					<?php if(!empty($log_proyek)):?>
-					<?php foreach($log_proyek as $key => $val):?>
+					<?php if(!empty($notifikasi)):?>
+					<?php foreach($notifikasi as $key => $val):?>
 					<li class="list-group-item py-3">
 						<div class="row justify-content-between">
 							<div class="col-sm-12 mb-2 mb-sm-0">
