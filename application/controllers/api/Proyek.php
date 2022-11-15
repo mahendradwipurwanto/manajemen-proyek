@@ -92,7 +92,7 @@ class Proyek extends CI_Controller
         $this->cekSessionProyek();
 
         $data['proyek'] = $this->M_proyek->getProyekById($this->session->userdata('proyek')['id']);
-
+        
         $this->load->view('proyek/ajax/edit_proyek', $data);
     }
 

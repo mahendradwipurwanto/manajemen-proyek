@@ -53,6 +53,9 @@ class M_proyek extends CI_Model
                 $models->upload_string .= $v.", ";
             }
         }
+        
+        $models->file_pendukung = [];
+        $models->file_pendukung = $this->getPendukungProyek($models->id);
 
         return $models;
 
