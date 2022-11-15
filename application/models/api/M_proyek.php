@@ -37,7 +37,25 @@ class M_proyek extends CI_Model
     }
     
     function getProyekById($proyek_id = null){
-        return $this->db->get_where('tb_proyek', ['id' => $proyek_id])->row();
+        $this->db->select('*');
+        $this->db->from('tb_proyek');
+        $this->db->where(['id' => $proyek_id]);
+        $this->db->order_by('created_at DESC');
+        $models = $this->db->get()->row();
+
+        $models->upload_type = json_decode($models->upload_type);
+
+        $models->upload_allowed = '';
+        $models->upload_string = '';
+        if (!empty($models->upload_type)) {
+            foreach ($models->upload_type as $k => $v) {
+                $models->upload_allowed .= $k.", ";
+                $models->upload_string .= $v.", ";
+            }
+        }
+
+        return $models;
+
     }
     
     function getAllProyek(){
@@ -532,6 +550,19 @@ class M_proyek extends CI_Model
         }
 
         return $arr;
+    }
+
+    function getTaskById($task_id){
+        $this->db->select('*')
+        ->from('tb_proyek_task')
+        ->where(['id' => $task_id, 'is_deleted' => 0])
+        ;
+
+        $models = $this->db->get()->row();
+
+        $models->bukti_task = $this->getTaskBukti($task_id);
+
+        return $models;
     }
 
     function getTaskByProyekStatus($proyek_id, $status_id){

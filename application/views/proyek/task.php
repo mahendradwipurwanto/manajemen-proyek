@@ -200,7 +200,7 @@
 		<?php if($task->is_selesai == 0 && $task->is_closed == 0):?>
 		<div class="col">
 			<button type="button" class="btn btn-sm btn-success w-100" data-bs-toggle="modal"
-				data-bs-target="#selesaikan-task-<?= $task->id;?>">selesaikan task</button>
+				data-bs-target="#selesaikan-task-<?= $task->id;?>" onclick="showSelesaikan(<?= $task->id;?>)">selesaikan task</button>
 		</div>
 		<?php endif;?>
 		<?php if($task->is_selesai == 1 && ($this->session->userdata('role') == 0 || $this->session->userdata('role') == 1 || $this->session->userdata('is_leader') == true)):?>

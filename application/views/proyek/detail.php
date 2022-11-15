@@ -258,73 +258,7 @@
 											<button type="button" class="btn-close" data-bs-dismiss="modal"
 												aria-label="Close"></button>
 										</div>
-										<div class="modal-body">
-											<form action="<?= site_url('api/proyek/selesaikanTask');?>" method="post"
-												class="js-validate needs-validation" enctype="multipart/form-data"
-												novalidate>
-												<input type="hidden" name="id" value="<?= $v->id;?>">
-												<input type="hidden" name="proyek_id" value="<?= $v->proyek_id;?>">
-												<?php if($v->bukti != null && $v->bukti != 0 && $v->bukti != ''):?>
-												<div class="mb-3">
-													<label class="form-label" for="formTask">Bukti penyelesaian <small
-															class="text-danger">*</small></label>
-													<div class="row">
-														<div class="col-4">
-															<a href="<?= base_url();?><?= $v->bukti;?>" target="_blank"
-																class="btn btn-outline-primary btn-sm text-left"><i
-																	class="bi bi-file-earmark-<?= $v->icon;?>"></i> Bukti
-																penyelesaian</a>
-														</div>
-														<div class="col-8">
-															<input type="file" name="file" id="formTask"
-																class="form-control form-control-sm"
-																accept="<?= $proyek->upload_string?>">
-														</div>
-													</div>
-													<small class="text-secondary">Upload bukti penyelesaian task, berupa
-														file <?= $proyek->upload_allowed?>. Maksimal 5Mb</small>
-												</div>
-												<input type="hidden" name="sudah_upload" value="1">
-												<?php else:?>
-												<div class="mb-3">
-													<label class="form-label" for="formTask">Bukti penyelesaian <small
-															class="text-danger">*</small></label>
-													<!-- <input type="file" name="file" id="formTask"
-														class="form-control form-control-sm"
-														accept="application/pdf,.pdf" required> -->
-														<div action="#" class="dropzone p-1">
-															<div class="fallback">
-															</div>
-															<div class="dz-message needsclick">
-																<div class="mb-2">
-																	<i class="display-4 text-muted mdi mdi-upload-network-outline"></i>
-																</div>
-
-																<h4>Drop file atau klik untuk mengunggah.</h4>
-															</div>
-														</div>
-													<small class="text-secondary">Upload bukti penyelesaian task, berupa
-														file <?= $proyek->upload_allowed?>. Maksimal 5Mb</small>
-												</div>
-												<input type="hidden" name="sudah_upload" value="0">
-												<?php endif;?>
-
-												<div class="mb-3">
-													<label class="form-label" for="formTaskKeterangan">Catatan <small
-															class="text-secondary">(optional)</small></label>
-													<textarea type="text" name="catatan"
-														class="form-control form-control-sm ckeditor"
-														placeholder="Keterangan" rows="3"><?= $v->catatan;?></textarea>
-												</div>
-												<!-- End Form -->
-												<!-- End From -->
-												<div class="modal-footer p-0 pt-3">
-													<button type="button" class="btn btn-sm btn-white"
-														data-bs-dismiss="modal">Batal</button>
-													<button type="submit" onclick="inikirim()"
-														class="btn btn-sm btn-success">Selesaikan</button>
-												</div>
-											</form>
+										<div class="modal-body" id="contentSelesaikan">
 										</div>
 									</div>
 								</div>
@@ -422,66 +356,7 @@
 							</div>
 							<!-- End Modal -->
 
-							<script>
-									Dropzone.autoDiscover = false;
 
-									$('.dz-message').addClass('hidden');
-
-									var foto_upload = new Dropzone(".dropzone", {
-										autoProcessQueue: false,
-										url: "<?= site_url('api/proyek/upload_bukti/'.$v->proyek_id.'/'.$v->id) ?>",
-										maxFilesize: 2,
-										maxFiles: 30,
-										parallelUploads: 30,
-										method: "post",
-										acceptedFiles: "<?= $proyek->upload_string?>",
-										paramName: "bukti",
-										dictInvalidFileType: "File type not allowed",
-										addRemoveLinks: true,
-										init: function() {
-											let myDropzone = this;
-											let mockFile = null;
-											let callback = null; // Optional callback when it's done
-											let crossOrigin = null; // Added to the `img` tag for crossOrigin handling
-											let resizeThumbnail = false; // Tells Dropzone whether it should resize the image first
-
-											<?php if (!empty($v->bukti_task)) : ?>
-												<?php foreach ($v->bukti_task as $kkk => $vvv) : ?>
-													mockFile = {
-														name: "<?= $vvv->bukti; ?>",
-														size: 10*1024
-													};
-
-													myDropzone.displayExistingFile(mockFile, "<?= base_url(); ?>assets/images/pdf.png", callback, crossOrigin, resizeThumbnail);
-												<?php endforeach; ?>
-											<?php endif; ?>
-											let fileCountOnServer = 2; // The number of files already uploaded
-											myDropzone.options.maxFiles = myDropzone.options.maxFiles - fileCountOnServer;
-										},
-										removedfile: function(file) {
-											var fileName = file.name;
-
-											$.ajax({
-												type: 'POST',
-												url: '<?= site_url('api/proyek/delete_bukti/'.$v->proyek_id.'/'.$v->id) ?>',
-												data: {
-													filename: fileName,
-													request: 'delete'
-												},
-												success: function(data) {
-													console.log('success: ' + data);
-												}
-											});
-
-											var _ref;
-											return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0;
-										}
-									});
-
-									function inikirim() {
-										foto_upload.processQueue();
-									}
-							</script>
 
 							<?php endforeach;?>
 							<?php else:?>
@@ -828,6 +703,26 @@
 			error: function (xhr, status, error) {
 				Swal.fire({
 					text: 'Gagal menampilkan detail task',
+					icon: 'error',
+				})
+				console.error(xhr);
+			}
+		});
+	}
+
+	function showSelesaikan(id) {
+		$.ajax({
+			type: "POST",
+			url: `<?= site_url('api/proyek/selesaikanTaskEdit');?>`,
+			data: {
+				task_id: id
+			},
+			success: function (data) {
+				$('#contentSelesaikan').html(data);
+			},
+			error: function (xhr, status, error) {
+				Swal.fire({
+					text: 'Gagal menampilkan task',
 					icon: 'error',
 				})
 				console.error(xhr);

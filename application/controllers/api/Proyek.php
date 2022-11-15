@@ -77,6 +77,16 @@ class Proyek extends CI_Controller
         $this->load->view('proyek/task', $data);
     }
 
+    public function selesaikanTaskEdit()
+    {
+        $this->cekSessionProyek();
+
+        $data['task'] = $this->M_proyek->getTaskById($this->input->post('task_id'));
+        $data['proyek'] = $this->M_proyek->getProyekById($this->session->userdata('proyek')['id']);
+
+        $this->load->view('proyek/ajax/edit_task', $data);
+    }
+
     public function save()
     {
         if(isset($_FILES['file'])){
