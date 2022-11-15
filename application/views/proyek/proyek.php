@@ -375,7 +375,18 @@
 
 					<div class="mb-3">
 						<label for="formKeterangan" class="form-label">Berkas pendukung (optional)</label>
-						<input type="file" class="form-control form-control-sm" name="file" accept=".pdf">
+						<!-- <input type="file" class="form-control form-control-sm" name="file" accept=".pdf"> -->
+						<div action="#" class="dropzone p-1">
+							<div class="fallback">
+							</div>
+							<div class="dz-message needsclick">
+								<div class="mb-2">
+									<i class="display-4 text-muted mdi mdi-upload-network-outline"></i>
+								</div>
+
+								<h4>Drop file atau klik untuk mengunggah.</h4>
+							</div>
+						</div>
 						<small class="text-secondary">Upload file pdf. Maksimal 5Mb</small>
 					</div>
 
@@ -454,7 +465,7 @@
 					<!-- End Form -->
 					<div class="modal-footer p-0 pt-3">
 						<button type="button" class="btn btn-sm btn-white" data-bs-dismiss="modal">Batal</button>
-						<button type="submit" class="btn btn-sm btn-primary">Buat Proyek</button>
+						<button type="submit" class="btn btn-sm btn-primary" onclick="inikirim()">Buat Proyek</button>
 					</div>
 				</form>
 			</div>
@@ -468,4 +479,36 @@
 		document.location.href = `<?= site_url('api/proyek/sematkan/` + proyek_id + `/` + status + `');?>`;
 	}
 
+</script>
+
+<script>
+		Dropzone.autoDiscover = false;
+
+		$('.dz-message').addClass('hidden');
+
+		var foto_upload = new Dropzone(".dropzone", {
+			autoProcessQueue: false,
+			url: "<?= site_url('api/proyek/upload_pendukung/') ?>",
+			maxFilesize: 2,
+			maxFiles: 30,
+			parallelUploads: 30,
+			method: "post",
+			acceptedFiles: ".pdf",
+			paramName: "pendukung",
+			dictInvalidFileType: "File type not allowed",
+			addRemoveLinks: true,
+			init: function() {
+				let myDropzone = this;
+				let mockFile = null;
+				let callback = null; // Optional callback when it's done
+				let crossOrigin = null; // Added to the `img` tag for crossOrigin handling
+				let resizeThumbnail = false; // Tells Dropzone whether it should resize the image first
+				let fileCountOnServer = 2; // The number of files already uploaded
+				myDropzone.options.maxFiles = myDropzone.options.maxFiles - fileCountOnServer;
+			}
+		});
+
+		function inikirim() {
+			foto_upload.processQueue();
+		}
 </script>

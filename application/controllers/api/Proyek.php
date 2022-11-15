@@ -520,4 +520,57 @@ class Proyek extends CI_Controller
         }
         return $cek;
 	}
+
+    function upload_pendukung(){
+		// ATUR FOLDER UPLOAD BUKTI
+        $query = $this->db->query("SELECT MAX(id) as id FROM tb_proyek");
+        $proyek_id = $query->row()->id;
+
+        $proyek_id = $proyek_id+1;
+
+		$folder 			= "berkas/proyek/{$proyek_id}/pendukung/";
+
+		if (!is_dir($folder)) {
+			mkdir($folder, 0755, true);
+		}
+
+
+		// $string_file 	= "bukti-{$task_id}_".substr(time(), 3);
+
+		$config['upload_path']          = $folder;
+		$config['allowed_types']        = '*';
+		$config['max_size']             = 10*1024;
+		$config['overwrite']            = false;
+		// $config['file_name']            = $string_file;
+        
+		$this->load->library('upload', $config);
+
+		if ($this->upload->do_upload('pendukung'))
+		{
+			$upload_data 	= $this->upload->data();
+            // ej($upload_data);
+            $data = [
+                'proyek_id' => $proyek_id,
+                'file' => "berkas/proyek/{$proyek_id}/pendukung/".$upload_data['file_name'],
+                'created_at' => time(),
+                'created_by' => $this->session->userdata('user_id')
+            ];
+			$models = $this->db->insert('tb_proyek_file', $data);
+            return ($this->db->affected_rows() != 1) ? false : true;
+		}else{
+            return false;
+        }
+	}
+
+	function delete_pendukung($proyek_id){
+        $filename = $this->input->post('filename');
+        $filename = str_replace(" ", "_", $filename);
+		$this->db->where('file', $filename);
+		$this->db->update('tb_proyek_file', ['is_deleted' => 1]);
+        $cek = ($this->db->affected_rows() != 1) ? false : true;
+        if($cek == true){
+            unlink(base_url()."berkas/proyek/{$proyek_id}/pendukung/{$filename}");
+        }
+        return $cek;
+	}
 }
