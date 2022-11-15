@@ -103,7 +103,7 @@
 	</div>
 </div>
 
-
+<?php if(!empty($chart_kpi)):?>
 <script>
 
 	// target bar chart
@@ -154,3 +154,4 @@
 	var chartTarget = new ApexCharts(document.querySelector("#chartTarget"), optionsChartTarget);
 	chartTarget.render();
 </script>
+<?php endif;?>

@@ -81,7 +81,7 @@
   					</li>
   					<?php if(empty($proyek_semat)):?>
   					<li class="nav-item" id="tour-menu-proyek">
-  						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-proyek" || $this->uri->segment(1) == "proyek" && $this->uri->segment(2) != "kpi" && $this->uri->segment(2) != "laporan" ? "active" : "") ?>"
+  						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-proyek" || $this->uri->segment(1) == "proyek" && $this->uri->segment(2) != "kpi" && $this->uri->segment(2) != "kpi-staff" && $this->uri->segment(2) != "laporan" ? "active" : "") ?>"
   							href="<?= site_url('admin/kelola-proyek'); ?>">Proyek
   							<span class="ms-auto badge bg-primary"></span>
   						</a>
