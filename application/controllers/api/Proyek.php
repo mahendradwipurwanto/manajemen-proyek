@@ -87,6 +87,15 @@ class Proyek extends CI_Controller
         $this->load->view('proyek/ajax/edit_task', $data);
     }
 
+    public function ajaxEditProyek()
+    {
+        $this->cekSessionProyek();
+
+        $data['proyek'] = $this->M_proyek->getProyekById($this->session->userdata('proyek')['id']);
+
+        $this->load->view('proyek/ajax/edit_proyek', $data);
+    }
+
     public function save()
     {
         if(isset($_FILES['file'])){
@@ -169,7 +178,7 @@ class Proyek extends CI_Controller
                 $this->session->set_flashdata('notif_success', 'Berhasil mengubah informasi proyek baru');
                 redirect($this->agent->referrer());
             } else {
-                $this->session->set_flashdata('notif_warning', 'Terjadi kesalahan saat mencoba mengubah informasi proyek baru');
+                $this->session->set_flashdata('notif_warning', 'Berhasil mengubah informasi proyek baru');
                 redirect($this->agent->referrer());
             }
         }
@@ -531,12 +540,14 @@ class Proyek extends CI_Controller
         return $cek;
 	}
 
-    function upload_pendukung(){
+    function upload_pendukung($proyek_id = null){
 		// ATUR FOLDER UPLOAD BUKTI
-        $query = $this->db->query("SELECT MAX(id) as id FROM tb_proyek");
-        $proyek_id = $query->row()->id;
+        if($proyek_id == null){
+            $query = $this->db->query("SELECT MAX(id) as id FROM tb_proyek");
+            $proyek_id = $query->row()->id;
 
-        $proyek_id = $proyek_id+1;
+            $proyek_id = $proyek_id+1;
+        }
 
 		$folder 			= "berkas/proyek/{$proyek_id}/pendukung/";
 

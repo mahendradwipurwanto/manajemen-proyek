@@ -638,6 +638,19 @@ class M_proyek extends CI_Model
                 $models->upload_string .= $v.", ";
             }
         }
+        $models->file_pendukung = [];
+        $models->file_pendukung = $this->getPendukungProyek($models->id);
+
+        return $models;
+    }
+
+    function getPendukungProyek($proyek_id){
+        $this->db->select('*')
+        ->from('tb_proyek_file')
+        ->where(['proyek_id' => $proyek_id, 'is_deleted' => 0])
+        ;
+
+        $models = $this->db->get()->result();
 
         return $models;
     }
