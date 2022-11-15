@@ -51,6 +51,10 @@
   						<a class="nav-link <?= ($this->uri->segment(2) == "kpi" ? "active" : "") ?>"
   							href="<?= site_url('proyek/kpi'); ?>">KPI </a>
   					</li>
+  					<li class="nav-item" id="tour-menu-kpi">
+  						<a class="nav-link <?= ($this->uri->segment(2) == "kpi-staff" ? "active" : "") ?>"
+  							href="<?= site_url('proyek/kpi-staff'); ?>">KPI (staff)</a>
+  					</li>
   					<li class="nav-item" id="tour-menu-laporan">
   						<a class="nav-link <?= ($this->uri->segment(2) == "laporan" ? "active" : "") ?>"
   							href="<?= site_url('proyek/laporan'); ?>">Laporan </a>

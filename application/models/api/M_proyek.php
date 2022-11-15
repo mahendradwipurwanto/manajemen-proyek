@@ -515,7 +515,9 @@ class M_proyek extends CI_Model
         }
 
         if($is_selesai == 1){
-            $this->db->where(['is_mulai' => 0, 'b.is_selesai' => 1]);
+            // $this->db->where(['is_mulai' => 0, 'b.is_selesai' => 1]);
+            $this->db->where(['is_mulai' => 0]);
+            $this->db->where("a.is_closed = 1");
         }
         $models = $this->db->get()->result();
 
@@ -762,6 +764,10 @@ class M_proyek extends CI_Model
         }else{
             $this->db->where('id', $this->input->post('id'));
             $this->db->update('tb_proyek', ['status' => 1]);
+
+            
+            $this->db->where('proyek_id', $this->input->post('id'));
+            $this->db->update('tb_kpi_manual', ['is_deleted' => 1]);
         }
 
         return $cek;
@@ -788,7 +794,31 @@ class M_proyek extends CI_Model
 
         $this->db->where('id', $this->input->post('id'));
         $this->db->update('tb_proyek', $data);
-        return ($this->db->affected_rows() != 1) ? false : true;
+        $cek = ($this->db->affected_rows() != 1) ? false : true;
+
+        if($cek == true){
+            $dataLeader = [
+                'staff_id' => $this->input->post('leader_id'),
+                'proyek_id' => $this->input->post('id'),
+                'nilai' => $this->input->post('nilai_leader')
+            ];
+
+            $this->db->insert('tb_kpi_manual', $dataLeader);
+
+            foreach($this->input->post('staff_id') as $key => $val){
+                $dataLeader = [
+                    'staff_id' => $this->input->post('staff_id')[$key],
+                    'proyek_id' => $this->input->post('id'),
+                    'nilai' => $this->input->post('nilai')[$key]
+                ];
+    
+                $this->db->insert('tb_kpi_manual', $dataLeader);
+            }
+
+            return true;
+        }else{
+            return false;
+        }
     }
 
     function cekAssignStaff($status, $user_id = null){
@@ -1856,5 +1886,103 @@ class M_proyek extends CI_Model
         }
         
         return $models;
+    }
+
+    function getManualKPI($proyek_id = null, $staff_id = null, $periode = []){
+        $this->db->select('a.*, b.nama, c.judul')
+        ->from('tb_kpi_manual a')
+        ->join('tb_user b', 'a.staff_id = b.user_id')
+        ->join('tb_proyek c', 'a.proyek_id = c.id')
+        ->where(['a.is_deleted' => 0])
+        ;
+        
+        if(!empty($periode) && is_array($periode)){
+            if(strtotime($periode[0]) == strtotime($periode[1])){
+                $this->db->where(['a.created_at' => strtotime($periode[0])]);
+            }else{
+                $this->db->where(['a.created_at >=' => strtotime($periode[0]), 'a.created_at <=' => strtotime($periode[1])]);
+            }
+        }
+
+        if(!is_null($proyek_id)){
+            $this->db->where('proyek_id', $proyek_id);
+        }
+
+        if(!is_null($staff_id)){
+            $this->db->where('staff_id', $staff_id);
+        }
+
+        $models = $this->db->get()->result();
+
+        $arr = [];
+        if($staff_id == null){
+            $temp = [];
+            $nilai = 0;
+            foreach($models as $key => $val){
+                $temp[$val->staff_id] = $val;
+                $nilai += $val->nilai;
+                $temp[$val->staff_id]->judul = "Seluruh proyek (pilih staff untuk lebih detail)";
+                $temp[$val->staff_id]->nilai = $nilai;
+            }
+            $arr = $temp;
+        }else{
+            $arr = $models;
+        }
+        return $arr;
+    }
+
+    function getManualKPIGrafik($proyek_id = null, $staff_id = null, $periode = []){
+        $this->db->select('a.*, b.nama, c.judul')
+        ->from('tb_kpi_manual a')
+        ->join('tb_user b', 'a.staff_id = b.user_id')
+        ->join('tb_proyek c', 'a.proyek_id = c.id')
+        ->where(['a.is_deleted' => 0])
+        ;
+        
+        if(!empty($periode) && is_array($periode)){
+            if(strtotime($periode[0]) == strtotime($periode[1])){
+                $this->db->where(['a.created_at' => strtotime($periode[0])]);
+            }else{
+                $this->db->where(['a.created_at >=' => strtotime($periode[0]), 'a.created_at <=' => strtotime($periode[1])]);
+            }
+        }
+
+        if(!is_null($proyek_id)){
+            $this->db->where('proyek_id', $proyek_id);
+        }
+
+        if(!is_null($staff_id)){
+            $this->db->where('staff_id', $staff_id);
+        }
+
+        $models = $this->db->get()->result();
+
+        $arr = [];
+        if($staff_id == null){
+            $temp = [];
+            $nilai = 0;
+            foreach($models as $key => $val){
+                $temp[$val->staff_id]['nama'] = $val->nama;
+                $temp[$val->staff_id]['judul'] = $val->judul;
+                $nilai += $val->nilai;
+                $temp[$val->staff_id]['nilai'] = $nilai;
+            }
+
+            $temp = array_values($temp);
+
+            foreach($temp as $key => $val){
+                $arr['kategori'][] = "'{$val['judul']}'";
+                $arr['name'][] = "'{$val['nama']}'";
+                $arr['data'][] = $val['nilai'];
+            }
+        }else{
+            foreach($models as $key => $val){
+                $arr['kategori'][] = "'{$val->judul}'";
+                $arr['name'][] = "'{$val->nama}'";
+                $arr['data'][] = $val->nilai;
+            }
+        }
+
+        return $arr;
     }
 }

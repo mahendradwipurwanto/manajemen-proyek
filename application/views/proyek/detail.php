@@ -533,7 +533,7 @@
 
 <!-- Modal -->
 <div id="tutup-proyek" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalTambah" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered " role="document">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h5 class="modal-title" id="modalTambah">Tutup Proyek</h5>
@@ -543,13 +543,51 @@
 				<form action="<?= site_url('api/proyek/tutup');?>" method="post" class="js-validate needs-validation" enctype="multipart/form-data"
 					novalidate>
 					<input type="hidden" name="id" value="<?= $proyek->id;?>">
-					<p>Apakah anda yakin ingin menutup proyek ini?</p>
-
+					<div class="alert alert-soft-primary small">Anda akan menutup proyek ini, harap berikan nilai pada staff yang terlibat pada proyek ini</div>
+					<table class="table table-hover w-100">
+						<thead class="thead-light">
+							<tr>
+								<th style="width: 10%;" class="border-bottom">No</th>
+								<th style="width: 40%;" class="border-bottom">Nama</th>
+								<th style="width: 15%;" class="border-bottom">Total Task</th>
+								<th style="width: 15%;" class="border-bottom">Selesai</th>
+								<th style="width: 20%;" class="border-bottom">Nilai</th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php if(!empty($leader)):?>
+							<tr>
+								<td>1</td>
+								<td><?= $leader[0]->nama;?> <span class="badge bg-warning">leader</span></td>
+								<td><?= $leader[0]->task['total'];?></td>
+								<td><?= $leader[0]->task_selesai['total'];?></td>
+								<td>
+									<input type="hidden" class="form-control form-control-sm w-100" name="leader_id" value="<?= $leader[0]->user_id;?>" required>
+									<input type="text" class="form-control form-control-sm w-100" name="nilai_leader" placeholder="nilai" required>
+								</td>
+							</tr>
+							<?php endif;?>
+							<?php if(!empty($staff)):?>
+							<?php $no = 2; foreach($staff as $k => $v):?>
+							<tr>
+								<td><?= $no++;?></td>
+								<td><?= $v->nama;?></td>
+								<td><?= $v->task['total'];?></td>
+								<td><?= $v->task_selesai['total'];?></td>
+								<td>
+									<input type="hidden" class="form-control form-control-sm w-100" name="staff_id[]" value="<?= $v->user_id;?>" required>
+									<input type="text" class="form-control form-control-sm w-100" name="nilai[]" placeholder="nilai" required>
+								</td>
+							</tr>
+							<?php endforeach;?>
+							<?php endif;?>
+						</tbody>
+					</table>
 					<!-- #KPI MANUAL -->
 					<!-- End Form -->
 					<div class="modal-footer p-0 pt-3">
 						<button type="button" class="btn btn-sm btn-white" data-bs-dismiss="modal">Batal</button>
-						<button type="submit" class="btn btn-sm btn-warning">Tutup Proyek</button>
+						<button type="submit" class="btn btn-sm btn-warning">Simpan nilai dan Tutup Proyek</button>
 					</div>
 				</form>
 			</div>

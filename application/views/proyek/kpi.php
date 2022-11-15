@@ -21,7 +21,7 @@
 			<div class="input-group input-group-sm">
 				<span class="input-group-text" id="basic-addon2"><i class="bi bi-calendar-week"></i></span>
 				<input type="text" class="form-control form-control-sm" name="periode" placeholder="Periode proyek"
-					aria-describedby="basic-addon2" required>
+					aria-describedby="basic-addon2" >
 			</div>
 		</div>
 		<div class="col-3">

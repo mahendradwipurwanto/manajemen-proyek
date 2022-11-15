@@ -115,9 +115,9 @@
 							<div class="box-progress-wrapper">
 								<p class="box-progress-header">Progress</p>
 								<div class="box-progress-bar">
-									<span class="box-progress bg-primary" style="width: <?= $val->progress;?>%;"></span>
+									<span class="box-progress bg-primary" style="width: <?= round($val->progress);?>%;"></span>
 								</div>
-								<p class="box-progress-percentage"><?= $val->progress;?>%</p>
+								<p class="box-progress-percentage"><?= round($val->progress);?>%</p>
 							</div>
 							<div class="project-box-footer">
 								<div class="participants">
@@ -239,9 +239,9 @@
 								<p class="box-progress-header">Progress</p>
 								<div class="box-progress-bar">
 									<span class="box-progress text-soft-primary"
-										style="width: <?= $val->progress;?>%;"></span>
+										style="width: <?= round($val->progress);?>%;"></span>
 								</div>
-								<p class="box-progress-percentage"><?= $val->progress;?>%</p>
+								<p class="box-progress-percentage"><?= round($val->progress);?>%</p>
 							</div>
 							<div class="project-box-footer">
 								<div class="participants">
