@@ -1,8 +1,16 @@
 <!-- Page Header -->
+<style>
+	@media print {
+		body {
+			zoom: 80%;
+		}
+	}
+
+</style>
 <div class="docs-page-header">
 	<div class="row align-items-center">
 		<div class="col-sm">
-			<h1 class="docs-page-header-title">KPI STAFF
+			<h1 class="docs-page-header-title">CETAK KPI STAFF
 				<?php if($this->input->get('periode')):?>
 				<span class="text-body pb-3 me-3"> - periode <span
 						class="text-primary"><?= $this->input->get('periode');?></span></span>
@@ -12,48 +20,8 @@
 		</div>
 	</div>
 </div>
-<form action="<?= site_url('proyek/kpi-staff');?>" method="get">
-	<div class="row mb-4 d-flex align-items-center">
-		<div class="col-1">
-			Filter: 
-		</div>
-		<div class="col-3 d-none">
-			<div class="input-group input-group-sm">
-				<span class="input-group-text" id="basic-addon2"><i class="bi bi-calendar-week"></i></span>
-				<input type="text" class="form-control form-control-sm" name="periode" placeholder="Periode proyek"
-					aria-describedby="basic-addon2" >
-			</div>
-		</div>
-		<div class="col-3">
-			<!-- Select -->
-			<div class="tom-select-custom tom-select-custom-sm">
-				<select class="js-select form-select form-select-sm" name="staff" autocomplete="off"
-					data-hs-tom-select-options='{"placeholder": "Pilih staff"}'>
-					<option value="0" selected>Semua Staff</option>
-					<?php if(!empty($staff)):?>
-					<?php foreach($staff as $key => $val):?>
-					<option value="<?= $val->user_id;?>"><?= $val->nama;?></option>
-					<?php endforeach;?>
-					<?php endif;?>
-				</select>
-			</div>
-			<!-- End Select -->
-		</div>
-		<div class="col-8 d-flex justify-content-end">
-			<button type="submit" class="btn btn-primary btn-sm ms-3">Tampilkan</button>
-			<?php if($this->input->get('periode')):?>
-			<a href="<?= current_url();?>" class="btn btn-sm btn-outline-secondary ms-2">Reset</a>
-			<?php endif;?>
-			<a href="<?= site_url('cetak/kpi-staff/'.$this->input->get('proyek'));?>" class="btn btn-warning btn-sm ms-3"
-				target="_blank"><i class="bi bi-printer"></i> Cetak</a>
-		</div>
-	</div>
-</form>
 <div class="row mb-4">
 	<div class="col-md-12">
-		<div class="alert bg-soft-primary py-1">
-			<small>KPI (Key Index Performance) Staff ini mengacu pada penilaian yang diberikan oleh atasan pada staff saat menutup salah satu proyek.</small>
-		</div>
 		<div class="card">
 			<!-- Table -->
 			<div class="card-body p-4">
@@ -153,5 +121,11 @@
 
 	var chartTarget = new ApexCharts(document.querySelector("#chartTarget"), optionsChartTarget);
 	chartTarget.render();
+
+	$(document).ready(function () {
+		setTimeout(function () {
+			window.print();
+		}, 2000);
+	})
 </script>
 <?php endif;?>

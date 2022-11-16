@@ -27,6 +27,41 @@ class Cetak extends CI_Controller
         $this->templateprint->view('proyek/cetak/kpi', $data);
     }
 
+    public function kpi_manual($proyek_id = null)
+    {
+        $periode = [];
+        if ($this->input->get('periode')) {
+            $periode = explode(' - ', $this->input->get('periode'));
+        }
+
+        $proyek = null;
+        // $data['nama_proyek']= "Semua Proyek";
+        // if($this->input->get('proyek')){
+        //     $proyek = $this->input->get('proyek') == 0 ? null : $this->input->get('proyek');
+
+        //     if($proyek > 0){
+        //         $data['nama_proyek']     = $this->M_proyek->getProyekById($proyek)->judul;
+        //     }
+        // }
+
+        $data['nama_staff']= "Semua Staff";
+        $staff = null;
+        if ($this->input->get('staff')) {
+            $staff = $this->input->get('staff') == 0 ? null : $this->input->get('staff');
+
+            if ($staff > 0) {
+                $data['nama_staff']     = $this->M_auth->get_userByID($staff)->nama;
+            }
+        }
+
+        $data['proyek']     = $this->M_proyek->getAllProyek();
+        $data['staff']     = $this->M_staff->getStaff();
+        $data['kpi']        = $this->M_proyek->getManualKPI($proyek, $staff, $periode);
+        $data['chart_kpi']  = $this->M_proyek->getManualKPIGrafik($proyek, $staff, $periode);
+
+        $this->templateprint->view('proyek/cetak/kpi_manual', $data);
+    }
+
     public function laporan($proyek_id = null)
     {
         $data['nama_proyek']= "Semua Proyek";
