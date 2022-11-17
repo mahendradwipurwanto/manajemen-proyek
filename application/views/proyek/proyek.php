@@ -96,7 +96,7 @@
 						<div class="project-box card shadow-sm">
 							<div class="project-box-header">
 								<span>Dibuat pada, <?= date("d F Y", $val->created_at);?>
-									<?php if($val->periode_selesai > time()):?>
+									<?php if($val->periode_selesai < strtotime(date('d-m-Y'))):?>
 									<div class="badge bg-danger text-white small fw-normal">over deadline</div>
 									<?php endif;?>
 								</span>

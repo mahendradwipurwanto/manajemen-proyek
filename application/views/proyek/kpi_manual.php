@@ -64,7 +64,8 @@
 							<th width="5%">No</th>
 							<th width="25%">Staff</th>
 							<th width="25%">Proyek</th>
-							<th width="25%" class="text-center">Nilai</th>
+							<th width="20%" class="text-center">Nilai</th>
+							<th width="25%" class="text-center">Keterangan</th>
 						</tr>
 					</thead>
 
@@ -81,6 +82,9 @@
 							</td>
 							<td class="text-center">
 								<?= $val->nilai;?>
+							</td>
+							<td class="text-center">
+								(<?= $val->detail;?>)
 							</td>
 						</tr>
 						<?php endforeach;?>

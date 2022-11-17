@@ -324,7 +324,8 @@ class Proyek extends CI_Controller
         }
 
         $data['proyek']     = $this->M_proyek->getAllProyek();
-        $data['proyekdata'] = $this->M_proyek->getLaporanStatusProyek($periode);
+        // $data['proyekdata'] = $this->M_proyek->getLaporanStatusProyek($periode, $proyek);
+        $data['proyekdata'] = $this->M_proyek->getLaporanStatusProyekNew($proyek, $periode);
         $data['tasks'] = $this->M_proyek->getLaporanStatusTaskProyek($proyek, $periode);
         $data['staff_target'] = $this->M_proyek->getStaffTargetTask($proyek, $periode);
         $data['staff_main'] = $this->M_proyek->getLaporanTaskStaff($proyek, $periode);

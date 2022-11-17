@@ -64,7 +64,7 @@
 	<div class="col-6 mb-4">
 		<div class="card">
 			<div class="card-header p-3 text-center">
-				<h4 class="card-header-title">Status deadline semua proyek</h4>
+				<h4 class="card-header-title">Status deadline semua task</h4>
 			</div>
 			<div class="card-body p-3">
 				<div id="chartPieChartProyekMain"></div>

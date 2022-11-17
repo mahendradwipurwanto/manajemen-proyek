@@ -22,10 +22,11 @@ class M_proyek extends CI_Model
         $cek = ($this->db->affected_rows() != 1) ? false : true;
     }
 
-    function insert_logNotif($proyek_id, $message = null){
+    function insert_logNotif($proyek_id, $message = null, $staff_id = null){
         $data = [
             'proyek_id' => $proyek_id,
             'user_id' => $this->session->userdata('user_id'),
+            'staff_id' => $staff_id,
             'message' => $message == null ? 'Mengelola proyek' : $message,
             'is_notif' => 1,
             'created_at' => time(),
@@ -47,7 +48,7 @@ class M_proyek extends CI_Model
 
         $models->upload_allowed = '';
         $models->upload_string = '';
-        if (!empty($models->upload_type)) {
+        if (!empty($models->upload_type) && is_array($models->upload_type)) {
             foreach ($models->upload_type as $k => $v) {
                 $models->upload_allowed .= $k.", ";
                 $models->upload_string .= $v.", ";
@@ -132,8 +133,8 @@ class M_proyek extends CI_Model
     {
         $this->db->select('a.*, b.nama, c.judul');
         $this->db->from('log_proyek a');
-        $this->db->join('tb_user b', 'a.staff_id = b.user_id');
-        $this->db->join('tb_proyek c', 'a.proyek_id = c.id');
+        $this->db->join('tb_user b', 'a.staff_id = b.user_id', 'left');
+        $this->db->join('tb_proyek c', 'a.proyek_id = c.id', 'left');
         $this->db->where(['a.is_deleted' => 0, 'a.staff_id' => $this->session->userdata('user_id'), 'a.is_notif' => 1]);
 
         if ($proyek_id > 0) {
@@ -250,6 +251,7 @@ class M_proyek extends CI_Model
                 $arrKpi[$key]->taskProsesData = [];
 
                 $arrKpi[$key]->nilai = 0;
+                $arrKpi[$key]->detail = '-';
                 $arrKpi[$key]->persentase = 0;
             }
             if($arrKpi[$key]->persentase > 100){
@@ -377,14 +379,13 @@ class M_proyek extends CI_Model
         }
         $this->db->order_by('created_at DESC');
         $proyek = $this->db->get()->result();
-
         $arr = [];
         foreach($proyek as $key => $val):
             $val->upload_type = json_decode($val->upload_type);
             
             $val->upload_allowed = '';
             $val->upload_string = '';
-            if(!empty($val->upload_type)){
+            if(!empty($val->upload_type) && is_array($val->upload_type)){
                 foreach($val->upload_type as $k => $v){
                     $val->upload_allowed .= $k.", ";
                     $val->upload_string .= $v.", ";
@@ -640,7 +641,7 @@ class M_proyek extends CI_Model
         
         $models->upload_allowed = '';
         $models->upload_string = '';
-        if(!empty($models->upload_type)){
+        if(!empty($models->upload_type) && is_array($models->upload_type)){
             foreach($models->upload_type as $k => $v){
                 $models->upload_allowed .= $k.", ";
                 $models->upload_string .= $v.", ";
@@ -1338,6 +1339,42 @@ class M_proyek extends CI_Model
         return $arr;
     }
 
+    function getLaporanStatusProyekNew($proyek_id = null, $periode = []){
+        $this->db->select('*')
+        ->from('tb_proyek_task')
+        ->where(['proyek_id' => $proyek_id, 'is_deleted' => 0 ])
+        ;
+        
+        if(!empty($periode) && is_array($periode)){
+            if(strtotime($periode[0]) == strtotime($periode[1])){
+                $this->db->where(['created_at' => strtotime($periode[0])]);
+            }else{
+                $this->db->where(['created_at >=' => strtotime($periode[0]), 'created_at <=' => strtotime($periode[1])]);
+            }
+        }
+
+        $models = $this->db->get()->result();
+        
+        $arr = (object) [];
+        
+        $arr->on_deadline = 0;
+        $arr->over_deadline = 0;
+        foreach ($models as $key => $val) {
+            if($val->deadline < time()){
+                $arr->on_deadline += 1;
+            }
+            
+            if($val->deadline > time()){
+                $arr->over_deadline += 1;
+            }
+        }
+
+        $arr->data = [$arr->on_deadline, $arr->over_deadline];
+        $arr->categories = ["'On Deadline'", "'Over Deadline'"];
+
+        return $arr;
+    }
+
     function getLaporanStatusProyekStaff(){
         $this->db->select('a.*')
         ->from('tb_proyek a')
@@ -1922,13 +1959,19 @@ class M_proyek extends CI_Model
                 $temp[$val->staff_id] = $val;
                 $nilai += $val->nilai;
                 $temp[$val->staff_id]->judul = "Seluruh proyek (pilih staff untuk lebih detail)";
-                $temp[$val->staff_id]->nilai = $nilai;
+                $proyek = $this->countProyekSelesaiStaff($val->staff_id);
+                $temp[$val->staff_id]->nilai = $nilai/$proyek;
+                $temp[$val->staff_id]->detail = "<small>*nilai/jumlah proyek: {$nilai}/{$proyek}</small>";
             }
             $arr = $temp;
         }else{
             $arr = $models;
         }
         return $arr;
+    }
+
+    function countProyekSelesaiStaff($staff_id = null){
+        return $this->db->get_where('tb_kpi_manual', ['staff_id' => $staff_id, 'is_deleted' => 0])->num_rows();
     }
 
     function getManualKPIGrafik($proyek_id = null, $staff_id = null, $periode = []){
