@@ -361,7 +361,6 @@
 	</div>
 </div>
 
-
 <!-- Modal -->
 <div id="tambah-status" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalTambah" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">

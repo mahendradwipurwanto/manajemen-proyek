@@ -257,6 +257,7 @@ class Proyek extends CI_Controller
         $data['proyek']     = $this->M_proyek->getAllProyek();
         $data['kpi']        = $this->M_proyek->getDataKPI($periode, $proyek);
         $data['chart_kpi']  = $this->M_proyek->getChartKPI($periode, $proyek);
+        // ej($data['kpi']);
         if ($this->agent->is_mobile()) {
             $this->templatemobile->view('proyek/kpi', $data);
         }else{

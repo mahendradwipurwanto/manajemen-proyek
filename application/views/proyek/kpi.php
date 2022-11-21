@@ -15,13 +15,13 @@
 <form action="<?= site_url('proyek/kpi');?>" method="get">
 	<div class="row mb-4 d-flex align-items-center">
 		<div class="col-1">
-			Filter: 
+			Filter:
 		</div>
 		<div class="col-3 d-none">
 			<div class="input-group input-group-sm">
 				<span class="input-group-text" id="basic-addon2"><i class="bi bi-calendar-week"></i></span>
 				<input type="text" class="form-control form-control-sm" name="periode" placeholder="Periode proyek"
-					aria-describedby="basic-addon2" >
+					aria-describedby="basic-addon2">
 			</div>
 		</div>
 		<div class="col-3">
@@ -89,6 +89,11 @@
 								<b><?= $val->nama;?></b><br>
 								<small><i class="bi bi-briefcase me-2"></i>
 									<?= isset($val->jabatan) ? $val->jabatan : '-';?></small>
+								<?php if($val->is_leader == true):?>
+								<span data-bs-toggle="tooltip" data-bs-html="true"
+									title="Lihat daftar proyek staff sebagai leader"
+									class="badge bg-soft-danger small ms-2">leader</span>
+								<?php endif;?>
 							</td>
 							<td class="text-center">
 								<span class="cursor" data-bs-toggle="modal"
@@ -332,7 +337,7 @@
 	</div>
 </div>
 
-
+<?php if(!empty($chart_kpi['data'])):?>
 <script>
 	var dataKpi = [ <?= implode(',', $chart_kpi['data']) ?> ];
 	var categoriesKpi = [ <?= implode(',', $chart_kpi['kategori']) ?> ];
@@ -367,3 +372,4 @@
 	chartKPI.render();
 
 </script>
+<?php endif;?>

@@ -52,7 +52,7 @@
 <div class="row mb-4">
 	<div class="col-md-12">
 		<div class="alert bg-soft-primary py-1">
-			<small>KPI (Key Index Performance) Staff ini mengacu pada penilaian yang diberikan oleh atasan pada staff saat menutup salah satu proyek.</small>
+			<small>KPI (Key Index Performance) Staff ini mengacu pada penilaian yang diberikan oleh atasan pada staff saat <b>menutup/menyelesaikan salah satu proyek</b>.</small>
 		</div>
 		<div class="card">
 			<!-- Table -->

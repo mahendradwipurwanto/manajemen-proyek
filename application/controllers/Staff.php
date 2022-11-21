@@ -126,13 +126,28 @@ class Staff extends CI_Controller
         }
 
         $data['proyek']     = $this->M_proyek->getAllProyekStaff();
-        $data['proyekdata'] = $this->M_proyek->getLaporanStatusProyekStaff($proyek);
-        $data['tasks'] = $this->M_proyek->getLaporanStatusTaskProyekStaff($proyek);
-        $data['staff_target'] = $this->M_proyek->getStaffTargetTaskStaff($proyek);
-        $data['staff_main'] = $this->M_proyek->getLaporanTaskStaffStaff($proyek);
-        $data['tabel_target'] = $this->M_proyek->getStaffTargetTaskTabelStaff($proyek);
-        $data['tabel_main'] = $this->M_proyek->getLaporanTaskStaffTabelStaff($proyek);
-        $data['proyek_status'] = $this->M_proyek->getProyekStatusLaporan($proyek);
+
+        if($this->M_proyek->cekLeaderProyek($proyek) == true){
+            $data['proyekdata'] = $this->M_proyek->getLaporanStatusProyek($proyek);
+            $data['tasks'] = $this->M_proyek->getLaporanStatusTaskProyek($proyek);
+            $data['staff_target'] = $this->M_proyek->getStaffTargetTask($proyek);
+            $data['staff_main'] = $this->M_proyek->getLaporanTaskStaff($proyek);
+            $data['tabel_target'] = $this->M_proyek->getStaffTargetTaskTabel($proyek);
+            $data['tabel_main'] = $this->M_proyek->getLaporanTaskStaffTabel($proyek);
+            $data['proyek_status'] = $this->M_proyek->getProyekStatusLaporan($proyek);
+
+            $data['leader'] = true;
+        }else{
+            $data['proyekdata'] = $this->M_proyek->getLaporanStatusProyekStaff($proyek);
+            $data['tasks'] = $this->M_proyek->getLaporanStatusTaskProyekStaff($proyek);
+            $data['staff_target'] = $this->M_proyek->getStaffTargetTaskStaff($proyek);
+            $data['staff_main'] = $this->M_proyek->getLaporanTaskStaffStaff($proyek);
+            $data['tabel_target'] = $this->M_proyek->getStaffTargetTaskTabelStaff($proyek);
+            $data['tabel_main'] = $this->M_proyek->getLaporanTaskStaffTabelStaff($proyek);
+            $data['proyek_status'] = $this->M_proyek->getProyekStatusLaporan($proyek);
+
+            $data['leader'] = false;
+        }
         // ej($data['tasks']);
         if ($this->agent->is_mobile()) {
             $this->templatemobile->view('staff/laporan', $data);

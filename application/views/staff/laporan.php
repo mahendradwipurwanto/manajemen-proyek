@@ -8,7 +8,6 @@
 					<div class="tom-select-custom tom-select-custom-sm">
 						<select class="js-select form-select form-select-sm" name="proyek" autocomplete="off"
 							data-hs-tom-select-options='{"placeholder": "Pilih proyek"}'>
-							<option value="0" selected><?= $nama_proyek;?></option>
 							<?php if(!empty($proyek)):?>
 							<?php foreach($proyek as $key => $val):?>
 							<option value="<?= $val->id;?>"><?= $val->judul;?></option>
@@ -24,7 +23,7 @@
 					<?php endif;?>
 				</form>
 			</h1>
-			<p class="docs-page-header-text">Pantau progres dari semua proyek yang anda kerjakan
+			<p class="docs-page-header-text">Pantau progres dari semua proyek yang <?php if($leader == true):?>tim anda<?php else:?>anda<?php endif;?> kerjakan
 			</p>
 		</div>
 	</div>
@@ -39,7 +38,7 @@
 	<div class="col-6 mb-4">
 		<div class="card">
 			<div class="card-header p-3 text-center">
-				<h4 class="card-header-title">Status deadline semua proyek anda</h4>
+				<h4 class="card-header-title">Status deadline semua proyek <?php if($leader == true):?>tim anda<?php else:?>anda<?php endif;?></h4>
 			</div>
 			<div class="card-body p-3">
 				<div id="chartPieChartProyekMain"></div>
@@ -49,7 +48,7 @@
 	<div class="col-6 mb-4">
 		<div class="card">
 			<div class="card-header p-3 text-center">
-				<h4 class="card-header-title">Status pengerjaan task anda</h4>
+				<h4 class="card-header-title">Status pengerjaan task <?php if($leader == true):?>tim anda<?php else:?>anda<?php endif;?></h4>
 			</div>
 			<div class="card-body p-3">
 				<div id="chartPieChartProyekTask"></div>
@@ -59,7 +58,7 @@
 	<div class="col-4 mb-4">
 		<div class="card">
 			<div class="card-header p-3">
-				<h4 class="card-header-title">Target deadline pengerjaan anda</h4>
+				<h4 class="card-header-title">Target deadline pengerjaan <?php if($leader == true):?>tim anda<?php else:?>anda<?php endif;?></h4>
 			</div>
 			<div class="card-body p-3">
 				<table
@@ -97,7 +96,7 @@
 	<div class="col-8 mb-4">
 		<div class="card">
 			<div class="card-header p-3">
-				<h4 class="card-header-title">Target deadline pengerjaan anda (grafik)</h4>
+				<h4 class="card-header-title">Target deadline pengerjaan <?php if($leader == true):?>tim anda<?php else:?>anda<?php endif;?> (grafik)</h4>
 			</div>
 			<div class="card-body p-3">
 				<div id="chartTarget"></div>
@@ -107,7 +106,7 @@
 	<div class="col-12 mb-4">
 		<div class="card">
 			<div class="card-header p-3 text-center">
-				<h4 class="card-header-title">Status pengerjaan task anda (grafik)</h4>
+				<h4 class="card-header-title">Status pengerjaan task <?php if($leader == true):?>tim anda<?php else:?>anda<?php endif;?> (grafik)</h4>
 			</div>
 			<div class="card-body p-3">
 				<div id="chartTargetMain"></div>
@@ -117,7 +116,7 @@
 	<div class="col-12 mb-4">
 		<div class="card">
 			<div class="card-header p-3 text-center">
-				<h4 class="card-header-title">Status pengerjaan task anda</h4>
+				<h4 class="card-header-title">Status pengerjaan task <?php if($leader == true):?>tim anda<?php else:?>anda<?php endif;?></h4>
 			</div>
 			<div class="card-body p-3">
 				<table

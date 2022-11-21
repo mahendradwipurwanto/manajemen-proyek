@@ -45,19 +45,25 @@
   					<?php if($this->session->userdata('role') == 0 || $this->session->userdata('role') == 1):?>
   					<li class="nav-item" id="tour-dashboard">
   						<a class="nav-link <?= ($this->uri->segment(2) == "dashboard" || !$this->uri->segment(2) ? "active" : "") ?>"
-  							href="<?= site_url('admin/dashboard'); ?>">Dashboard</a>
+  							href="<?= site_url('admin/dashboard'); ?>"><i class="bi bi-tv nav-icon"></i> Dashboard</a>
+  					</li>
+
+  					<li class="nav-item my-2 my-lg-5"></li>
+
+  					<li class="nav-item">
+  						<span class="nav-subtitle">Laporan</span>
   					</li>
   					<li class="nav-item" id="tour-menu-kpi">
   						<a class="nav-link <?= ($this->uri->segment(2) == "kpi" ? "active" : "") ?>"
-  							href="<?= site_url('proyek/kpi'); ?>">KPI </a>
+  							href="<?= site_url('proyek/kpi'); ?>"><i class="bi bi-bar-chart-steps nav-icon"></i> KPI (system)</a>
   					</li>
   					<li class="nav-item" id="tour-menu-kpi">
   						<a class="nav-link <?= ($this->uri->segment(2) == "kpi-staff" ? "active" : "") ?>"
-  							href="<?= site_url('proyek/kpi-staff'); ?>">KPI (staff)</a>
+  							href="<?= site_url('proyek/kpi-staff'); ?>"><i class="bi bi-bar-chart nav-icon"></i> KPI</a>
   					</li>
   					<li class="nav-item" id="tour-menu-laporan">
   						<a class="nav-link <?= ($this->uri->segment(2) == "laporan" ? "active" : "") ?>"
-  							href="<?= site_url('proyek/laporan'); ?>">Laporan </a>
+  							href="<?= site_url('proyek/laporan'); ?>"><i class="bi bi-card-list nav-icon"></i> Laporan </a>
   					</li>
 
   					<li class="nav-item my-2 my-lg-5"></li>
@@ -67,9 +73,9 @@
   					</li>
   					<li class="nav-item" id="tour-menu-staff">
   						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-staff" && $this->uri->segment(1) != "proyek" ? "active" : "") ?>"
-  							href="<?= site_url('admin/kelola-staff'); ?>">Staff</a>
+  							href="<?= site_url('admin/kelola-staff'); ?>"><i class="bi bi-person-lines-fill nav-icon"></i> Staff</a>
   					</li>
-  					<li class="nav-item" id="tour-menu-leader">
+  					<li class="nav-item d-none" id="tour-menu-leader">
   						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-leader" ? "active" : "") ?>"
   							href="<?= site_url('admin/kelola-leader'); ?>">Leader (Staff)</a>
   					</li>
@@ -82,7 +88,7 @@
   					<?php if(empty($proyek_semat)):?>
   					<li class="nav-item" id="tour-menu-proyek">
   						<a class="nav-link <?= ($this->uri->segment(2) == "kelola-proyek" || $this->uri->segment(1) == "proyek" && $this->uri->segment(2) != "kpi" && $this->uri->segment(2) != "kpi-staff" && $this->uri->segment(2) != "laporan" ? "active" : "") ?>"
-  							href="<?= site_url('admin/kelola-proyek'); ?>">Proyek
+  							href="<?= site_url('admin/kelola-proyek'); ?>"><i class="bi bi-briefcase nav-icon"></i> Proyek
   							<span class="ms-auto badge bg-primary"></span>
   						</a>
   					</li>
@@ -109,7 +115,7 @@
   					</li>
   					<li class="nav-item" id="tour-menu-pengaturan">
   						<a class="nav-link <?= ($this->uri->segment(2) == "pengaturan" ? "active" : "") ?>"
-  							href="<?= site_url('admin/pengaturan'); ?>">Pengaturan</a>
+  							href="<?= site_url('admin/pengaturan'); ?>"><i class="bi bi-sliders nav-icon"></i> Pengaturan</a>
   					</li>
   					<?php elseif($this->session->userdata('role') == 2):?>
   					<li class="nav-item" id="tour-dashboard">

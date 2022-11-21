@@ -98,7 +98,7 @@ class Admin extends CI_Controller
         }
         $data['countStaff'] = $this->M_staff->countStaff();
         $data['jabatan'] = $this->M_master->getJabatan();
-        $data['staff'] = $this->M_staff->getStaff();
+        $data['staff'] = $this->M_staff->getStaff_new();
         $data['undanganStaff'] = $this->M_master->getUndangan(3);
         $data['proyekAktif'] = $this->M_proyek->getAllStatus(0, $periode);
         $data['proyekArsip'] = $this->M_proyek->getAllStatus(1, $periode);

@@ -8,7 +8,7 @@
 	</div>
 </div>
 <!-- End Page Header -->
-<div class="row mb-4">
+<div class="row">
 	<div class="col-md-3 col-sm-12 mb-4">
 		<div class="card" style="text-align: center;">
 			<div class="card-body">
@@ -55,6 +55,14 @@
 	</div>
 </div>
 
+
+<div class="row">
+	<div class="col-12">
+		<div class="alert alert-soft-primary">
+			<small>Free maintenance selama 6 bulan terhitung dari tanggal waktu penyelesaiian yaitu (dd MM YYYY). Maintenance hanya berupa perbaikan fitur yang ada (tanpa ada penambahan fitur baru)</small>
+		</div>
+	</div>
+</div>
 
 
 <div class="row">

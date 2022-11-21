@@ -13,7 +13,8 @@
 				<button type="button" class="btn btn-xs btn-soft-secondary float-end me-2" data-bs-toggle="modal"
 					href="#edit-proyek" onclick='showEditProyek()'>informasi proyek</button>
 				<?php if($proyek->is_selesai == 0):?>
-				<button type="button" class="btn btn-xs btn-soft-warning float-end me-2" data-bs-toggle="modal" href="#tutup-proyek">tutup proyek</button>
+				<button type="button" class="btn btn-xs btn-soft-warning float-end me-2" data-bs-toggle="modal"
+					href="#tutup-proyek">tutup proyek</button>
 				<?php endif;?>
 				<?php if($this->session->userdata('role') == 2):?>
 				<a href="<?= site_url('leader/kelola-proyek');?>"
@@ -50,9 +51,9 @@
 						Kelola Task
 						<div class="participants ms-2">
 							<?php if(!empty($leader)):?>
-							<img src="<?= base_url();?><?= $leader[0]->profil;?>"
-								alt="leader: <?= $leader[0]->nama;?>" data-bs-toggle="tooltip" data-bs-html="true"
-								title="leader: <?= $leader[0]->nama;?>" class="me-3">
+							<img src="<?= base_url();?><?= $leader[0]->profil;?>" alt="leader: <?= $leader[0]->nama;?>"
+								data-bs-toggle="tooltip" data-bs-html="true" title="leader: <?= $leader[0]->nama;?>"
+								class="me-3">
 							<?php endif;?>
 							<?php if(!empty($staff)):?>
 							<?php foreach($staff as $k => $v):?>
@@ -112,7 +113,8 @@
 							<?php if(!empty($val->tasks)):?>
 							<?php foreach($val->tasks as $k => $v):?>
 							<li class="js-hs-unfold-invoker list-group-item py-2 cursor"
-								onclick='showDetail(<?= $key;?>, <?= $k;?>)' data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarSignup" aria-controls="offcanvasNavbarSignup">
+								onclick='showDetail(<?= $key;?>, <?= $k;?>)' data-bs-toggle="offcanvas"
+								data-bs-target="#offcanvasNavbarSignup" aria-controls="offcanvasNavbarSignup">
 								<div class="row justify-content-between">
 									<div class="col-sm-7 mb-2 mb-sm-0">
 									</div>
@@ -175,8 +177,22 @@
 													</select>
 												</div>
 												<div class="mb-4 row align-items-center">
-													<label class="form-label col-3 mb-0" for="formTask">Bobot task
-														</label>
+													<label class="form-label col-3 mb-0" for="formTask">Bobot task leader
+													</label>
+													<div class="col-4">
+														<div class="input-group input-group-sm">
+															<input type="number" class="form-control form-control-sm"
+																name="bobot_leader" placeholder="Bobot task leader" min="0"
+																value="<?= $v->bobot_leader;?>" aria-label="Bobot"
+																aria-describedby="input-bobot-task-leader" required>
+															<span class="input-group-text"
+																id="input-bobot-task-leader">%</span>
+														</div>
+													</div>
+												</div>
+												<div class="mb-4 row align-items-center">
+													<label class="form-label col-3 mb-0" for="formTask">Bobot task staff
+													</label>
 													<div class="col-4">
 														<div class="input-group input-group-sm">
 															<input type="number" class="form-control form-control-sm"
@@ -216,7 +232,7 @@
 													</div>
 													<div class="col">
 														<label class="form-label" for="formDeadline">Deadline Task
-															</label>
+														</label>
 														<input type="date" name="deadline" id="formDeadline"
 															class="form-control form-control-sm"
 															value="<?= $v->deadline;?>" required>
@@ -258,7 +274,7 @@
 											<button type="button" class="btn-close" data-bs-dismiss="modal"
 												aria-label="Close"></button>
 										</div>
-										<div class="modal-body" id="contentSelesaikan">
+										<div class="modal-body" id="contentSelesaikan-<?= $v->id;?>">
 										</div>
 									</div>
 								</div>
@@ -286,7 +302,8 @@
 													<?php foreach($v->bukti_task as $kkk => $vvv):?>
 													<a href="<?= base_url();?><?= $vvv->bukti;?>" target="_blank"
 														class="btn btn-outline-primary btn-xs text-left mb-2"><i
-															class="bi bi-file-earmark-<?= $vvv->icon;?>"></i> <?php $nama_file = explode("/", $vvv->bukti); echo substr(end($nama_file), 0, 50);?></a><br>
+															class="bi bi-file-earmark-<?= $vvv->icon;?>"></i>
+														<?php $nama_file = explode("/", $vvv->bukti); echo substr(end($nama_file), 0, 50);?></a><br>
 													<?php endforeach;?>
 												</div>
 												<p>Verifikasi penyelesaian task ini, tambahkan catatan jika ada</p>
@@ -387,7 +404,8 @@
 			<div class="card-body p-3">
 				<?php if(!empty($proyek->file_pendukung)):?>
 				<?php foreach($proyek->file_pendukung as $keyPendukung => $valPendukung):?>
-				<a href="<?= base_url();?><?= $valPendukung->file;?>" class="btn btn-outline-primary btn-sm mb-2" target="_blank"><i class="bi bi-file-pdf"></i> file pendukung proyek</a>
+				<a href="<?= base_url();?><?= $valPendukung->file;?>" class="btn btn-outline-primary btn-sm mb-2"
+					target="_blank"><i class="bi bi-file-pdf"></i> file pendukung proyek</a>
 				<?php endforeach;?>
 				<?php else:?>
 				<center><span class="text-secondary">Tidak ada file pendukung</span></center>
@@ -450,24 +468,41 @@
 						<small class="text-secondary">Task baru akan otomatis masuk kedalam status To Do</small>
 					</div>
 					<div class="mb-4 row align-items-center">
-						<label class="form-label col-3 mb-0" for="formTask">Bobot task <small
+						<label class="form-label col-3 mb-0" for="formTask">Bobot task leader <small
+								class="text-danger">*</small></label>
+						<div class="col-4">
+							<div class="input-group input-group-sm">
+								<input type="number" class="form-control form-control-sm" name="bobot_leader"
+									placeholder="Bobot task leader" min="0" value="0" aria-label="Bobot"
+									aria-describedby="input-bobot-task-leader" required>
+								<span class="input-group-text" id="input-bobot-task-leader">%</span>
+							</div>
+						</div>
+						<small class="text-secondary">Bobot ini digunakan untuk penilaian terhadap leader dalam proyek ini
+							yang digunakan pada KPI system</small>
+					</div>
+					<div class="mb-4 row align-items-center">
+						<label class="form-label col-3 mb-0" for="formTask">Bobot task staff <small
 								class="text-danger">*</small></label>
 						<div class="col-4">
 							<div class="input-group input-group-sm">
 								<input type="number" class="form-control form-control-sm" name="bobot"
-									placeholder="Bobot task" min="0" max="<?= (100-(isset($bobot->quota_bobot) ? $bobot->quota_bobot : 0));?>" value="0"
+									placeholder="Bobot task" min="0"
+									max="<?= (100-(isset($bobot->quota_bobot) ? $bobot->quota_bobot : 0));?>" value="0"
 									aria-label="Bobot" aria-describedby="input-bobot-task"
-									<?= (100-(isset($bobot->quota_bobot) ? $bobot->quota_bobot : 0)) == 0 ? 'readonly' : '';?> required>
+									<?= (100-(isset($bobot->quota_bobot) ? $bobot->quota_bobot : 0)) == 0 ? 'readonly' : '';?>
+									required>
 								<span class="input-group-text" id="input-bobot-task">%</span>
 							</div>
 						</div>
 						<div class="col-5">
-							<span class="badge bg-soft-info ms-2">bobot tersisa: <?= isset($bobot->quota_bobot) ? $bobot->quota_bobot : 0;?>/100</span>
+							<span class="badge bg-soft-info ms-2">bobot tersisa:
+								<?= isset($bobot->quota_bobot) ? $bobot->quota_bobot : 0;?>/100</span>
 						</div>
 						<?php if((100-(isset($bobot->quota_bobot) ? $bobot->quota_bobot : 0)) == 0):?>
 						<small class="text-danger">anda tidak dapat membuat task baru dengan bobot lebih dari 0, ketika
 							quota bobot mencapai batas maksimal. ini akan berpengaruh terhadap sistem penilaian
-							KPI</small>
+							KPI system</small>
 						<?php endif;?>
 					</div>
 
@@ -489,7 +524,7 @@
 						<div class="col">
 							<label class="form-label" for="formDeadline">Deadline Task</label>
 							<input type="date" name="deadline" id="formDeadline" class="form-control form-control-sm"
-								 value="<?= date('Y-m-d', strtotime('+1 week'));?>" required>
+								value="<?= date('Y-m-d', strtotime('+1 week'));?>" required>
 						</div>
 					</div>
 
@@ -540,10 +575,11 @@
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				<form action="<?= site_url('api/proyek/tutup');?>" method="post" class="js-validate needs-validation" enctype="multipart/form-data"
-					novalidate>
+				<form action="<?= site_url('api/proyek/tutup');?>" method="post" class="js-validate needs-validation"
+					enctype="multipart/form-data" novalidate>
 					<input type="hidden" name="id" value="<?= $proyek->id;?>">
-					<div class="alert alert-soft-primary small">Anda akan menutup proyek ini, harap berikan nilai pada staff yang terlibat pada proyek ini</div>
+					<div class="alert alert-soft-primary small">Anda akan menutup proyek ini, harap berikan nilai pada
+						staff yang terlibat pada proyek ini</div>
 					<table class="table table-hover w-100">
 						<thead class="thead-light">
 							<tr>
@@ -562,8 +598,10 @@
 								<td><?= $leader[0]->task['total'];?></td>
 								<td><?= $leader[0]->task_selesai['total'];?></td>
 								<td>
-									<input type="hidden" class="form-control form-control-sm w-100" name="leader_id" value="<?= $leader[0]->user_id;?>" required>
-									<input type="text" class="form-control form-control-sm w-100" name="nilai_leader" placeholder="nilai" required>
+									<input type="hidden" class="form-control form-control-sm w-100" name="leader_id"
+										value="<?= $leader[0]->user_id;?>" required>
+									<input type="text" class="form-control form-control-sm w-100" name="nilai_leader"
+										placeholder="nilai" required>
 								</td>
 							</tr>
 							<?php endif;?>
@@ -575,8 +613,10 @@
 								<td><?= $v->task['total'];?></td>
 								<td><?= $v->task_selesai['total'];?></td>
 								<td>
-									<input type="hidden" class="form-control form-control-sm w-100" name="staff_id[]" value="<?= $v->user_id;?>" required>
-									<input type="text" class="form-control form-control-sm w-100" name="nilai[]" placeholder="nilai" required>
+									<input type="hidden" class="form-control form-control-sm w-100" name="staff_id[]"
+										value="<?= $v->user_id;?>" required>
+									<input type="text" class="form-control form-control-sm w-100" name="nilai[]"
+										placeholder="nilai" required>
 								</td>
 							</tr>
 							<?php endforeach;?>
@@ -626,7 +666,7 @@
 				task_id: id
 			},
 			success: function (data) {
-				$('#contentSelesaikan').html(data);
+				$('#contentSelesaikan-'+id).html(data);
 			},
 			error: function (xhr, status, error) {
 				Swal.fire({

@@ -65,13 +65,33 @@ class M_proyek extends CI_Model
     function getAllProyek(){
         return $this->db->get_where('tb_proyek', ['is_deleted' => 0])->result();
     }
+
+    function cekLeaderProyek($proyek_id = null){
+        $model = $this->db->get_where('tb_assign_leader', ['is_deleted' => 0, 'proyek_id' => $proyek_id, 'user_id' => $this->session->userdata('user_id')]);
+
+        if(!empty($model)){
+            return true;
+        }else{
+            return false;
+        }
+    }
     
     function getAllProyekStaff(){
         $this->db->select('a.*');
         $this->db->from('tb_proyek a');
-        $this->db->join('tb_assign_staff b', 'a.id = b.proyek_id');
+        $this->db->join('tb_assign_staff b', 'a.id = b.proyek_id', 'left');
+        $this->db->join('tb_assign_leader c', 'a.id = c.proyek_id', 'left');
         $this->db->where(['a.is_deleted' => 0, 'b.user_id' => $this->session->userdata('user_id')]);
-        return $this->db->get()->result();
+        $this->db->or_where(['c.user_id' => $this->session->userdata('user_id')]);
+        $models = $this->db->get()->result();
+
+        $arr = [];
+
+        foreach($models as $key => $val){
+            $arr[$val->id] = $val;
+        }
+
+        return array_values($arr);
     }
 
     function getLogProyek($proyek_id = 0){
@@ -180,7 +200,6 @@ class M_proyek extends CI_Model
         ->join('tb_user b', 'a.user_id = b.user_id')
         ->join('tb_assign_staff c', 'a.user_id = c.user_id')
         ->join('tb_jabatan d', 'b.jabatan_id = d.id', 'left')
-        ->join('tb_assign_leader e', 'a.user_id = e.user_id', 'left')
         ->where(['a.role' => 3, 'a.status' => 1, 'a.is_deleted' => 0, 'c.status' => 1])
         ->group_by('a.user_id');
         ;
@@ -198,6 +217,30 @@ class M_proyek extends CI_Model
         }
 
         $staff = $this->db->get()->result();
+
+        // get data leader
+        $this->db->select('b.*, d.jabatan, c.proyek_id')
+        ->from('tb_auth a')
+        ->join('tb_user b', 'a.user_id = b.user_id')
+        ->join('tb_assign_leader c', 'a.user_id = c.user_id')
+        ->join('tb_jabatan d', 'b.jabatan_id = d.id', 'left')
+        ->where(['a.role' => 3, 'a.status' => 1, 'a.is_deleted' => 0, 'c.status' => 1])
+        ->group_by('a.user_id');
+        ;
+
+        if(!empty($periode)){
+            if(strtotime($periode[0]) == strtotime($periode[1])){
+                $this->db->where(['c.created_at' => strtotime($periode[0])]);
+            }else{
+                $this->db->where(['c.created_at >=' => strtotime($periode[0]), 'c.created_at <=' => strtotime($periode[1])]);
+            }
+        }
+
+        if(!is_null($proyek_id)){
+            $this->db->where(['c.proyek_id' => $proyek_id]);
+        }
+
+        $leader = $this->db->get()->result();
         
         $arrKpi = [];
         foreach($staff as $key => $val){
@@ -269,12 +312,89 @@ class M_proyek extends CI_Model
             }
 
             $arrKpi[$key]->color_badge = $color;
+            $arrKpi[$key]->is_leader = false;
         }
-        
+
         $tempData = array_column($arrKpi, 'persentase');
         array_multisort($tempData, SORT_DESC, $arrKpi);
-        // ej($arrKpi);
-        return $arrKpi;
+        
+        
+        foreach($leader as $key => $val){
+            $arrKpiLeader[$key] = $val;
+            if(isset($val->proyek_id)){
+                $arrKpiLeader[$key]->proyek = $this->getProyekStaff($val->proyek_id);
+                $arrKpiLeader[$key]->totalProyek = count($this->getProyekStaff($val->proyek_id));
+
+                $arrKpiLeader[$key]->task = $this->getTaskLeaderKpi($val->proyek_id, $val->user_id);
+                $arrKpiLeader[$key]->totalTask = count($this->getTaskLeaderKpi($val->proyek_id, $val->user_id, 0));
+                $arrKpiLeader[$key]->taskSelesai = count($this->getTaskLeaderKpi($val->proyek_id, $val->user_id, 1));
+                $arrKpiLeader[$key]->taskSelesaiData = $this->getTaskLeaderKpi($val->proyek_id, $val->user_id, 1);
+                $arrKpiLeader[$key]->taskProses = count($this->getTaskLeaderKpi($val->proyek_id, $val->user_id, 2));
+                $arrKpiLeader[$key]->taskProsesData = $this->getTaskLeaderKpi($val->proyek_id, $val->user_id, 2);
+
+                // hitung total bobot
+                $total_bobot = 0;
+                foreach ($this->getTaskLeaderKpi($val->proyek_id, $val->user_id) as $k => $v) {
+                    $total_bobot += $v->bobot_leader;
+                }
+                // hitung nilai
+                $nilai = 0;
+                $presentase = 0;
+                $rumus = [];
+                foreach ($this->getTaskLeaderKpi($val->proyek_id, $val->user_id) as $k => $v) {
+                    if($v->is_selesai == 1 || $v->is_closed == 1){
+                        $nilai += (($v->bobot_leader/$total_bobot)*(($total_bobot*3)/4));
+                        $presentase += round(($v->bobot_leader/$total_bobot)*100);
+                        $index_kpi = ($total_bobot*3)/4;
+
+                        $rumus['nilai'][] = "{$v->bobot_leader}/{$total_bobot}*100= {$nilai}";
+                        $rumus['presentase'][] = "{$v->bobot_leader}/{$total_bobot}*{$index_kpi}= {$presentase}%";
+                    }
+                }
+                $arrKpiLeader[$key]->nilai = $nilai;
+                $arrKpiLeader[$key]->persentase = $presentase;
+                $arrKpiLeader[$key]->total_bobot = $total_bobot;
+                $arrKpiLeader[$key]->rumus = $rumus;
+
+                // $arrKpiLeader[$key]->nilai = $arrKpiLeader[$key]->totalTask > 0 && $arrKpiLeader[$key]->taskSelesai > 0 ? number_format((float)($arrKpiLeader[$key]->taskSelesai/$arrKpiLeader[$key]->totalTask)*10, 1, '.', '') : 0;
+                // $arrKpiLeader[$key]->persentase = $arrKpiLeader[$key]->totalTask > 0 && $arrKpiLeader[$key]->taskSelesai > 0 ? number_format((float)(($arrKpiLeader[$key]->taskSelesai/$arrKpiLeader[$key]->totalTask)*100), 2, '.', '') : 0;
+            }else{
+                $arrKpiLeader[$key]->proyek = [];
+                $arrKpiLeader[$key]->totalProyek = 0;
+
+                $arrKpiLeader[$key]->task = [];
+                $arrKpiLeader[$key]->totalTask = 0;
+                $arrKpiLeader[$key]->taskSelesai = 0;
+                $arrKpiLeader[$key]->taskSelesaiData = [];
+                $arrKpiLeader[$key]->taskProses = 0;
+                $arrKpiLeader[$key]->taskProsesData = [];
+
+                $arrKpiLeader[$key]->nilai = 0;
+                $arrKpiLeader[$key]->detail = '-';
+                $arrKpiLeader[$key]->persentase = 0;
+            }
+            if($arrKpiLeader[$key]->persentase > 100){
+                $color = 'success';
+            }elseif($arrKpiLeader[$key]->persentase >= 75 ){
+                $color = 'primary';
+            }elseif($arrKpiLeader[$key]->persentase >= 50){
+                $color = 'info';
+            }elseif($arrKpiLeader[$key]->persentase >= 25){
+                $color = 'warning';
+            }elseif($arrKpiLeader[$key]->persentase > 0){
+                $color = 'secondary';
+            }else{
+                $color = 'danger';
+            }
+
+            $arrKpiLeader[$key]->color_badge = $color;
+            $arrKpiLeader[$key]->is_leader = true;
+        }
+
+        $tempDataLeader = array_column($arrKpiLeader, 'persentase');
+        array_multisort($tempDataLeader, SORT_DESC, $arrKpiLeader);
+
+        return array_values(array_merge($arrKpiLeader, $arrKpi));
     }
 
     function getProyekStaff($proyek_id = null){
@@ -305,6 +425,23 @@ class M_proyek extends CI_Model
             $this->db->where(['is_selesai' => 0]);
         }
 
+        return $this->db->get()->result();
+    }
+
+    function getTaskLeaderKpi($proyek_id = null, $user_id = null, $is_selesai = 0){
+        $this->db->select('*')
+        ->from('tb_proyek_task a')
+        ->where(['proyek_id' => $proyek_id, 'is_deleted' => 0])
+        ;
+
+        if($is_selesai == 1){
+            $this->db->where(['is_closed' => 1]);
+            $this->db->or_where(['is_selesai' => 1]);
+        }elseif($is_selesai == 2){
+            $this->db->where(['is_closed' => 0]);
+            $this->db->where(['is_selesai' => 0]);
+        }
+        
         return $this->db->get()->result();
     }
 
@@ -963,6 +1100,8 @@ class M_proyek extends CI_Model
 
             sendMail($staff->email, $subject, $message);
 
+            $this->insert_logNotif($proyek_id, 'kamu telah ditambahkan sebagai leader kedalam proyek <b>'.$this->input->post('judul').'</b>', $leader_id);
+
             $data = [
                 'proyek_id' => $proyek_id,
                 'user_id' => $leader_id,
@@ -983,6 +1122,8 @@ class M_proyek extends CI_Model
             $message = 'Hi '.$staff->nama.', kamu telah ditambahkan sebagai staff kedalam proyek <b>'.$this->input->post('judul').'</b>. Masuk kedalam akunmu dan mulai berkolaborasi dalam proyek tersebut';
 
             sendMail($staff->email, $subject, $message);
+
+            $this->insert_logNotif($proyek_id, 'kamu telah ditambahkan sebagai staff kedalam proyek <b>'.$this->input->post('judul').'</b>', $val);
 
             $data = [
                 'proyek_id' => $proyek_id,
@@ -1113,6 +1254,7 @@ class M_proyek extends CI_Model
             'user_id' => $this->input->post('staff_id'),
             'task' => $this->input->post('task'),
             'bobot' => $this->input->post('bobot'),
+            'bobot_leader' => $this->input->post('bobot_leader'),
             'keterangan' => $this->input->post('keterangan'),
             'deadline' => strtotime($this->input->post('deadline')),
             'status_id' => $status_id,
@@ -1132,6 +1274,7 @@ class M_proyek extends CI_Model
             'user_id' => $this->input->post('staff_id'),
             'task' => $this->input->post('task'),
             'bobot' => $this->input->post('bobot'),
+            'bobot_leader' => $this->input->post('bobot_leader'),
             'keterangan' => $this->input->post('keterangan'),
             'is_selesai' => 0,
             'is_closed' => 0,
@@ -1360,11 +1503,11 @@ class M_proyek extends CI_Model
         $arr->on_deadline = 0;
         $arr->over_deadline = 0;
         foreach ($models as $key => $val) {
-            if($val->deadline < time()){
+            if(time() < $val->deadline){
                 $arr->on_deadline += 1;
             }
             
-            if($val->deadline > time()){
+            if(time() > $val->deadline){
                 $arr->over_deadline += 1;
             }
         }
@@ -1514,6 +1657,7 @@ class M_proyek extends CI_Model
         ->from('tb_user a')
         ->join('tb_assign_staff b', 'a.user_id = b.user_id')
         ->where(['b.is_deleted' => 0, 'proyek_id' => $proyek_id])
+        ->order_by('a.nama');
         ;
 
         $models = $this->db->get()->result();
@@ -1578,7 +1722,7 @@ class M_proyek extends CI_Model
     function getTaskTargetStaff($user_id = null, $on_deadline = 1, $proyek_id = null, $periode = []){
         $this->db->select('*')
         ->from('tb_proyek_task')
-        ->where(['is_deleted' => 0, 'user_id' => $user_id, 'proyek_id' => $proyek_id, 'is_selesai' => 0, 'is_closed' => 0])
+        ->where(['is_deleted' => 0, 'user_id' => $user_id, 'proyek_id' => $proyek_id])
         ;
         
         if(!empty($periode) && is_array($periode)){
@@ -1590,16 +1734,18 @@ class M_proyek extends CI_Model
         }
 
         $models = $this->db->get()->result();
-
+        
         $total = 0;
         foreach($models as $key => $val){
-            if($on_deadline == 1){
-                if($val->deadline > time()){
-                    $total += 1;
-                }
-            }else{
-                if($val->deadline < time()){
-                    $total += 1;
+            if($val->is_selesai == 1 || $val->is_closed == 1){
+                if($on_deadline == 1){
+                    if($val->deadline > time()){
+                        $total += 1;
+                    }
+                }else{
+                    if($val->deadline < time()){
+                        $total += 1;
+                    }
                 }
             }
         }

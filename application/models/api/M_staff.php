@@ -107,6 +107,49 @@ class M_staff extends CI_Model
             foreach($models as $key => $val):
                 $arr[$key] = $val;
 
+                $arr[$key]->leader = $this->getStaffLeader($val->user_id);
+                
+                $proyekAll = $this->getAssign($val->user_id, 1);
+                $proyekAktif = $this->getAssign($val->user_id, 1);
+                $proyekArsip = $this->getAssign($val->user_id, 2);
+
+                if(!empty($arr[$key]->leader)){
+                    $proyekAllLeader = $this->getAssignleader($val->user_id, 1);
+                    $proyekAktifLeader = $this->getAssignleader($val->user_id, 1);
+                    $proyekArsipLeader = $this->getAssignleader($val->user_id, 2);
+                
+                $proyekAll = $proyekAll + $proyekAllLeader;
+                $proyekAktif = $proyekAll + $proyekAktifLeader;
+                $proyekArsip = $proyekAll + $proyekArsipLeader;
+                }
+                $arr[$key]->proyek_all = $proyekAll;
+                $arr[$key]->proyek_aktif = $proyekAktif;
+                $arr[$key]->proyek_arsip = $proyekArsip;
+                $arr[$key]->status_staff = $this->cekStaffIdle($val->user_id, 0)['status'] == true ? 1 : 0;
+                $arr[$key]->total_task = $this->cekStaffIdle($val->user_id, 1)['total_tasks'];
+                $arr[$key]->tasks = $this->cekStaffIdle($val->user_id, 1)['tasks'];
+            endforeach;
+            
+            return $arr;
+        }else{
+            return $models;
+        }
+    }
+
+    function getStaff_new(){
+        $this->db->select('a.*, b.*, c.jabatan');
+        $this->db->from('tb_auth a');
+        $this->db->join('tb_user b', 'a.user_id = b.user_id');
+        $this->db->join('tb_jabatan c', 'b.jabatan_id = c.id', 'left');
+        $this->db->where(['a.role' => 3, 'a.status' => 1]);
+        $this->db->where("a.user_id NOT IN (SELECT user_id FROM tb_assign_leader WHERE is_deleted = 0)");
+        $models = $this->db->get()->result();
+
+        if(!empty($models)){
+            $arr = [];
+            foreach($models as $key => $val):
+                $arr[$key] = $val;
+
                 $proyekAll = $this->getAssign($val->user_id, 1);
                 $proyekAktif = $this->getAssign($val->user_id, 1);
                 $proyekArsip = $this->getAssign($val->user_id, 2);
@@ -138,6 +181,17 @@ class M_staff extends CI_Model
     function getAssign($user_id = null, $status = 1){
         $this->db->select('a.id, b.*');
         $this->db->from($this->table.' a');
+        $this->db->join('tb_proyek b', 'a.proyek_id = b.id');
+        $this->db->where('a.user_id', $user_id);
+        if($status > 0){
+        $this->db->where('a.status', $status);
+        }
+        return $this->db->get()->result();
+    }
+
+    function getAssignLeader($user_id = null, $status = 1){
+        $this->db->select('a.id, b.*');
+        $this->db->from('tb_assign_leader a');
         $this->db->join('tb_proyek b', 'a.proyek_id = b.id');
         $this->db->where('a.user_id', $user_id);
         if($status > 0){
