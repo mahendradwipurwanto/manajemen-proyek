@@ -231,6 +231,22 @@
 				}],
 			});
 
+			$('#table-kpi2').DataTable({
+				"language": {
+					"emptyTable": '<div class="text-center p-4">' +
+						'<img class="mb-3" src="<?= base_url() ?>assets/svg/illustrations/sorry.svg" alt="Image Description" style="width: 7rem;">' +
+						'<p class="mb-0">Tidak ada data untuk ditampilkan</p>' +
+						'</div>'
+				},
+				"scrollX": true,
+				"responsive": true,
+				"order": false,
+				"columnDefs": [{
+					"targets": [0, 1],
+					"orderable": false
+				}],
+			});
+
 			$(".alphanum").keydown(function (event) {
 				var inputValue = event.which;
 				// allow letters and whitespaces only.

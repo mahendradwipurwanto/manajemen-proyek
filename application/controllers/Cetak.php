@@ -27,29 +27,28 @@ class Cetak extends CI_Controller
         $this->templateprint->view('proyek/cetak/kpi', $data);
     }
 
-    public function kpi_manual($proyek_id = null)
+    public function kpi_manual($staff = null)
     {
         $periode = [];
-        if ($this->input->get('periode')) {
-            $periode = explode(' - ', $this->input->get('periode'));
-        }
-
+        // if($this->input->get('periode')){
+        //     $periode = explode(' - ', $this->input->get('periode'));
+        // }
+        
         $proyek = null;
         // $data['nama_proyek']= "Semua Proyek";
         // if($this->input->get('proyek')){
         //     $proyek = $this->input->get('proyek') == 0 ? null : $this->input->get('proyek');
-
+            
         //     if($proyek > 0){
         //         $data['nama_proyek']     = $this->M_proyek->getProyekById($proyek)->judul;
         //     }
         // }
 
         $data['nama_staff']= "Semua Staff";
-        $staff = null;
-        if ($this->input->get('staff')) {
-            $staff = $this->input->get('staff') == 0 ? null : $this->input->get('staff');
-
-            if ($staff > 0) {
+        if($staff != null){
+            $staff = $staff == 0 ? null : $staff;
+            
+            if($staff > 0){
                 $data['nama_staff']     = $this->M_auth->get_userByID($staff)->nama;
             }
         }

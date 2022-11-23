@@ -34,7 +34,7 @@
   						<img class="navbar-brand-logo" src="<?= base_url(); ?><?= $web_logo;?>" alt="Logo">
   					</a>
   					<a class="navbar-brand-badge">
-  						<span class="badge bg-soft-primary text-primary ms-2">v1.5.9</span>
+  						<span class="badge bg-soft-primary text-primary ms-2">v1.7.9</span>
   					</a>
   				</div>
   				<!-- End Default Logo -->
@@ -55,9 +55,9 @@
   					</li>
   					<li class="nav-item" id="tour-menu-kpi">
   						<a class="nav-link <?= ($this->uri->segment(2) == "kpi" ? "active" : "") ?>"
-  							href="<?= site_url('proyek/kpi'); ?>"><i class="bi bi-bar-chart-steps nav-icon"></i> KPI (system)</a>
+  							href="<?= site_url('proyek/kpi'); ?>"><i class="bi bi-bar-chart-steps nav-icon"></i> KPI</a>
   					</li>
-  					<li class="nav-item" id="tour-menu-kpi">
+  					<li class="nav-item d-none" id="tour-menu-kpi">
   						<a class="nav-link <?= ($this->uri->segment(2) == "kpi-staff" ? "active" : "") ?>"
   							href="<?= site_url('proyek/kpi-staff'); ?>"><i class="bi bi-bar-chart nav-icon"></i> KPI</a>
   					</li>

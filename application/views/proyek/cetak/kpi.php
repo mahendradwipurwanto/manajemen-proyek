@@ -28,8 +28,8 @@
 							<th rowspan="2" width="5%">No</th>
 							<th rowspan="2">Staff</th>
 							<th colspan="4" class="text-center">Proyek</th>
-							<th rowspan="2">Nilai</th>
-							<th rowspan="2">Presentase</th>
+							<!-- <th rowspan="2">Nilai</th> -->
+							<!-- <th rowspan="2">Presentase</th> -->
 						</tr>
 						<tr>
 							<th class="text-center">Total Proyek</th>
@@ -73,12 +73,12 @@
 										data-bs-html="true"
 										title="Lihat daftar task selesai"><?= $val->taskSelesai;?></span></span>
 							</td>
-							<td class="text-center">
+							<!-- <td class="text-center">
 								<?= $val->nilai;?>
-							</td>
-							<td class="text-center">
+							</td> -->
+							<!-- <td class="text-center">
 								<span class="badge bg-soft-<?= $val->color_badge;?>"><?= $val->persentase;?>%</span>
-							</td>
+							</td> -->
 						</tr>
 						<?php endforeach;?>
 						<?php endif;?>
@@ -90,7 +90,7 @@
 	</div>
 </div>
 
-<div class="row">
+<div class="row d-none">
 	<div class="col-md-4">
 		<div class="card">
 			<!-- Table -->

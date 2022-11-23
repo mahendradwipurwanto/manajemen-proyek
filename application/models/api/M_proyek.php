@@ -341,11 +341,14 @@ class M_proyek extends CI_Model
                 $nilai = 0;
                 $presentase = 0;
                 $rumus = [];
+                $index_kpi = 0;
                 foreach ($this->getTaskLeaderKpi($val->proyek_id, $val->user_id) as $k => $v) {
                     if($v->is_selesai == 1 || $v->is_closed == 1){
-                        $nilai += (($v->bobot_leader/$total_bobot)*(($total_bobot*3)/4));
-                        $presentase += round(($v->bobot_leader/$total_bobot)*100);
-                        $index_kpi = ($total_bobot*3)/4;
+                        if($v->bobot_leader > 0 && $total_bobot > 0 ){
+                            $nilai += (($v->bobot_leader/$total_bobot)*(($total_bobot*3)/4));
+                            $presentase += round(($v->bobot_leader/$total_bobot)*100);
+                            $index_kpi = ($total_bobot*3)/4;
+                        }
 
                         $rumus['nilai'][] = "{$v->bobot_leader}/{$total_bobot}*100= {$nilai}";
                         $rumus['presentase'][] = "{$v->bobot_leader}/{$total_bobot}*{$index_kpi}= {$presentase}%";
@@ -2111,7 +2114,17 @@ class M_proyek extends CI_Model
             }
             $arr = $temp;
         }else{
-            $arr = $models;
+            $temp = [];
+            $nilai = 0;
+            foreach($models as $key => $val){
+                $temp[$val->staff_id] = $val;
+                $nilai += $val->nilai;
+                $temp[$val->staff_id]->judul = "Seluruh proyek (pilih staff untuk lebih detail)";
+                $proyek = $this->countProyekSelesaiStaff($val->staff_id);
+                $temp[$val->staff_id]->nilai = $nilai/$proyek;
+                $temp[$val->staff_id]->detail = "<small>*nilai/jumlah proyek: {$nilai}/{$proyek}</small>";
+            }
+            $arr = $temp;
         }
         return $arr;
     }

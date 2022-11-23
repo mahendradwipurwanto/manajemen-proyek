@@ -149,8 +149,8 @@ class Proyek extends CI_Controller
         $sheet->setCellValue('A3', "Peringkat"); // Set kolom A3 dengan tulisan "NO"
         $sheet->setCellValue('B3', "Staff"); // Set kolom E3
         $sheet->setCellValue('C3', "Proyek"); // Set kolom E3
-        $sheet->setCellValue('G3', "Nilai"); // Set kolom B3
-        $sheet->setCellValue('H3', "Presentase"); // Set kolom C3
+        // $sheet->setCellValue('G3', "Presentase"); // Set kolom C3
+        // $sheet->setCellValue('G3', "Nilai"); // Set kolom B3
 
         $sheet->setCellValue('C4', "Total Proyek"); // Set kolom C3
         $sheet->setCellValue('D4', "Total Task"); // Set kolom C3
@@ -160,8 +160,8 @@ class Proyek extends CI_Controller
         $sheet->mergeCells('A3:A4');
         $sheet->mergeCells('B3:B4');
         $sheet->mergeCells('C3:F3');
-        $sheet->mergeCells('G3:G4');
-        $sheet->mergeCells('H3:H4');
+        // $sheet->mergeCells('G3:G4');
+        // $sheet->mergeCells('H3:H4');
 
         // Apply style header yang telah kita buat tadi ke masing-masing kolom header
         $sheet->getStyle('A3:A4')->applyFromArray($style_col);
@@ -170,8 +170,8 @@ class Proyek extends CI_Controller
         $sheet->getStyle('D3')->applyFromArray($style_col);
         $sheet->getStyle('E3')->applyFromArray($style_col);
         $sheet->getStyle('F3')->applyFromArray($style_col);
-        $sheet->getStyle('G3:G4')->applyFromArray($style_col);
-        $sheet->getStyle('H3:H4')->applyFromArray($style_col);
+        // $sheet->getStyle('G3:G4')->applyFromArray($style_col);
+        // $sheet->getStyle('H3:H4')->applyFromArray($style_col);
         
         $sheet->getStyle('C4')->applyFromArray($style_col);
         $sheet->getStyle('D4')->applyFromArray($style_col);
@@ -189,8 +189,8 @@ class Proyek extends CI_Controller
                 $sheet->setCellValue('D'.$numrow, $data->totalTask);
                 $sheet->setCellValue('E'.$numrow, $data->taskProses);
                 $sheet->setCellValue('F'.$numrow, $data->taskSelesai);
-                $sheet->setCellValue('G'.$numrow, $data->nilai);
-                $sheet->setCellValue('H'.$numrow, $data->persentase."%");
+                // $sheet->setCellValue('G'.$numrow, $data->persentase."%");
+                // $sheet->setCellValue('G'.$numrow, $data->nilai);
 
             
                 // Apply style row yang telah kita buat tadi ke masing-masing baris (isi tabel)
@@ -200,8 +200,8 @@ class Proyek extends CI_Controller
                 $sheet->getStyle('D'.$numrow)->applyFromArray($style_row);
                 $sheet->getStyle('E'.$numrow)->applyFromArray($style_row);
                 $sheet->getStyle('F'.$numrow)->applyFromArray($style_row);
-                $sheet->getStyle('G'.$numrow)->applyFromArray($style_row);
-                $sheet->getStyle('H'.$numrow)->applyFromArray($style_row);
+                // $sheet->getStyle('G'.$numrow)->applyFromArray($style_row);
+                // $sheet->getStyle('H'.$numrow)->applyFromArray($style_row);
 
             
                 $no++; // Tambah 1 setiap kali looping
@@ -209,7 +209,7 @@ class Proyek extends CI_Controller
             }
         }else{
             $sheet->setCellValue('A5', "belum ada data"); // Set kolom A1
-            $sheet->mergeCells('A4:H4'); // Set Merge Cell pada kolom A1 sampai E1
+            $sheet->mergeCells('A4:F4'); // Set Merge Cell pada kolom A1 sampai E1
             $sheet->getStyle('A5')->getFont()->setBold(true); // Set bold kolom A1
         }
             // Set width kolom
@@ -219,8 +219,8 @@ class Proyek extends CI_Controller
         $sheet->getColumnDimension('D')->setAutoSize(true); // Set width kolom D
         $sheet->getColumnDimension('E')->setAutoSize(true); // Set width kolom E
         $sheet->getColumnDimension('F')->setAutoSize(true); // Set width kolom E
-        $sheet->getColumnDimension('G')->setAutoSize(true); // Set width kolom E
-        $sheet->getColumnDimension('H')->setAutoSize(true); // Set width kolom E
+        // $sheet->getColumnDimension('G')->setAutoSize(true); // Set width kolom E
+        // $sheet->getColumnDimension('H')->setAutoSize(true); // Set width kolom E
     
         // Set height semua kolom menjadi auto (mengikuti height isi dari kolommnya, jadi otomatis)
         $sheet->getDefaultRowDimension()->setRowHeight(-1);
@@ -254,9 +254,23 @@ class Proyek extends CI_Controller
             }
         }
 
+        $data['nama_staff']= "Semua Staff";
+        $staff = null;
+        if($this->input->get('staff')){
+            $staff = $this->input->get('staff') == 0 ? null : $this->input->get('staff');
+            
+            if($staff > 0){
+                $data['nama_staff']     = $this->M_auth->get_userByID($staff)->nama;
+            }
+        }
+
         $data['proyek']     = $this->M_proyek->getAllProyek();
         $data['kpi']        = $this->M_proyek->getDataKPI($periode, $proyek);
         $data['chart_kpi']  = $this->M_proyek->getChartKPI($periode, $proyek);
+        
+        $data['staff']      = $this->M_staff->getStaff();
+        $data['kpi_manual']        = $this->M_proyek->getManualKPI($proyek, $staff, $periode);
+        $data['chart_kpi_manual']  = $this->M_proyek->getManualKPIGrafik($proyek, $staff, $periode);
         // ej($data['kpi']);
         if ($this->agent->is_mobile()) {
             $this->templatemobile->view('proyek/kpi', $data);

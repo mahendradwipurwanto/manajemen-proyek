@@ -1,4 +1,3 @@
-<!-- Page Header -->
 <style>
 	@media print {
 		body {
@@ -7,16 +6,13 @@
 	}
 
 </style>
+
+<!-- Page Header -->
 <div class="docs-page-header">
 	<div class="row align-items-center">
 		<div class="col-sm">
-			<h1 class="docs-page-header-title">CETAK KPI STAFF
-				<?php if($this->input->get('periode')):?>
-				<span class="text-body pb-3 me-3"> - periode <span
-						class="text-primary"><?= $this->input->get('periode');?></span></span>
-				<?php endif;?>
+			<h1 class="docs-page-header-title d-flex justify-content-between">Cetak KPI - <?= $nama_staff;?>
 			</h1>
-			<p class="docs-page-header-text">Pantau kinerja staff pada semua proyek</p>
 		</div>
 	</div>
 </div>
@@ -25,14 +21,14 @@
 		<div class="card">
 			<!-- Table -->
 			<div class="card-body p-4">
-				<table class="table table-thead-bordered table-nowrap table-align-middle card-table"
-					id="table-kpi">
+				<table class="table table-thead-bordered table-nowrap table-align-middle card-table" id="table-kpi">
 					<thead class="thead-light">
 						<tr>
 							<th width="5%">No</th>
 							<th width="25%">Staff</th>
 							<th width="25%">Proyek</th>
-							<th width="25%" class="text-center">Nilai</th>
+							<th width="20%" class="text-center">Nilai</th>
+							<th width="25%" class="text-center">Keterangan</th>
 						</tr>
 					</thead>
 
@@ -49,6 +45,9 @@
 							</td>
 							<td class="text-center">
 								<?= $val->nilai;?>
+							</td>
+							<td class="text-center">
+								(<?= $val->detail;?>)
 							</td>
 						</tr>
 						<?php endforeach;?>
@@ -73,13 +72,12 @@
 </div>
 
 <script>
-
 	// target bar chart
 	var optionsChartTarget = {
 		series: [{
-            name: 'Nilai',
-			data: [<?= implode(',', $chart_kpi['data']) ?>]
-        }],
+			name: 'Nilai',
+			data: [ <?= implode(',', $chart_kpi['data']) ?> ]
+		}],
 		chart: {
 			type: 'bar',
 			height: 350
@@ -100,7 +98,7 @@
 			colors: ['transparent']
 		},
 		xaxis: {
-			categories: [<?= implode(',', $chart_kpi['kategori']) ?>],
+			categories: [ <?= implode(',', $chart_kpi['name']) ?> ],
 		},
 		yaxis: {
 			title: {
@@ -127,5 +125,6 @@
 			window.print();
 		}, 2000);
 	})
+
 </script>
 <?php endif;?>
