@@ -236,7 +236,7 @@ class M_staff extends CI_Model
         $this->db->select('a.id, a.user_id, a.proyek_id, b.*');
         $this->db->from('tb_assign_staff a');
         $this->db->join('tb_proyek b', 'a.proyek_id = b.id');
-        $this->db->where(['b.status' => $status, 'b.is_deleted' => 0]);
+        $this->db->where(['b.is_selesai' => $status, 'b.is_deleted' => 0]);
         if($this->session->userdata('role') == 2 || $this->session->userdata('role') == 3){
             $this->db->where('a.user_id', $this->session->userdata('user_id'));
         }

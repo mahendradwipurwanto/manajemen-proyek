@@ -246,8 +246,8 @@ class M_proyek extends CI_Model
         foreach($staff as $key => $val){
             $arrKpi[$key] = $val;
             if(isset($val->proyek_id)){
-                $arrKpi[$key]->proyek = $this->getProyekStaff($val->proyek_id);
-                $arrKpi[$key]->totalProyek = count($this->getProyekStaff($val->proyek_id));
+                $arrKpi[$key]->proyek = $this->getProyekStaff_new($val->user_id);
+                $arrKpi[$key]->totalProyek = count($this->getProyekStaff_new($val->user_id));
 
                 $arrKpi[$key]->task = $this->getTaskStaffKpi($proyek_id, $val->user_id);
                 $arrKpi[$key]->totalTask = count($this->getTaskStaffKpi($proyek_id, $val->user_id, 0));
@@ -404,6 +404,16 @@ class M_proyek extends CI_Model
         $this->db->select('*')
         ->from('tb_proyek')
         ->where(['id' => $proyek_id, 'is_deleted' => 0])
+        ;
+
+        return $this->db->get()->result();
+    }
+
+    function getProyekStaff_new($user_id = null){
+        $this->db->select('*')
+        ->from('tb_assign_staff a')
+        ->join('tb_proyek b', 'a.proyek_id = b.id')
+        ->where(['a.user_id' => $user_id, 'a.is_deleted' => 0])
         ;
 
         return $this->db->get()->result();

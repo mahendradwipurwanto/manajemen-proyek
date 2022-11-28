@@ -238,7 +238,7 @@
 							<div class="box-progress-wrapper">
 								<p class="box-progress-header">Progress</p>
 								<div class="box-progress-bar">
-									<span class="box-progress text-soft-primary"
+									<span class="box-progress bg-primary"
 										style="width: <?= round($val->progress);?>%;"></span>
 								</div>
 								<p class="box-progress-percentage"><?= round($val->progress);?>%</p>

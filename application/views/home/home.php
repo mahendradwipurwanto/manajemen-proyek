@@ -24,7 +24,7 @@
 			</div>
 
 			<div class="d-grid d-md-flex gap-3 align-items-md-center">
-				<a class="btn btn-primary" href="<?= site_url('login');?>">Masuk sekarang</a>
+				<a class="btn btn-primary" href="<?= site_url('masuk');?>">Masuk sekarang</a>
 			</div>
 		</div>
 		<!-- End Col -->

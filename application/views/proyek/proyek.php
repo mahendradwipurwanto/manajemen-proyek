@@ -246,6 +246,11 @@
 							</div>
 							<div class="project-box-footer">
 								<div class="participants">
+									<?php if(!empty($val->leader)):?>
+									<img src="<?= base_url();?><?= $val->leader[0]->profil;?>"
+										alt="leader: <?= $val->leader[0]->nama;?>" data-bs-toggle="tooltip"
+										data-bs-html="true" title="leader: <?= $val->leader[0]->nama;?>" class="me-3">
+									<?php endif;?>
 									<?php if(!empty($val->staff)):?>
 									<?php foreach($val->staff as $k => $v):?>
 									<img src="<?= base_url();?><?= $v->profil;?>" alt="<?= $v->nama;?>"

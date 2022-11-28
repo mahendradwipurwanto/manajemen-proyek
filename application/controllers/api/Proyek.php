@@ -96,6 +96,16 @@ class Proyek extends CI_Controller
         $this->load->view('proyek/ajax/edit_proyek', $data);
     }
 
+    public function showTables()
+    {
+
+        $data['proyek']     = $this->M_proyek->getAllProyek();
+        $data['kpi']        = $this->M_proyek->getDataKPI();
+        $data['chart_kpi']  = $this->M_proyek->getChartKPI();
+        
+        $this->load->view('proyek/ajax/tables', $data);
+    }
+
     public function save()
     {
         if(isset($_FILES['file'])){

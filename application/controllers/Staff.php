@@ -170,8 +170,8 @@ class Staff extends CI_Controller
         $data['jabatan'] = $this->M_master->getJabatan();
         $data['staff'] = $this->M_staff->getStaff();
         $data['undanganStaff'] = $this->M_master->getUndangan(3);
-        $data['proyekAktif'] = $this->M_staff->getProyekStaffAll(1, $periode);
-        $data['proyekArsip'] = $this->M_staff->getProyekStaffAll(2, $periode);
+        $data['proyekAktif'] = $this->M_staff->getProyekStaffAll(0, $periode);
+        $data['proyekArsip'] = $this->M_staff->getProyekStaffAll(1, $periode);
 
         if ($this->agent->is_mobile()) {
             $this->templatemobile->view('staff/proyek', $data);
