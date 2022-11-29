@@ -56,7 +56,7 @@
 </div>
 
 
-<div class="row">
+<div class="row d-none">
 	<div class="col-12">
 		<div class="alert alert-soft-primary">
 			<small>Free maintenance selama 6 bulan terhitung dari tanggal waktu penyelesaiian yaitu (dd MM YYYY). Maintenance hanya berupa perbaikan fitur yang ada (tanpa ada penambahan fitur baru)</small>

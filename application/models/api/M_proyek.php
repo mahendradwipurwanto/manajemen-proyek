@@ -2109,6 +2109,11 @@ class M_proyek extends CI_Model
         }
 
         $models = $this->db->get()->result();
+        
+        $arrNilai = [];
+        foreach($models as $key => $val){
+            $arrNilai[$val->staff_id][] = $val->nilai;
+        }
 
         $arr = [];
         if($staff_id == null){
@@ -2116,11 +2121,11 @@ class M_proyek extends CI_Model
             $nilai = 0;
             foreach($models as $key => $val){
                 $temp[$val->staff_id] = $val;
-                $nilai += $val->nilai;
+                $nilai = array_sum($arrNilai[$val->staff_id]);
                 $temp[$val->staff_id]->judul = "Seluruh proyek (pilih staff untuk lebih detail)";
                 $proyek = $this->countProyekSelesaiStaff($val->staff_id);
                 $temp[$val->staff_id]->nilai = $nilai/$proyek;
-                $temp[$val->staff_id]->detail = "<small>*nilai/jumlah proyek: {$nilai}/{$proyek}</small>";
+                $temp[$val->staff_id]->detail = "<small>*jumlah nilai/jumlah proyek: {$nilai}/{$proyek}</small>";
             }
             $arr = $temp;
         }else{
@@ -2128,11 +2133,12 @@ class M_proyek extends CI_Model
             $nilai = 0;
             foreach($models as $key => $val){
                 $temp[$val->staff_id] = $val;
-                $nilai += $val->nilai;
+                $nilai = array_sum($arrNilai[$val->staff_id]);
+
                 $temp[$val->staff_id]->judul = "Seluruh proyek (pilih staff untuk lebih detail)";
                 $proyek = $this->countProyekSelesaiStaff($val->staff_id);
                 $temp[$val->staff_id]->nilai = $nilai/$proyek;
-                $temp[$val->staff_id]->detail = "<small>*nilai/jumlah proyek: {$nilai}/{$proyek}</small>";
+                $temp[$val->staff_id]->detail = "<small>*jumlah nilai/jumlah proyek: {$nilai}/{$proyek}</small>";
             }
             $arr = $temp;
         }
