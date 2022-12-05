@@ -59,14 +59,31 @@ class M_staff extends CI_Model
         return ['totalStaff' => $totalStaff, 'aktifStaff' => $aktifStaff, 'idleStaff' => $idleStaff, 'suspendStaff' => $suspendStaff];
     }
     function countDashboardStaff(){ 
+        // $this->db->select('*')
+        // ->from($this->table.' a')
+        // ->join('tb_proyek b', 'a.proyek_id = b.id')
+        // ->where(['a.user_id' => $this->session->userdata('user_id'), 'a.status' => 1, 'b.is_deleted' => 0])
+        // ;
+
+        // $totalProyek = $this->db->get()->num_rows();
+        
         $this->db->select('*')
-        ->from($this->table.' a')
-        ->join('tb_proyek b', 'a.proyek_id = b.id')
-        ->where(['a.user_id' => $this->session->userdata('user_id'), 'a.status' => 1, 'b.is_deleted' => 0])
+        ->from('tb_assign_staff')
+        ->where(['user_id' => $this->session->userdata('user_id'), 'is_deleted' => 0])
         ;
 
         $totalProyek = $this->db->get()->num_rows();
+        
+        $this->db->select('*')
+        ->from('tb_assign_leader')
+        ->where(['user_id' => $this->session->userdata('user_id'), 'is_deleted' => 0])
+        ;
 
+        $totalProyek2 = $this->db->get()->num_rows();
+
+        $totalProyek = $totalProyek+$totalProyek2;
+
+        
         $this->db->select('*')
         ->from('tb_proyek_task a')
         ->join('tb_proyek b', 'a.proyek_id = b.id')
@@ -86,10 +103,71 @@ class M_staff extends CI_Model
         $this->db->select('*')
         ->from('tb_proyek_task a')
         ->join('tb_proyek b', 'a.proyek_id = b.id')
-        ->where(['a.user_id' => $this->session->userdata('user_id'), 'a.is_selesai' => 1, 'a.is_closed' => 1, 'a.is_deleted' => 0, 'b.is_deleted' => 0])
+        ->where(['a.user_id' => $this->session->userdata('user_id'), 'a.is_selesai' => 1, 'a.is_deleted' => 0, 'b.is_deleted' => 0])
         ;
 
         $taskSelesai = $this->db->get()->num_rows();
+
+        $this->db->select('*')
+        ->from('tb_proyek_task a')
+        ->join('tb_proyek b', 'a.proyek_id = b.id')
+        ->where(['a.user_id' => $this->session->userdata('user_id'), 'a.is_closed' => 1, 'a.is_deleted' => 0, 'b.is_deleted' => 0])
+        ;
+
+        $taskClosed = $this->db->get()->num_rows();
+
+        $taskSelesai = $taskSelesai + $taskClosed;
+
+        // if leader
+        $this->db->select('*')
+        ->from('tb_assign_leader')
+        ->where(['user_id' => $this->session->userdata('user_id'), 'is_deleted' => 0]);
+
+        $project = $this->db->get()->result();
+
+        if(!empty($project)){
+            foreach($project as $key => $val){
+                $this->db->select('*')
+                ->from('tb_proyek_task a')
+                ->join('tb_proyek b', 'a.proyek_id = b.id')
+                ->where(['a.proyek_id' => $val->proyek_id, 'a.is_deleted' => 0, 'b.is_deleted' => 0])
+                ;
+
+                $totalTask2 = $this->db->get()->num_rows();
+
+                $totalTask = $totalTask+$totalTask2;
+
+                $this->db->select('*')
+                ->from('tb_proyek_task a')
+                ->join('tb_proyek b', 'a.proyek_id = b.id')
+                ->where(['a.proyek_id' => $val->proyek_id, 'a.is_selesai' => 0, 'a.is_closed' => 0, 'a.is_deleted' => 0, 'b.is_deleted' => 0])
+                ;
+
+                $taskProses2 = $this->db->get()->num_rows();
+
+                $taskProses = $taskProses+$taskProses2;
+
+                $this->db->select('*')
+                ->from('tb_proyek_task a')
+                ->join('tb_proyek b', 'a.proyek_id = b.id')
+                ->where(['a.proyek_id' => $val->proyek_id, 'a.is_selesai' => 1, 'a.is_deleted' => 0, 'b.is_deleted' => 0])
+                ;
+
+                $taskSelesai2 = $this->db->get()->num_rows();
+
+                $this->db->select('*')
+                ->from('tb_proyek_task a')
+                ->join('tb_proyek b', 'a.proyek_id = b.id')
+                ->where(['a.proyek_id' => $val->proyek_id, 'a.is_closed' => 1, 'a.is_deleted' => 0, 'b.is_deleted' => 0])
+                ;
+
+                $taskClosed = $this->db->get()->num_rows();
+
+                $taskSelesai = $taskSelesai + $taskClosed;
+
+                $taskSelesai = $taskSelesai+$taskSelesai2;
+            }
+        }
 
         return ['totalProyek' => $totalProyek, 'totalTask' => $totalTask, 'taskProses' => $taskProses, 'taskSelesai' => $taskSelesai];
     }
