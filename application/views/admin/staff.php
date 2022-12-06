@@ -445,7 +445,7 @@
 												<?= isset($val->jabatan) || $val->jabatan != null ? $val->jabatan : '-';?>
 											</li>
 											<li><i class="bi-box-seam dropdown-item-icon"></i>
-												<?= count($val->proyek_aktif)+count($val->proyek_arsip);?> Proyek</li>
+												<?= count($val->proyek_all);?> Proyek</li>
 										</ul>
 									</div>
 									<div class="col-6">
